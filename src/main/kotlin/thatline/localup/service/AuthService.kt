@@ -14,7 +14,7 @@ import thatline.localup.repository.UserTokenJpaRepository
 import java.time.LocalDateTime
 import java.util.*
 
-// TODO: rename AuthenticationService
+// TODO: signService 분리
 @Service
 class AuthService(
     private val userJpaRepository: UserJpaRepository,
