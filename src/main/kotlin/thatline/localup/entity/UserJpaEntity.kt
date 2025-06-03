@@ -17,7 +17,7 @@ class UserJpaEntity(
     @Column(nullable = false, unique = true)
     val email: String,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 60)
     val password: String,
 
     @CreatedDate

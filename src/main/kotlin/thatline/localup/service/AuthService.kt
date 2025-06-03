@@ -1,5 +1,6 @@
 package thatline.localup.service
 
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import thatline.localup.entity.UserJpaEntity
@@ -8,7 +9,8 @@ import thatline.localup.repository.UserJpaRepository
 
 @Service
 class AuthService(
-    private val userJpaRepository: UserJpaRepository
+    private val userJpaRepository: UserJpaRepository,
+    private val passwordEncoder: PasswordEncoder
 ) {
     @Transactional(readOnly = true)
     fun signIn(email: String, password: String) {
@@ -16,8 +18,7 @@ class AuthService(
         val user = userJpaRepository.findByEmail(email)
             ?: throw IllegalArgumentException()
 
-        // TODO: noah, hash password
-        if (user.password != password) {
+        if (!passwordEncoder.matches(password, user.password)) {
             throw IllegalArgumentException()
         }
     }
@@ -28,8 +29,9 @@ class AuthService(
             throw DuplicateEmailException()
         }
 
-        // TODO: noah, 비밀번호 암호화
-        val newUser = UserJpaEntity(email = email, password = password)
+        val hashedPassword = passwordEncoder.encode(password)
+
+        val newUser = UserJpaEntity(email = email, password = hashedPassword)
 
         userJpaRepository.save(newUser)
     }
