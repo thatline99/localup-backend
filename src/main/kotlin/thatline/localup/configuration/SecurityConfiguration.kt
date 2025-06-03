@@ -15,6 +15,7 @@ import thatline.localup.constant.Environment
 class SecurityConfiguration {
 
     @Bean
+    // TODO: profile로 변경
     @ConditionalOnProperty(name = ["spring.profiles.active"], havingValue = Environment.LOCAL)
     fun localFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -36,6 +37,7 @@ class SecurityConfiguration {
             .csrf { it.disable() }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
+            .logout { it.disable() }
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
@@ -45,7 +47,6 @@ class SecurityConfiguration {
                     .requestMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
             }
-//            .userDetailsService(userDetailsService)
 
         return http.build()
     }

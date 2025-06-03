@@ -14,6 +14,7 @@ import thatline.localup.repository.UserTokenJpaRepository
 import java.time.LocalDateTime
 import java.util.*
 
+// TODO: rename AuthenticationService
 @Service
 class AuthService(
     private val userJpaRepository: UserJpaRepository,
@@ -54,5 +55,18 @@ class AuthService(
         val newUser = UserJpaEntity(email = email, password = hashedPassword)
 
         userJpaRepository.save(newUser)
+    }
+
+    @Transactional
+    fun findUserIdByAccessToken(accessToken: String): Long? {
+        val userToken = userTokenJpaRepository.findByAccessToken(accessToken) ?: return null
+
+        if (userToken.accessTokenExpirationDate.isBefore(LocalDateTime.now())) {
+            userTokenJpaRepository.deleteByAccessToken(accessToken)
+
+            return null
+        }
+
+        return userToken.userId
     }
 }

@@ -6,5 +6,7 @@ import thatline.localup.entity.UserTokenJpaEntity
 interface UserTokenJpaRepository : JpaRepository<UserTokenJpaEntity, Long> {
     fun findByAccessToken(accessToken: String): UserTokenJpaEntity?
 
+    fun deleteByAccessToken(accessToken: String)
+
     fun deleteByUserId(userId: Long)
 }
