@@ -1,8 +1,8 @@
 package thatline.localup.configuration
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -15,8 +15,7 @@ import thatline.localup.constant.Environment
 class SecurityConfiguration {
 
     @Bean
-    // TODO: profile로 변경
-    @ConditionalOnProperty(name = ["spring.profiles.active"], havingValue = Environment.LOCAL)
+    @Profile(Environment.LOCAL)
     fun localFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors { cors ->
