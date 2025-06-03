@@ -1,5 +1,7 @@
 package thatline.localup.controller
 
+import jakarta.servlet.http.Cookie
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.exception.DuplicateEmailException
@@ -14,13 +16,21 @@ class AuthController(
 ) {
     @PostMapping("/sign-in")
     fun signIn(
-        @RequestBody request: SignInRequest
+        @RequestBody request: SignInRequest,
+        response: HttpServletResponse
     ): ResponseEntity<Void> {
-        authService.signIn(request.email, request.password)
+        val accessToken = authService.signIn(request.email, request.password)
 
-        // TODO: noah, 토큰
+        // TODO: noah, 쿠키 생성, 환경에 따라 분리, 메서드 분리
+        val cookie = Cookie("accessToken", accessToken)
+        cookie.isHttpOnly = true
+        cookie.maxAge = 60 * 60 * 24
+        cookie.path = "/"
+        // cookie.secure = true
 
-        return ResponseEntity.ok().build();
+        response.addCookie(cookie)
+
+        return ResponseEntity.ok().build()
     }
 
 //    @PostMapping("/sign-out")
