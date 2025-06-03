@@ -1,10 +1,8 @@
 package thatline.localup.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import thatline.localup.exception.DuplicateEmailException
 import thatline.localup.request.SignUpRequest
 import thatline.localup.service.AuthService
 
@@ -34,5 +32,9 @@ class AuthController(
         return ResponseEntity.ok().build()
     }
 
-    // TODO: noah, 이메일 exception 핸들러 추가
+    // TODO: noah, 추후 error body 정의
+    @ExceptionHandler(DuplicateEmailException::class)
+    fun handleDuplicateEmail(exception: DuplicateEmailException): ResponseEntity<Void> {
+        return ResponseEntity.badRequest().build()
+    }
 }
