@@ -9,6 +9,7 @@ data class TokenProperty(
     val accessToken: AccessToken,
 ) {
     data class AccessToken(
+        var name: String,
         val expirationSeconds: Int,
     )
 }

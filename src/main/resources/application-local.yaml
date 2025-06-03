@@ -13,4 +13,5 @@ spring:
 
 token:
   access-token:
+    name: accessToken
     expiration-seconds: 86400

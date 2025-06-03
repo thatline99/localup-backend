@@ -1,22 +1,21 @@
 package thatline.localup.controller
 
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.exception.DuplicateEmailException
 import thatline.localup.exception.InvalidCredentialsException
-import thatline.localup.property.TokenProperty
 import thatline.localup.request.SignInRequest
 import thatline.localup.request.SignUpRequest
 import thatline.localup.service.AuthService
+import thatline.localup.support.CookieProvider
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
     private val authService: AuthService,
-    private val tokenProperty: TokenProperty,
+    private val cookieProvider: CookieProvider,
 ) {
     @PostMapping("/sign-in")
     fun signIn(
@@ -25,14 +24,9 @@ class AuthController(
     ): ResponseEntity<Void> {
         val authToken = authService.signIn(request.email, request.password)
 
-        // TODO: noah, 쿠키 생성, 환경에 따라 분리, 메서드 분리
-        val cookie = Cookie("accessToken", authToken.accessToken)
-        cookie.isHttpOnly = true
-        cookie.maxAge = tokenProperty.accessToken.expirationSeconds
-        cookie.path = "/"
-        // cookie.secure = true
+        val accessTokenCookie = cookieProvider.createAccessTokenCookie(authToken.accessToken)
 
-        response.addCookie(cookie)
+        response.addCookie(accessTokenCookie)
 
         return ResponseEntity.ok().build()
     }
