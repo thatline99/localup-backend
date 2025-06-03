@@ -2,15 +2,15 @@ package thatline.localup.controller
 
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.exception.DuplicateEmailException
+import thatline.localup.exception.InvalidCredentialsException
 import thatline.localup.property.TokenProperty
 import thatline.localup.request.SignInRequest
 import thatline.localup.request.SignUpRequest
 import thatline.localup.service.AuthService
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,6 +49,12 @@ class AuthController(
         authService.signUp(request.email, request.password)
 
         return ResponseEntity.ok().build()
+    }
+
+    // TODO: noah, 추후 error body 정의
+    @ExceptionHandler(InvalidCredentialsException::class)
+    fun handleInvalidCredentials(exception: InvalidCredentialsException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }
 
     // TODO: noah, 추후 error body 정의

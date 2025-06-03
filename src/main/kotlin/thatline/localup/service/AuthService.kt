@@ -7,6 +7,7 @@ import thatline.localup.dto.AuthToken
 import thatline.localup.entity.UserJpaEntity
 import thatline.localup.entity.UserTokenJpaEntity
 import thatline.localup.exception.DuplicateEmailException
+import thatline.localup.exception.InvalidCredentialsException
 import thatline.localup.property.TokenProperty
 import thatline.localup.repository.UserJpaRepository
 import thatline.localup.repository.UserTokenJpaRepository
@@ -22,12 +23,11 @@ class AuthService(
 ) {
     @Transactional
     fun signIn(email: String, password: String): AuthToken {
-        // TODO: noah, custom exception
         val user = userJpaRepository.findByEmail(email)
-            ?: throw IllegalArgumentException()
+            ?: throw InvalidCredentialsException()
 
         if (!passwordEncoder.matches(password, user.password)) {
-            throw IllegalArgumentException()
+            throw InvalidCredentialsException()
         }
 
         userTokenJpaRepository.deleteByUserId(user.id)
