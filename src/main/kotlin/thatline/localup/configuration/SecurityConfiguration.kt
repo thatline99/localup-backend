@@ -1,5 +1,6 @@
 package thatline.localup.configuration
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -7,14 +8,28 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.web.cors.CorsConfiguration
+import thatline.localup.constant.Environment
 
 @Configuration
 class SecurityConfiguration {
+
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        // TODO: CORS 설정
+    @ConditionalOnProperty(name = ["spring.profiles.active"], havingValue = Environment.LOCAL)
+    fun localFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            // TODO: H2, 분리
+            .cors { cors ->
+                cors.configurationSource {
+                    val corsConfiguration = CorsConfiguration()
+
+                    corsConfiguration.allowedOrigins = listOf("http://localhost:3000")
+                    corsConfiguration.addAllowedHeader("*")
+                    corsConfiguration.addAllowedMethod("*")
+                    corsConfiguration.allowCredentials = true
+
+                    corsConfiguration
+                }
+            }
             .headers { headers ->
                 headers.frameOptions { it.sameOrigin() }
             }
@@ -24,10 +39,8 @@ class SecurityConfiguration {
             .sessionManagement { session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
-
             .authorizeHttpRequests { auth ->
                 auth
-                    // TODO: H2, 분리
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
