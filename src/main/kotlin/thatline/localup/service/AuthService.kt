@@ -14,7 +14,6 @@ import thatline.localup.repository.UserTokenJpaRepository
 import java.time.LocalDateTime
 import java.util.*
 
-// TODO: signService 분리
 @Service
 class AuthService(
     private val userJpaRepository: UserJpaRepository,
@@ -35,13 +34,18 @@ class AuthService(
 
         val accessToken = UUID.randomUUID().toString()
         val createdDate = LocalDateTime.now()
-        val accessTokenExpirationDate = createdDate.plusSeconds(tokenProperty.accessToken.expirationSeconds.toLong())
+        val accessTokenExpirationDate = createdDate.plusSeconds(tokenProperty.accessToken.expirationSeconds)
 
         val userToken = UserTokenJpaEntity(accessToken, user.id, createdDate, accessTokenExpirationDate)
 
         userTokenJpaRepository.save(userToken)
 
         return AuthToken(accessToken)
+    }
+
+    @Transactional
+    fun signOut(userId: Long) {
+        userTokenJpaRepository.deleteByUserId(userId)
     }
 
     @Transactional

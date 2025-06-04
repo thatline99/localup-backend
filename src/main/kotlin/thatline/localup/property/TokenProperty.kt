@@ -10,6 +10,6 @@ data class TokenProperty(
 ) {
     data class AccessToken(
         var name: String,
-        val expirationSeconds: Int,
+        val expirationSeconds: Long,
     )
 }

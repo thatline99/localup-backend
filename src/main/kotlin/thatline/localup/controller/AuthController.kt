@@ -1,8 +1,10 @@
 package thatline.localup.controller
 
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import thatline.localup.exception.DuplicateEmailException
 import thatline.localup.exception.InvalidCredentialsException
@@ -26,15 +28,24 @@ class AuthController(
 
         val accessTokenCookie = cookieProvider.createAccessTokenCookie(authToken.accessToken)
 
-        response.addCookie(accessTokenCookie)
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
 
         return ResponseEntity.ok().build()
     }
 
-//    @PostMapping("/sign-out")
-//    fun signOut(): ResponseEntity<Void> {
-//
-//    }
+    @PostMapping("/sign-out")
+    fun signOut(
+        @AuthenticationPrincipal userId: Long,
+        response: HttpServletResponse,
+    ): ResponseEntity<Void> {
+        authService.signOut(userId)
+
+        val deletedAccessTokenCookie = cookieProvider.deleteAccessTokenCookie()
+
+        response.addHeader(HttpHeaders.SET_COOKIE, deletedAccessTokenCookie.toString())
+
+        return ResponseEntity.ok().build()
+    }
 
     @PostMapping("/sign-up")
     fun signUp(

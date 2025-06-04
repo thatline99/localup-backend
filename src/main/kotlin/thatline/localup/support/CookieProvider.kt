@@ -1,7 +1,9 @@
 package thatline.localup.support
 
-import jakarta.servlet.http.Cookie
+import org.springframework.http.ResponseCookie
 
 interface CookieProvider {
-    fun createAccessTokenCookie(accessToken: String): Cookie
+    fun createAccessTokenCookie(accessToken: String): ResponseCookie
+
+    fun deleteAccessTokenCookie(): ResponseCookie
 }
