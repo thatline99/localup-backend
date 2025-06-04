@@ -5,15 +5,15 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import thatline.localup.constant.Environment
 
 @Configuration
-class SecurityConfiguration {
-
+class SecurityConfiguration(
+    private val authenticationFilter: AuthenticationFilter,
+) {
     @Bean
     @Profile(Environment.LOCAL)
     fun localFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -44,14 +44,11 @@ class SecurityConfiguration {
                 auth
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/test/2").permitAll()
                     .anyRequest().authenticated()
             }
+            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
-    }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
     }
 }

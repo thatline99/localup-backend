@@ -3,7 +3,6 @@ package thatline.localup.configuration
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -28,10 +27,7 @@ class AuthenticationFilter(
             val userId = authService.findUserIdByAccessToken(accessToken)
 
             if (userId != null) {
-                // TODO: noah, 커스텀 토큰으로 변경
-                val authentication = UsernamePasswordAuthenticationToken(userId, null, emptyList())
-
-                SecurityContextHolder.getContext().authentication = authentication
+                SecurityContextHolder.getContext().authentication = AuthenticationToken(userId)
             }
         }
 
