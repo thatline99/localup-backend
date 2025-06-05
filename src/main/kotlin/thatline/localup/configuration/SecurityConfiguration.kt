@@ -44,6 +44,7 @@ class SecurityConfiguration(
                 auth
                     .requestMatchers("/h2-console/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/tour-api/**").permitAll()
                     .anyRequest().authenticated()
             }
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
