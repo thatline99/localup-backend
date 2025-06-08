@@ -3,6 +3,7 @@ package thatline.localup.constant
 import thatline.localup.constant.dto.TourApiArea
 
 object TourApi {
+    // 한국관광공사_TourAPI_관광지_시군구_코드정보_v1.0
     val areas = listOf(
         // 서울특별시
         TourApiArea("11", "서울특별시", "11110", "종로구"),
