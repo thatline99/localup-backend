@@ -15,20 +15,25 @@ class TourApiProperty(
     data class TatsCnctrRateService(
         val firstPath: String,
         val serviceKey: String,
-        var tatsCnctrRatedList: TatsCnctrRatedList,
+        val tatsCnctrRatedList: TatsCnctrRatedList,
     ) {
         data class TatsCnctrRatedList(
-            var secondPath: String,
+            val secondPath: String,
         )
     }
 
     data class DataLabService(
         val firstPath: String,
         val serviceKey: String,
-        var metcoRegnVisitrDDList: MetcoRegnVisitrDDList,
+        val metcoRegnVisitrDDList: MetcoRegnVisitrDDList,
+        val locgoRegnVisitrDDList: LocgoRegnVisitrDDList,
     ) {
         data class MetcoRegnVisitrDDList(
-            var secondPath: String,
+            val secondPath: String,
+        )
+
+        data class LocgoRegnVisitrDDList(
+            val secondPath: String,
         )
     }
 }
