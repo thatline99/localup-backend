@@ -1,12 +1,9 @@
-package thatline.localup.repository
+package thatline.localup.repository.mongodb
 
 import org.springframework.data.mongodb.repository.MongoRepository
-import org.springframework.stereotype.Repository
-import thatline.localup.entity.UserTokenMongoDbEntity
+import thatline.localup.entity.mongodb.UserTokenMongoDbEntity
 
-@Repository
 interface UserTokenMongoDbRepository : MongoRepository<UserTokenMongoDbEntity, String> {
-
     fun findByAccessToken(accessToken: String): UserTokenMongoDbEntity?
 
     fun deleteByAccessToken(accessToken: String)

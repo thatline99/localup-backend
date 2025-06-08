@@ -4,13 +4,13 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import thatline.localup.dto.AuthToken
-import thatline.localup.entity.UserMongoDbEntity
-import thatline.localup.entity.UserTokenMongoDbEntity
+import thatline.localup.entity.mongodb.UserMongoDbEntity
+import thatline.localup.entity.mongodb.UserTokenMongoDbEntity
 import thatline.localup.exception.DuplicateEmailException
 import thatline.localup.exception.InvalidCredentialsException
 import thatline.localup.property.TokenProperty
-import thatline.localup.repository.UserMongoDbRepository
-import thatline.localup.repository.UserTokenMongoDbRepository
+import thatline.localup.repository.mongodb.UserMongoDbRepository
+import thatline.localup.repository.mongodb.UserTokenMongoDbRepository
 import java.time.LocalDateTime
 import java.util.*
 

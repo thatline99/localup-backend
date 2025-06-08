@@ -1,4 +1,4 @@
-package thatline.localup.entity
+package thatline.localup.entity.jpa
 
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
