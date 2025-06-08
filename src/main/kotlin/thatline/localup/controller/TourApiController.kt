@@ -23,7 +23,7 @@ class TourApiController(
     // link: https://www.data.go.kr/data/15128555/openapi.do
     // 관광지 집중률 정보 목록조회
     @GetMapping("/tatsCnctrRatedList")
-    fun getTatsCnctrRatedList(
+    fun tatsCnctrRatedList(
         request: TatsCnctrRatedListRequest,
     ): TatsCnctrRatedListResponse {
         return tourApiService.tatsCnctrRatedList(
@@ -39,7 +39,7 @@ class TourApiController(
     // link: https://www.data.go.kr/data/15101972/openapi.do
     // 광역 지자체 지역방문자수 집계 데이터 정보 조회
     @GetMapping("/metcoRegnVisitrDDList")
-    fun getMetcoRegnVisitrDDList(
+    fun metcoRegnVisitrDDList(
         request: MetcoRegnVisitrDDListRequest,
     ): MetcoRegnVisitrDDListResponse {
         return tourApiService.metcoRegnVisitrDDList(
@@ -54,7 +54,7 @@ class TourApiController(
     // link: https://www.data.go.kr/data/15101972/openapi.do
     // 기초 지자체 지역방문자수 집계 데이터 정보 조회
     @GetMapping("/locgoRegnVisitrDDList")
-    fun getLocgoRegnVisitrDDList(
+    fun locgoRegnVisitrDDList(
         request: LocgoRegnVisitrDDListRequest,
     ): LocgoRegnVisitrDDListResponse {
         return tourApiService.locgoRegnVisitrDDList(
