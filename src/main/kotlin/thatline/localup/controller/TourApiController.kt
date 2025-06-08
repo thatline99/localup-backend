@@ -2,9 +2,9 @@ package thatline.localup.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
+import thatline.localup.request.TatsCnctrRatedListRequest
 import thatline.localup.service.TourApiService
 
 @RestController
@@ -16,18 +16,14 @@ class TourApiController(
     // link: https://www.data.go.kr/data/15128555/openapi.do
     @GetMapping("/tatsCnctrRatedList")
     fun getTatsCnctrRatedList(
-        @RequestParam areaCd: String,
-        @RequestParam signguCd: String,
-        @RequestParam(required = false, defaultValue = "") tAtsNm: String,
-        @RequestParam(defaultValue = "1") pageNo: Long,
-        @RequestParam(defaultValue = "10") numOfRows: Long,
+        request: TatsCnctrRatedListRequest,
     ): TatsCnctrRatedListResponse? {
         return tourApiService.tatsCnctrRatedList(
-            pageNo = pageNo,
-            numOfRows = numOfRows,
-            areaCd = areaCd,
-            signguCd = signguCd,
-            tAtsNm = tAtsNm
+            pageNo = request.pageNo,
+            numOfRows = request.numOfRows,
+            areaCd = request.areaCd,
+            signguCd = request.signguCd,
+            tAtsNm = request.tAtsNm
         )
     }
 }
