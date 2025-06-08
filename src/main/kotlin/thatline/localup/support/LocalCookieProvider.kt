@@ -1,5 +1,6 @@
 package thatline.localup.support
 
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
@@ -18,6 +19,10 @@ class LocalCookieProvider(
             .sameSite("Lax")
             .maxAge(tokenProperty.accessToken.expirationSeconds)
             .build()
+    }
+
+    override fun findAccessTokenFromRequest(request: HttpServletRequest): String? {
+        return request.cookies?.firstOrNull { it.name == tokenProperty.accessToken.name }?.value
     }
 
     override fun deleteAccessTokenCookie(): ResponseCookie {
