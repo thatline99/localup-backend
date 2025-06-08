@@ -10,6 +10,7 @@ class TourApiProperty(
     val mobileOS: String,
     val mobileApp: String,
     val tatsCnctrRateService: TatsCnctrRateService,
+    val dataLabService: DataLabService,
 ) {
     data class TatsCnctrRateService(
         val firstPath: String,
@@ -17,6 +18,16 @@ class TourApiProperty(
         var tatsCnctrRatedList: TatsCnctrRatedList,
     ) {
         data class TatsCnctrRatedList(
+            var secondPath: String,
+        )
+    }
+
+    data class DataLabService(
+        val firstPath: String,
+        val serviceKey: String,
+        var metcoRegnVisitrDDList: MetcoRegnVisitrDDList,
+    ) {
+        data class MetcoRegnVisitrDDList(
             var secondPath: String,
         )
     }

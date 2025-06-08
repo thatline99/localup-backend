@@ -27,3 +27,5 @@ tour-api:
   # 한국관광공사_관광지 집중률 방문자 추이 예측 정보
   tats-cnctr-rate-service:
     service-key: ${TATS_CNCTR_RATE_SERVICE_KEY}
+  data-lab-service:
+    service-key: ${DATA_LAB_SERVICE}
