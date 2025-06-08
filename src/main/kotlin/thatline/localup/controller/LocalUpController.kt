@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.constant.dto.TourApiArea
+import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
+import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
 import thatline.localup.service.LocalUpService
 
@@ -35,5 +37,19 @@ class LocalUpController(
         val touristAttractions = localUpService.searchTouristAttractions(request.areaCd, request.signguCd)
 
         return ResponseEntity.ok(touristAttractions)
+    }
+
+    @GetMapping("/tatsCnctrRatedList/tourist-attraction-last-30-days")
+    fun searchTouristAttractionConcentrationLast30Days(
+        @RequestBody request: SearchTouristAttractionConcentrationLast30DaysRequest,
+    ): ResponseEntity<TatsCnctrRatedListResponse> {
+        val tatsCnctrRatedListResponse =
+            localUpService.searchTouristAttractionConcentrationLast30Days(
+                request.areaCd,
+                request.signguCd,
+                request.tatsNm
+            )
+
+        return ResponseEntity.ok(tatsCnctrRatedListResponse)
     }
 }
