@@ -19,8 +19,8 @@ class TourApiController(
         @RequestParam areaCd: String,
         @RequestParam signguCd: String,
         @RequestParam(required = false, defaultValue = "") tAtsNm: String,
-        @RequestParam(defaultValue = "1") pageNo: Int,
-        @RequestParam(defaultValue = "10") numOfRows: Int,
+        @RequestParam(defaultValue = "1") pageNo: Long,
+        @RequestParam(defaultValue = "10") numOfRows: Long,
     ): TatsCnctrRatedListResponse? {
         return tourApiService.tatsCnctrRatedList(
             pageNo = pageNo,

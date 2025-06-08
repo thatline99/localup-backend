@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated
 @Validated
 class TourApiProperty(
     val baseUrl: String,
+    val mobileOS: String,
+    val mobileApp: String,
     val tatsCnctrRateService: TatsCnctrRateService,
 ) {
     data class TatsCnctrRateService(

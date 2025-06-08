@@ -15,8 +15,8 @@ class TourApiService(
     private val restClient: RestClient,
 ) {
     fun tatsCnctrRatedList(
-        pageNo: Int = 1,
-        numOfRows: Int = 30,
+        pageNo: Long,
+        numOfRows: Long,
         areaCd: String,
         signguCd: String,
         tAtsNm: String,
@@ -32,8 +32,8 @@ class TourApiService(
             .queryParam("serviceKey", tourApiProperty.tatsCnctrRateService.serviceKey)
             .queryParam("pageNo", pageNo)
             .queryParam("numOfRows", numOfRows)
-            .queryParam("MobileOS", "WEB")
-            .queryParam("MobileApp", "LocalUp")
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("areaCd", areaCd)
             .queryParam("signguCd", signguCd)
             .queryParam("tAtsNm", encodedTAtsNm)

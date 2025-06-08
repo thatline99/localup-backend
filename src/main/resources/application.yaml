@@ -6,6 +6,8 @@ spring:
 
 tour-api:
   base-url: https://apis.data.go.kr
+  mobile-os: WEB
+  mobile-app: LocalUp
   # 한국관광공사_관광지 집중률 방문자 추이 예측 정보
   # link: https://www.data.go.kr/tcs/dss/selectApiDataDetailView.do?publicDataPk=15128555#/API%20%EB%AA%A9%EB%A1%9D/tatsCnctrRatedList
   tats-cnctr-rate-service:
