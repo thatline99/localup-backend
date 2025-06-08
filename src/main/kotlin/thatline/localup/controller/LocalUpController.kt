@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
+import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.service.LocalUpService
 
 // TODO: noah, API 경로 및 메서드명 합의 필요
@@ -32,24 +32,24 @@ class LocalUpController(
     // TODO: noah, 캐시 필요
     @GetMapping("/tatsCnctrRatedList/tourist-attractions")
     fun searchTouristAttractions(@RequestBody request: SearchTouristAttractionRequest): ResponseEntity<List<String>> {
-        println(request.areaCd + " " + request.signguCd)
-
         val touristAttractions = localUpService.searchTouristAttractions(request.areaCd, request.signguCd)
 
         return ResponseEntity.ok(touristAttractions)
     }
 
+    // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
+    // 최근 30일간의 관광지 집중률 데이터 조회
     @GetMapping("/tatsCnctrRatedList/tourist-attraction-last-30-days")
     fun searchTouristAttractionConcentrationLast30Days(
         @RequestBody request: SearchTouristAttractionConcentrationLast30DaysRequest,
-    ): ResponseEntity<TatsCnctrRatedListResponse> {
-        val tatsCnctrRatedListResponse =
+    ): ResponseEntity<TouristAttractionConcentrationRateLast30Days> {
+        val touristAttractionConcentrationRateLast30Days =
             localUpService.searchTouristAttractionConcentrationLast30Days(
                 request.areaCd,
                 request.signguCd,
                 request.tatsNm
             )
 
-        return ResponseEntity.ok(tatsCnctrRatedListResponse)
+        return ResponseEntity.ok(touristAttractionConcentrationRateLast30Days)
     }
 }
