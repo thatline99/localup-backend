@@ -22,7 +22,7 @@ class TourApiService(
         areaCd: String,
         signguCd: String,
         tAtsNm: String,
-    ): TatsCnctrRatedListResponse? {
+    ): TatsCnctrRatedListResponse {
         val fromUri = URI.create(
             "${tourApiProperty.baseUrl}${tourApiProperty.tatsCnctrRateService.firstPath}${tourApiProperty.tatsCnctrRateService.tatsCnctrRatedList.secondPath}"
         )

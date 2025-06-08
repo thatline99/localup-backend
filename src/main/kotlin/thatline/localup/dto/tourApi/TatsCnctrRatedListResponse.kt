@@ -1,10 +1,10 @@
 package thatline.localup.dto.tourApi
 
 data class TatsCnctrRatedListResponse(
-    val response: TatsCnctrRatedListResponseDeep = TatsCnctrRatedListResponseDeep(),
+    val response: TatsCnctrRatedListResponseWrapper = TatsCnctrRatedListResponseWrapper(),
 )
 
-data class TatsCnctrRatedListResponseDeep(
+data class TatsCnctrRatedListResponseWrapper(
     val header: TatsCnctrRatedListHeader = TatsCnctrRatedListHeader(),
     val body: TatsCnctrRatedListBody = TatsCnctrRatedListBody(),
 )
