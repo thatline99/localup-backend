@@ -20,7 +20,7 @@ class TourApiController(
     @GetMapping("/tatsCnctrRatedList")
     fun getTatsCnctrRatedList(
         request: TatsCnctrRatedListRequest,
-    ): TatsCnctrRatedListResponse? {
+    ): TatsCnctrRatedListResponse {
         return tourApiService.tatsCnctrRatedList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
