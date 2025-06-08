@@ -11,7 +11,7 @@ class UserTokenMongoDbEntity(
 
     val userId: String,
 
-    val createdDate: LocalDateTime = LocalDateTime.now(),
+    val createdDate: LocalDateTime,
 
     val accessTokenExpirationDate: LocalDateTime,
 )
