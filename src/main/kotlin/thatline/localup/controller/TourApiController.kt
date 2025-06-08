@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.dto.tourApi.TatsCnctrRatedResponse
+import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
 import thatline.localup.service.TourApiService
 
 @RestController
@@ -13,6 +13,7 @@ class TourApiController(
     private val tourApiService: TourApiService,
 ) {
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
+    // link: https://www.data.go.kr/data/15128555/openapi.do
     @GetMapping("/tatsCnctrRatedList")
     fun getTatsCnctrRatedList(
         @RequestParam areaCd: String,
@@ -20,7 +21,7 @@ class TourApiController(
         @RequestParam(required = false, defaultValue = "") tAtsNm: String,
         @RequestParam(defaultValue = "1") pageNo: Int,
         @RequestParam(defaultValue = "10") numOfRows: Int,
-    ): TatsCnctrRatedResponse? {
+    ): TatsCnctrRatedListResponse? {
         return tourApiService.tatsCnctrRatedList(
             pageNo = pageNo,
             numOfRows = numOfRows,

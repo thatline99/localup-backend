@@ -3,7 +3,7 @@ package thatline.localup.service
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.util.UriComponentsBuilder
-import thatline.localup.dto.tourApi.TatsCnctrRatedResponse
+import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
 import thatline.localup.property.TourApiProperty
 import java.net.URI
 import java.net.URLEncoder
@@ -20,7 +20,7 @@ class TourApiService(
         areaCd: String,
         signguCd: String,
         tAtsNm: String,
-    ): TatsCnctrRatedResponse? {
+    ): TatsCnctrRatedListResponse? {
         val fromUri = URI.create(
             "${tourApiProperty.baseUrl}${tourApiProperty.tatsCnctrRateService.firstPath}${tourApiProperty.tatsCnctrRateService.tatsCnctrRatedList.secondPath}"
         )
@@ -44,7 +44,7 @@ class TourApiService(
         val response = restClient.get()
             .uri(uri)
             .retrieve()
-            .body(TatsCnctrRatedResponse::class.java)
+            .body(TatsCnctrRatedListResponse::class.java)
 
         return response
     }
