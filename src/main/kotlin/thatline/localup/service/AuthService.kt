@@ -5,23 +5,17 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import thatline.localup.dto.AuthToken
 import thatline.localup.entity.mongodb.UserMongoDbEntity
-import thatline.localup.entity.mongodb.UserTokenMongoDbEntity
 import thatline.localup.exception.DuplicateEmailException
 import thatline.localup.exception.InvalidCredentialsException
-import thatline.localup.property.TokenProperty
 import thatline.localup.repository.mongodb.UserMongoDbRepository
-import thatline.localup.repository.mongodb.UserTokenMongoDbRepository
-import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class AuthService(
-    private val userRepository: UserMongoDbRepository,
-    private val userTokenRepository: UserTokenMongoDbRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val tokenProperty: TokenProperty,
+    private val userRepository: UserMongoDbRepository,
+    private val userTokenRedisService: UserTokenRedisService,
 ) {
-    @Transactional
     fun signIn(email: String, password: String): AuthToken {
         val user = userRepository.findByEmail(email)
             ?: throw InvalidCredentialsException()
@@ -30,22 +24,15 @@ class AuthService(
             throw InvalidCredentialsException()
         }
 
-        userTokenRepository.deleteByUserId(user.id)
-
         val accessToken = UUID.randomUUID().toString()
-        val createdDate = LocalDateTime.now()
-        val accessTokenExpirationDate = createdDate.plusSeconds(tokenProperty.accessToken.expirationSeconds)
 
-        val userToken = UserTokenMongoDbEntity(accessToken, user.id, createdDate, accessTokenExpirationDate)
-
-        userTokenRepository.save(userToken)
+        userTokenRedisService.save(accessToken, user.id)
 
         return AuthToken(accessToken)
     }
 
-    @Transactional
-    fun signOut(userId: String) {
-        userTokenRepository.deleteByUserId(userId)
+    fun signOut(accessToken: String) {
+        userTokenRedisService.deleteByAccessToken(accessToken)
     }
 
     @Transactional
@@ -61,16 +48,7 @@ class AuthService(
         userRepository.save(newUser)
     }
 
-    @Transactional
     fun findUserIdByAccessToken(accessToken: String): String? {
-        val userToken = userTokenRepository.findByAccessToken(accessToken) ?: return null
-
-        if (userToken.accessTokenExpirationDate.isBefore(LocalDateTime.now())) {
-            userTokenRepository.deleteByAccessToken(accessToken)
-
-            return null
-        }
-
-        return userToken.userId
+        return userTokenRedisService.findUserIdByAccessToken(accessToken)
     }
 }
