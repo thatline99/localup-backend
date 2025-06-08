@@ -1,0 +1,16 @@
+# command: docker-compose -p localup_local up -d
+services:
+  mongodb:
+    image: mongo:8
+    container_name: mongodb-localup_local
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: localup
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
