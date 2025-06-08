@@ -1,7 +1,7 @@
-package thatline.localup.repository
+package thatline.localup.repository.jpa
 
 import org.springframework.data.jpa.repository.JpaRepository
-import thatline.localup.entity.UserTokenJpaEntity
+import thatline.localup.entity.jpa.UserTokenJpaEntity
 
 interface UserTokenJpaRepository : JpaRepository<UserTokenJpaEntity, Long> {
     fun findByAccessToken(accessToken: String): UserTokenJpaEntity?
