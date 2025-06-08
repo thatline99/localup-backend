@@ -1,9 +1,12 @@
 package thatline.localup.controller
 
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
+import thatline.localup.exception.ExternalTourApiException
 import thatline.localup.request.TatsCnctrRatedListRequest
 import thatline.localup.service.TourApiService
 
@@ -25,5 +28,11 @@ class TourApiController(
             signguCd = request.signguCd,
             tAtsNm = request.tAtsNm
         )
+    }
+
+    // TODO: noah, 추후 error body 정의
+    @ExceptionHandler(ExternalTourApiException::class)
+    fun handleExternalTourApi(exception: ExternalTourApiException): ResponseEntity<Void> {
+        return ResponseEntity.internalServerError().build()
     }
 }

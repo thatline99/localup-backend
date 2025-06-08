@@ -2,8 +2,10 @@ package thatline.localup.service
 
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
+import thatline.localup.exception.ExternalTourApiException
 import thatline.localup.property.TourApiProperty
 import java.net.URI
 import java.net.URLEncoder
@@ -41,11 +43,21 @@ class TourApiService(
             .build(true)
             .toUri()
 
-        val response = restClient.get()
-            .uri(uri)
-            .retrieve()
-            .body(TatsCnctrRatedListResponse::class.java)
+        return retrieveTourApi(uri, TatsCnctrRatedListResponse::class.java)
+    }
 
-        return response
+    private fun <T> retrieveTourApi(
+        uri: URI,
+        responseType: Class<T>,
+    ): T {
+        try {
+            return restClient.get()
+                .uri(uri)
+                .retrieve()
+                .body(responseType)
+                ?: throw ExternalTourApiException()
+        } catch (exception: RestClientException) {
+            throw ExternalTourApiException()
+        }
     }
 }
