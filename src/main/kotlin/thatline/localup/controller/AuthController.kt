@@ -35,7 +35,7 @@ class AuthController(
 
     @PostMapping("/sign-out")
     fun signOut(
-        @AuthenticationPrincipal userId: Long,
+        @AuthenticationPrincipal userId: String,
         response: HttpServletResponse,
     ): ResponseEntity<Void> {
         authService.signOut(userId)
