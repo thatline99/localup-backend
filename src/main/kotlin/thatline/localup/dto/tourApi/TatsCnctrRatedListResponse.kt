@@ -10,15 +10,15 @@ data class TatsCnctrRatedListResponseWrapper(
 )
 
 data class TatsCnctrRatedListHeader(
-    val resultMsg: String = "",
     val resultCode: String = "",
+    val resultMsg: String = "",
 )
 
 data class TatsCnctrRatedListBody(
-    val totalCount: Long = 0,
     val items: TatsCnctrRatedListItems = TatsCnctrRatedListItems(),
     val numOfRows: Long = 0,
     val pageNo: Long = 0,
+    val totalCount: Long = 0,
 )
 
 data class TatsCnctrRatedListItems(
@@ -26,11 +26,11 @@ data class TatsCnctrRatedListItems(
 )
 
 data class TatsCnctrRatedListItem(
-    val cnctrRate: Double = 0.0,
     val baseYmd: String = "",
     val areaCd: String = "",
     val areaNm: String = "",
     val signguCd: String = "",
     val signguNm: String = "",
     val tAtsNm: String = "",
+    val cnctrRate: Double = 0.0,
 )
