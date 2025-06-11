@@ -3,11 +3,14 @@ package thatline.localup.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.constant.dto.TourApiArea
+import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListItem
+import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
 import thatline.localup.response.BaseResponse
 import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.service.LocalUpService
+import java.time.LocalDate
 
 // TODO: noah, API 경로 및 메서드명 합의 필요
 
@@ -50,5 +53,16 @@ class LocalUpController(
             )
 
         return ResponseEntity.ok(BaseResponse.success(touristAttractionConcentrationRateLast30Days))
+    }
+
+    @GetMapping("/test")
+    fun test(
+        @RequestParam areaName: String // 서울특별시
+    ): List<MetcoRegnVisitrDDListItem> {
+        val result = localUpService.test(
+            LocalDate.of(2025, 1, 3),
+            LocalDate.of(2025, 1, 3)
+        )
+        return result.values.flatten().filter { it.areaNm == areaName }
     }
 }

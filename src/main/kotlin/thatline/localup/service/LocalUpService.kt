@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import thatline.localup.constant.TourApi
 import thatline.localup.constant.dto.TourApiArea
+import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListItem
+import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
 import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -78,5 +80,32 @@ class LocalUpService(
             signguName = firstItem.signguNm,
             concentrationRates = concentrationRates
         )
+    }
+
+    // 한국관광공사_관광빅데이터 정보서비스_GW
+    // link: https://www.data.go.kr/data/15101972/openapi.do
+    fun test(
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): Map<String, List<MetcoRegnVisitrDDListItem>> {
+        val totalCount = tourApiService.metcoRegnVisitrDDList(
+            1,
+            1,
+            startDate.format(DATETIME_FORMATTER),
+            endDate.format(DATETIME_FORMATTER)
+        ).response.body.totalCount
+
+        val metcoRegnVisitrDDList = tourApiService.metcoRegnVisitrDDList(
+            1,
+            totalCount,
+            startDate.format(DATETIME_FORMATTER),
+            endDate.format(DATETIME_FORMATTER)
+        )
+
+        return metcoRegnVisitrDDList.response.body.items.item.groupBy { it.areaCode }
+    }
+
+    companion object {
+        private val DATETIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     }
 }
