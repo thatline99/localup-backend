@@ -1,5 +1,8 @@
 package thatline.localup.service
 
+import org.springframework.cache.annotation.CachePut
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import thatline.localup.constant.TourApi
 import thatline.localup.constant.dto.TourApiArea
@@ -18,16 +21,32 @@ class LocalUpService(
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
     // areaCd와 signguCd로 관광지 목록 조회
-    fun searchTouristAttractions(areaCd: String, signguCd: String): List<String> {
-        // 1. total Count 조회
-        val tatsCnctrRatedListResponse1 = tourApiService.tatsCnctrRatedList(1, 1, areaCd, signguCd, "")
+    // 1. searchTouristAttractions()에 @Cacheable 추가
+    @Cacheable(cacheNames = ["touristAttractions"], key = "#areaCd + '_' + #signguCd")
+    fun searchTouristAttractions(areaCd: String, signguCd: String): List<String> =
+        fetchTouristAttractions(areaCd, signguCd)
 
-        val totalCount = tatsCnctrRatedListResponse1.response.body.totalCount
+    // 2. 캐시 갱신용 메서드 @CachePut
+    @CachePut(cacheNames = ["touristAttractions"], key = "#areaCd + '_' + #signguCd")
+    fun refreshTouristAttractions(areaCd: String, signguCd: String): List<String> =
+        fetchTouristAttractions(areaCd, signguCd)
 
-        // 2. 관광지 목록 조회
-        val tatsCnctrRatedListResponse2 = tourApiService.tatsCnctrRatedList(1, totalCount, areaCd, signguCd, "")
+    // 3. 0시 정각 일괄 갱신 스케줄러
+    @Scheduled(cron = "0 0 0 * * *")
+    fun refreshAllTouristAttractions() {
+        TourApi.areas.forEach { area ->
+            refreshTouristAttractions(area.areaCd, area.sigunguCd)
+        }
+    }
 
-        return tatsCnctrRatedListResponse2.response.body.items.item
+    // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
+    // areaCd와 signguCd로 관광지 목록 조회
+    private fun fetchTouristAttractions(areaCd: String, signguCd: String): List<String> {
+        val totalCount = tourApiService.tatsCnctrRatedList(1, 1, areaCd, signguCd, "")
+            .response.body.totalCount
+
+        return tourApiService.tatsCnctrRatedList(1, totalCount, areaCd, signguCd, "")
+            .response.body.items.item
             .map { it.tAtsNm }
             .distinct()
     }

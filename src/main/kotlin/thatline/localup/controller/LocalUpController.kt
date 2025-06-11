@@ -1,10 +1,7 @@
 package thatline.localup.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import thatline.localup.constant.dto.TourApiArea
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
@@ -29,7 +26,6 @@ class LocalUpController(
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
     // areaCd와 signguCd로 관광지 목록 조회
-    // TODO: noah, 캐시 필요
     @GetMapping("/tatsCnctrRatedList/tourist-attractions")
     fun searchTouristAttractions(
         @RequestBody request: SearchTouristAttractionRequest,
