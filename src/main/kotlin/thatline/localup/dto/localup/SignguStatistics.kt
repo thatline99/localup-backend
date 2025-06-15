@@ -10,10 +10,10 @@ package thatline.localup.dto.localup
 data class SignguStatistics(
     val signguCode: String,
     val signguName: String,
-    val dailyStatistics: List<DailyStatistics>,
+    val dailySignguStatistics: List<DailySignguStatistics>,
 )
 
-data class DailyStatistics(
+data class DailySignguStatistics(
     val date: String,
     val signguVisitors: List<SignguVisitor>,
 )

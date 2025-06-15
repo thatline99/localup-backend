@@ -1,9 +1,9 @@
 package thatline.localup.service
 
 import org.springframework.stereotype.Service
-import thatline.localup.dto.localup.AreaVisitors
-import thatline.localup.dto.localup.DailyVisitors
-import thatline.localup.dto.localup.VisitorByType
+import thatline.localup.dto.localup.AreaStatistics
+import thatline.localup.dto.localup.AreaVisitor
+import thatline.localup.dto.localup.DailyAreaStatistics
 import thatline.localup.util.DateUtil.DATETIME_FORMATTER
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -23,7 +23,7 @@ class LuMetcoRegnVisitrDDListService(
         startDate: LocalDate,
         endDate: LocalDate,
         areaCode: String,
-    ): List<AreaVisitors> {
+    ): AreaStatistics? {
         val formattedStartDate = startDate.format(DATETIME_FORMATTER)
         val formattedEndDate = endDate.format(DATETIME_FORMATTER)
 
@@ -44,35 +44,33 @@ class LuMetcoRegnVisitrDDListService(
         val filteredItems = items.filter { it.areaCode == areaCode }
 
         if (filteredItems.isEmpty()) {
-            return emptyList()
+            return null
         }
 
-        val visitorsByDate = filteredItems
+        val dailyAreaStatistics = filteredItems
             .groupBy { it.baseYmd }
-            .map { (rawDate, itemsOnDate) ->
-                val formattedDate = LocalDate.parse(rawDate, DateTimeFormatter.BASIC_ISO_DATE)
+            .map { (date, items) ->
+                val formattedDate = LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE)
                     .format(DateTimeFormatter.ISO_DATE)
 
-                val visitors = itemsOnDate.map {
-                    VisitorByType(
-                        visitorTypeCode = it.touDivCd,
-                        visitorCount = it.touNum.toDouble()
+                val areaVisitors = items.map {
+                    AreaVisitor(
+                        typeCode = it.touDivCd,
+                        count = it.touNum.toDouble()
                     )
                 }
 
-                DailyVisitors(
+                DailyAreaStatistics(
                     date = formattedDate,
-                    visitors = visitors
+                    areaVisitors = areaVisitors
                 )
             }
             .sortedBy { it.date }
 
-        return listOf(
-            AreaVisitors(
-                areaCode = areaCode,
-                areaName = filteredItems.first().areaNm,
-                visitorsByDate = visitorsByDate,
-            )
+        return AreaStatistics(
+            areaCode = areaCode,
+            areaName = filteredItems.first().areaNm,
+            dailyAreaStatistics = dailyAreaStatistics,
         )
     }
 }

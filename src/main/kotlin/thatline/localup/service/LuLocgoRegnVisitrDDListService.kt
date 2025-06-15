@@ -1,7 +1,7 @@
 package thatline.localup.service
 
 import org.springframework.stereotype.Service
-import thatline.localup.dto.localup.DailyStatistics
+import thatline.localup.dto.localup.DailySignguStatistics
 import thatline.localup.dto.localup.SignguStatistics
 import thatline.localup.dto.localup.SignguVisitor
 import thatline.localup.util.DateUtil.DATETIME_FORMATTER
@@ -47,7 +47,7 @@ class LuLocgoRegnVisitrDDListService(
             return null
         }
 
-        val dailyStatistics = filteredItems
+        val dailySignguStatistics = filteredItems
             .groupBy { it.baseYmd }
             .map { (date, items) ->
                 val formattedDate = LocalDate.parse(date, DateTimeFormatter.BASIC_ISO_DATE)
@@ -60,7 +60,7 @@ class LuLocgoRegnVisitrDDListService(
                     )
                 }
 
-                DailyStatistics(
+                DailySignguStatistics(
                     date = formattedDate,
                     signguVisitors = signguVisitors
                 )
@@ -70,7 +70,7 @@ class LuLocgoRegnVisitrDDListService(
         return SignguStatistics(
             signguCode = signguCode,
             signguName = filteredItems.first().signguNm,
-            dailyStatistics = dailyStatistics
+            dailySignguStatistics = dailySignguStatistics
         )
     }
 }

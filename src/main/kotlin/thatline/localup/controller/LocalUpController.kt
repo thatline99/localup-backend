@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.localup.AreaVisitors
+import thatline.localup.dto.localup.AreaStatistics
 import thatline.localup.dto.localup.SignguStatistics
 import thatline.localup.request.LuLocgoRegnVisitrDDListRequest
 import thatline.localup.request.LuMetcoRegnVisitrDDListRequest
@@ -73,14 +73,18 @@ class LocalUpController(
     @GetMapping("/metcoRegnVisitrDDList")
     fun metcoRegnVisitrDDList(
         request: LuMetcoRegnVisitrDDListRequest,
-    ): ResponseEntity<BaseResponse<List<AreaVisitors>>> {
+    ): ResponseEntity<BaseResponse<AreaStatistics>> {
         val result = luMetcoRegnVisitrDDListService.searchData(
             request.startDate,
             request.endDate,
             request.areaCode,
         )
 
-        return ResponseEntity.ok(BaseResponse.success(result))
+        return if (result == null) {
+            ResponseEntity.status(404).body(BaseResponse.failure())
+        } else {
+            ResponseEntity.ok(BaseResponse.success(result))
+        }
     }
 
     /**

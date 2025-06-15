@@ -7,19 +7,18 @@ package thatline.localup.dto.localup
  *
  * @author [noah (조태현)]
  */
-// TODO: rename
-data class AreaVisitors(
+data class AreaStatistics(
     val areaCode: String,
     val areaName: String,
-    val visitorsByDate: List<DailyVisitors>,
+    val dailyAreaStatistics: List<DailyAreaStatistics>,
 )
 
-data class DailyVisitors(
+data class DailyAreaStatistics(
     val date: String,
-    val visitors: List<VisitorByType>,
+    val areaVisitors: List<AreaVisitor>,
 )
 
-data class VisitorByType(
-    val visitorTypeCode: String,
-    val visitorCount: Double,
+data class AreaVisitor(
+    val typeCode: String,
+    val count: Double,
 )
