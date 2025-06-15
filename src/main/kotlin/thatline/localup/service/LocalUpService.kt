@@ -6,9 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import thatline.localup.constant.TourApi
 import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.localup.MetcoAreaVisitors
-import thatline.localup.dto.localup.MetcoVisitorItem
-import thatline.localup.dto.localup.MetcoVisitorsByDate
 import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -81,84 +78,5 @@ class LocalUpService(
             signguName = firstItem.signguNm,
             concentrationRates = concentrationRates
         )
-    }
-
-    fun searchAreaWithMetcoRegnVisitrDDList() {
-        val totalCount = tourApiService.metcoRegnVisitrDDList(
-            1,
-            1,
-            "20250101",
-            "20250101",
-        ).response.body.totalCount
-
-        val metcoRegnVisitrDDList = tourApiService.metcoRegnVisitrDDList(
-            1,
-            totalCount,
-            "20250101",
-            "20250101",
-        )
-    }
-
-    // 한국관광공사_관광빅데이터 정보서비스_GW
-    // link: https://www.data.go.kr/data/15101972/openapi.do
-    fun test(
-        startDate: LocalDate,
-        endDate: LocalDate,
-        areaName: String,
-    ): List<MetcoAreaVisitors> {
-        val startDate = startDate.format(DATETIME_FORMATTER)
-        val endDate = endDate.format(DATETIME_FORMATTER)
-
-        val totalCount = tourApiService.metcoRegnVisitrDDList(
-            1,
-            1,
-            startDate,
-            endDate
-        ).response.body.totalCount
-
-        val items = tourApiService.metcoRegnVisitrDDList(
-            1,
-            totalCount,
-            startDate,
-            endDate
-        ).response.body.items.item
-
-        val filteredItems = items.filter {
-            it.areaNm == areaName
-        }
-
-        val areaGroups = filteredItems.groupBy { it.areaCode to it.areaNm }
-
-
-        return areaGroups.map { (areaKey, areaItems) ->
-            val dateGroups = areaItems.groupBy { it.baseYmd }
-
-            val visitorsByDate = dateGroups.map { (rawDate, itemsOnDate) ->
-                val formattedDate = LocalDate.parse(rawDate, DateTimeFormatter.BASIC_ISO_DATE)
-                    .format(DateTimeFormatter.ISO_DATE)
-
-                val visitors = itemsOnDate.map {
-                    MetcoVisitorItem(
-                        touDivCd = it.touDivCd,
-                        touNum = it.touNum.toDouble()
-                    )
-                }
-
-                MetcoVisitorsByDate(
-                    date = formattedDate,
-                    visitors = visitors
-                )
-            }.sortedBy { it.date }
-
-            MetcoAreaVisitors(
-                areaCode = areaKey.first,
-                areaName = areaKey.second,
-                visitorsByDate = visitorsByDate
-            )
-        }
-    }
-
-    companion object {
-        private val DATETIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     }
 }

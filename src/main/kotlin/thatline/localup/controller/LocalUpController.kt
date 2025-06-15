@@ -1,15 +1,19 @@
 package thatline.localup.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.localup.MetcoAreaVisitors
+import thatline.localup.dto.localup.AreaVisitors
+import thatline.localup.request.LuMetcoRegnVisitrDDListRequest
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
 import thatline.localup.response.BaseResponse
 import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.service.LocalUpService
-import java.time.LocalDate
+import thatline.localup.service.LuMetcoRegnVisitrDDListService
 
 // TODO: noah, API 경로 및 메서드명 합의 필요
 
@@ -17,6 +21,7 @@ import java.time.LocalDate
 @RequestMapping("/api/local-up")
 class LocalUpController(
     private val localUpService: LocalUpService,
+    private val luMetcoRegnVisitrDDListService: LuMetcoRegnVisitrDDListService,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     @GetMapping("/tour-api-areas")
@@ -54,18 +59,23 @@ class LocalUpController(
         return ResponseEntity.ok(BaseResponse.success(touristAttractionConcentrationRateLast30Days))
     }
 
-    @GetMapping("/test")
-    fun test(
-        @RequestParam startDate: LocalDate,
-        @RequestParam endDate: LocalDate,
-        @RequestParam areaName: String, // 서울특별시
-    ): List<MetcoAreaVisitors> {
-        val result = localUpService.test(
-            startDate,
-            endDate,
-            areaName
+    /**
+     * 한국관광공사_관광빅데이터 정보서비스_GW: 광역 지자체 지역방문자수 집계 데이터 정보 조회
+     *
+     * link: https://www.data.go.kr/data/15101972/openapi.do
+     *
+     * @author [noah (조태현)]
+     */
+    @GetMapping("/metcoRegnVisitrDDList")
+    fun metcoRegnVisitrDDList(
+        request: LuMetcoRegnVisitrDDListRequest,
+    ): ResponseEntity<BaseResponse<List<AreaVisitors>>> {
+        val result = luMetcoRegnVisitrDDListService.searchData(
+            request.startDate,
+            request.endDate,
+            request.areaCode,
         )
 
-        return result
+        return ResponseEntity.ok(BaseResponse.success(result))
     }
 }
