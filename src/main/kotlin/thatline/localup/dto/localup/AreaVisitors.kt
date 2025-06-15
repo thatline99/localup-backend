@@ -7,6 +7,7 @@ package thatline.localup.dto.localup
  *
  * @author [noah (조태현)]
  */
+// TODO: rename
 data class AreaVisitors(
     val areaCode: String,
     val areaName: String,
