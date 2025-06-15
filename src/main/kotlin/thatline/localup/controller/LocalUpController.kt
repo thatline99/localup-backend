@@ -3,8 +3,7 @@ package thatline.localup.controller
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListItem
-import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
+import thatline.localup.dto.localup.MetcoAreaVisitors
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
 import thatline.localup.response.BaseResponse
@@ -57,12 +56,16 @@ class LocalUpController(
 
     @GetMapping("/test")
     fun test(
-        @RequestParam areaName: String // 서울특별시
-    ): List<MetcoRegnVisitrDDListItem> {
+        @RequestParam startDate: LocalDate,
+        @RequestParam endDate: LocalDate,
+        @RequestParam areaName: String, // 서울특별시
+    ): List<MetcoAreaVisitors> {
         val result = localUpService.test(
-            LocalDate.of(2025, 1, 3),
-            LocalDate.of(2025, 1, 3)
+            startDate,
+            endDate,
+            areaName
         )
-        return result.values.flatten().filter { it.areaNm == areaName }
+
+        return result
     }
 }
