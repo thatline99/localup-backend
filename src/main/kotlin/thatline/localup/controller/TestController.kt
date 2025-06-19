@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping
 @Controller
 class TestController {
 
+    /**
+     * Handles HTTP POST requests to the "/TeSt" endpoint.
+     *
+     * Returns an HTTP 200 OK response with no content.
+     */
     @PostMapping("/TeSt")
     fun test(): ResponseEntity<Void> {
         println("Log: Test")
@@ -16,6 +21,9 @@ class TestController {
         return ResponseEntity.ok().build()
     }
 
+    /**
+     * Logs a "DELETE" message to the console.
+     */
     private fun NotTTHING() {
         println("Log: DELETE")
     }
