@@ -37,6 +37,8 @@ etc-api:
       # 초단기실황조회
       get-ultra-srt-ncst:
         second-path: /getUltraSrtNcst
+        date-type: JSON
       # 예보버전조회
       get-fcst-version:
         second-path: /getFcstVersion
+        date-type: JSON

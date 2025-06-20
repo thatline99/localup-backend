@@ -20,10 +20,12 @@ class EtcApiProperty(
         ) {
             data class GetUltraSrtNcst(
                 val secondPath: String,
+                val dateType: String,
             )
 
             data class GetFcstVersion(
                 val secondPath: String,
+                val dateType: String,
             )
         }
     }
