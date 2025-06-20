@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
+import thatline.localup.dto.etcApi.GetFcstVersionResponse
 import thatline.localup.dto.etcApi.GetUltraSrtNcstResponse
 import thatline.localup.exception.ExternalTourApiException
 import thatline.localup.property.EtcApiProperty
@@ -19,6 +20,14 @@ class EtcApiRestClient(
 
     /**
      * 기상청_단기예보 ((구) 동네예보) 조회서비스: 초단기실황조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지에 포함할 결과 수
+     * @param baseDate 발표 일자
+     * @param baseTime 발표 시각
+     * @param nx 예보 지점의 X 좌표
+     * @param ny 예보 지점의 Y 좌표
+     * @return [GetUltraSrtNcstResponse]
      *
      * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
      */
@@ -63,9 +72,47 @@ class EtcApiRestClient(
     /**
      * 기상청_단기예보 ((구) 동네예보) 조회서비스: 예보버전조회
      *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param fileType 파일 구분
+     * @param basedDatetime 발표일시분
+     * @return [GetFcstVersionResponse]
+     *
      * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
      */
-    // TODO-noah: 작성
+    fun getFcstVersion(
+        pageNo: Long,
+        numOfRows: Long,
+        fileType: String,
+        basedDatetime: String,
+    ): GetFcstVersionResponse {
+        val fromUri = URI.create(
+            "${etcApiProperty.kma.baseUrl}${etcApiProperty.kma.vilageFcstInfoService.firstPath}${etcApiProperty.kma.vilageFcstInfoService.getFcstVersion.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", etcApiProperty.kma.vilageFcstInfoService.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("dataType", "JSON")
+            .queryParam("ftype", fileType)
+            .queryParam("basedatetime", basedDatetime)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, GetFcstVersionResponse::class.java)
+
+        if (response.response.header.resultCode != "00") {
+            log.warn(
+                "resultCode={}, resultMsg={}",
+                response.response.header.resultCode,
+                response.response.header.resultMsg
+            )
+        }
+
+        return response
+    }
 
     private fun <T> retrieveTourApi(
         uri: URI,
