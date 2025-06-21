@@ -1,13 +1,13 @@
-package thatline.localup.request
+package thatline.localup.auth.request
 
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-data class SignUpRequest(
+data class SignInRequest(
     @field:NotBlank
     @field:Email
     val email: String,
 
     @field:NotBlank
-    val password: String
+    val password: String,
 )

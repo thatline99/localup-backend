@@ -1,4 +1,4 @@
-package thatline.localup.service
+package thatline.localup.auth.service
 
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service

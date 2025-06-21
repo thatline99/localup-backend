@@ -1,4 +1,4 @@
-package thatline.localup.configuration
+package thatline.localup.common.configuration
 
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package thatline.localup.configuration
+package thatline.localup.common.configuration
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories

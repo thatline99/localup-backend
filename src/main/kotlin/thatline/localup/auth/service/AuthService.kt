@@ -1,12 +1,12 @@
-package thatline.localup.service
+package thatline.localup.auth.service
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import thatline.localup.dto.AuthToken
+import thatline.localup.auth.dto.AuthToken
+import thatline.localup.auth.exception.DuplicateEmailException
+import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.entity.mongodb.UserMongoDbEntity
-import thatline.localup.exception.DuplicateEmailException
-import thatline.localup.exception.InvalidCredentialsException
 import thatline.localup.repository.mongodb.UserMongoDbRepository
 import java.util.*
 

@@ -1,4 +1,4 @@
-package thatline.localup.configuration
+package thatline.localup.common.configuration
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority

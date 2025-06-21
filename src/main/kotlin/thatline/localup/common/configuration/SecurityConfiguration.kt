@@ -1,4 +1,4 @@
-package thatline.localup.configuration
+package thatline.localup.common.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -8,6 +8,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
+import thatline.localup.common.filter.AuthenticationFilter
 import thatline.localup.constant.Environment
 
 @Configuration

@@ -1,4 +1,4 @@
-package thatline.localup.configuration
+package thatline.localup.common.filter
 
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -6,8 +6,9 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import thatline.localup.auth.service.AuthService
+import thatline.localup.common.configuration.AuthenticationToken
 import thatline.localup.property.TokenProperty
-import thatline.localup.service.AuthService
 
 @Component
 class AuthenticationFilter(

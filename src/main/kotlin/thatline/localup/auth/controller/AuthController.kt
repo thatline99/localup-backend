@@ -1,4 +1,4 @@
-package thatline.localup.controller
+package thatline.localup.auth.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -6,11 +6,11 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import thatline.localup.exception.DuplicateEmailException
-import thatline.localup.exception.InvalidCredentialsException
-import thatline.localup.request.SignInRequest
-import thatline.localup.request.SignUpRequest
-import thatline.localup.service.AuthService
+import thatline.localup.auth.exception.DuplicateEmailException
+import thatline.localup.auth.exception.InvalidCredentialsException
+import thatline.localup.auth.request.SignInRequest
+import thatline.localup.auth.request.SignUpRequest
+import thatline.localup.auth.service.AuthService
 import thatline.localup.support.CookieProvider
 
 @RestController
