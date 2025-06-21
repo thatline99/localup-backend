@@ -111,6 +111,8 @@ class EtcApiRestClient(
             )
         }
 
+        throw IllegalStateException
+
         return response
     }
 
@@ -123,9 +125,9 @@ class EtcApiRestClient(
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalEtcApiException()
+                ?: throw ExternalEtcApiException(cause = null)
         } catch (exception: RestClientException) {
-            throw ExternalEtcApiException()
+            throw ExternalEtcApiException(cause = exception)
         }
     }
 }
