@@ -1,14 +1,14 @@
-package thatline.localup.controller
+package thatline.localup.etcapi.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.dto.etcApi.GetFcstVersionResponse
-import thatline.localup.dto.etcApi.GetUltraSrtNcstResponse
-import thatline.localup.request.GetFcstVersionRequest
-import thatline.localup.request.GetUltraSrtNcstRequest
-import thatline.localup.service.EtcApiRestClient
+import thatline.localup.etcapi.request.GetFcstVersionRequest
+import thatline.localup.etcapi.request.GetUltraSrtNcstRequest
+import thatline.localup.etcapi.response.GetFcstVersionResponse
+import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
+import thatline.localup.etcapi.restclient.EtcApiRestClient
 
 @RestController
 @RequestMapping("/api/etc-api")

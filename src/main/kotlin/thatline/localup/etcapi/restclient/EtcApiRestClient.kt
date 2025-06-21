@@ -1,12 +1,12 @@
-package thatline.localup.service
+package thatline.localup.etcapi.restclient
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
-import thatline.localup.dto.etcApi.GetFcstVersionResponse
-import thatline.localup.dto.etcApi.GetUltraSrtNcstResponse
+import thatline.localup.etcapi.response.GetFcstVersionResponse
+import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
 import thatline.localup.exception.ExternalTourApiException
 import thatline.localup.property.EtcApiProperty
 import java.net.URI

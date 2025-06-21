@@ -1,17 +1,18 @@
-package thatline.localup.dto.etcApi
+package thatline.localup.etcapi.response
 
 /**
- * 기상청_단기예보 ((구) 동네예보) 조회서비스: 초단기실황조회 응답
+ * 기상청_단기예보 ((구) 동네예보) 조회서비스: 예보버전조회 응답
  *
  * @property response 응답
  *
  * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
  */
-data class GetUltraSrtNcstResponse(
+data class GetFcstVersionResponse(
     val response: Response,
 ) {
     /**
      * 응답
+     *
      * @property header 헤더
      * @property body 본문
      */
@@ -60,19 +61,11 @@ data class GetUltraSrtNcstResponse(
     /**
      * 항목
      *
-     * @property baseDate 발표 일자
-     * @property baseTime 발표 시각
-     * @property category 자료 구분 코드
-     * @property nx 예보 지점 X 좌표
-     * @property ny 예보 지점 Y 좌표
-     * @property obsrValue 실황 값
+     * @property filetype 파일 구분
+     * @property version 버전 정보
      */
     data class Item(
-        val baseDate: String,
-        val baseTime: String,
-        val category: String,
-        val nx: Int,
-        val ny: Int,
-        val obsrValue: String,
+        val filetype: String,
+        val version: String,
     )
 }

@@ -1,4 +1,4 @@
-package thatline.localup.request
+package thatline.localup.etcapi.request
 
 /**
  * 기상청_단기예보 ((구) 동네예보) 조회서비스: 예보버전조회 요청
