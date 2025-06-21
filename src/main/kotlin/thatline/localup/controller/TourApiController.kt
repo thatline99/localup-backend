@@ -5,10 +5,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import thatline.localup.dto.tourApi.AreaBasedListResponse
 import thatline.localup.dto.tourApi.LocgoRegnVisitrDDListResponse
 import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
 import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
 import thatline.localup.exception.ExternalTourApiException
+import thatline.localup.request.AreaBasedListRequest
 import thatline.localup.request.LocgoRegnVisitrDDListRequest
 import thatline.localup.request.MetcoRegnVisitrDDListRequest
 import thatline.localup.request.TatsCnctrRatedListRequest
@@ -19,6 +21,27 @@ import thatline.localup.service.TourApiService
 class TourApiController(
     private val tourApiService: TourApiService,
 ) {
+    /**
+     * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
+     *
+     * @param request [AreaBasedListRequest]
+     * @return [ResponseEntity]<[AreaBasedListResponse]>
+     */
+    @GetMapping("/areaBasedList")
+    fun areaBasedList(
+        request: AreaBasedListRequest,
+    ): ResponseEntity<AreaBasedListResponse> {
+        val response = tourApiService.areaBasedList(
+            pageNo = request.pageNo,
+            numOfRows = request.numOfRows,
+            baseYm = request.baseYm,
+            areaCd = request.areaCd,
+            signguCd = request.signguCd,
+        )
+
+        return ResponseEntity.ok(response)
+    }
+
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보
     // link: https://www.data.go.kr/data/15128555/openapi.do
     // 관광지 집중률 정보 목록조회

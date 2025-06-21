@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
+import thatline.localup.dto.tourApi.AreaBasedListResponse
 import thatline.localup.dto.tourApi.LocgoRegnVisitrDDListResponse
 import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
 import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
@@ -18,6 +19,50 @@ class TourApiService(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {
+    /**
+     * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param baseYm 기준 날짜 조회
+     * @param areaCd 관광지 지역 코드
+     * @param signguCd 관광지 시군구 코드
+     * @return [AreaBasedListResponse]
+     *
+     * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun areaBasedList(
+        pageNo: Long,
+        numOfRows: Long,
+        baseYm: String,
+        areaCd: String,
+        signguCd: String,
+    ): AreaBasedListResponse {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.tarRlteTarService.firstPath}${tourApiProperty.tarRlteTarService.areaBasedList.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.tarRlteTarService.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("baseYm", baseYm)
+            .queryParam("areaCd", areaCd)
+            .queryParam("signguCd", signguCd)
+            .queryParam("_type", tourApiProperty.tarRlteTarService.areaBasedList.responseType)
+            .build(true)
+            .toUri()
+
+        println(uri.toString())
+
+        val response = retrieveTourApi(uri, AreaBasedListResponse::class.java)
+
+        return response
+    }
+
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보
     // link: https://www.data.go.kr/data/15128555/openapi.do
     // 관광지 집중률 정보 목록조회
