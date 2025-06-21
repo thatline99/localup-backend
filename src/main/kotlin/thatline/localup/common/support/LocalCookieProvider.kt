@@ -1,11 +1,11 @@
-package thatline.localup.support
+package thatline.localup.common.support
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Profile
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
 import thatline.localup.constant.Environment
-import thatline.localup.property.TokenProperty
+import thatline.localup.common.property.TokenProperty
 
 @Profile(Environment.LOCAL)
 @Component

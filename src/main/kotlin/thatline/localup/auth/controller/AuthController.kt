@@ -11,7 +11,7 @@ import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.auth.request.SignInRequest
 import thatline.localup.auth.request.SignUpRequest
 import thatline.localup.auth.service.AuthService
-import thatline.localup.support.CookieProvider
+import thatline.localup.common.support.CookieProvider
 
 @RestController
 @RequestMapping("/api/auth")

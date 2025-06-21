@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import thatline.localup.auth.service.AuthService
 import thatline.localup.common.configuration.AuthenticationToken
-import thatline.localup.property.TokenProperty
+import thatline.localup.common.property.TokenProperty
 
 @Component
 class AuthenticationFilter(

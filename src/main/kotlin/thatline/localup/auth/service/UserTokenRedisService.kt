@@ -2,7 +2,7 @@ package thatline.localup.auth.service
 
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
-import thatline.localup.property.TokenProperty
+import thatline.localup.common.property.TokenProperty
 import java.time.Duration
 
 @Service

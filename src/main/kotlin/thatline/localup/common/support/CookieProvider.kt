@@ -1,4 +1,4 @@
-package thatline.localup.support
+package thatline.localup.common.support
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.ResponseCookie

@@ -1,4 +1,4 @@
-package thatline.localup.response
+package thatline.localup.common.response
 
 data class BaseResponse<T>(
     val code: String,

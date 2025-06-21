@@ -9,7 +9,7 @@ import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse
 import thatline.localup.tourapi.response.MetcoRegnVisitrDDListResponse
 import thatline.localup.tourapi.response.TatsCnctrRatedListResponse
 import thatline.localup.tourapi.exception.ExternalTourApiException
-import thatline.localup.property.TourApiProperty
+import thatline.localup.common.property.TourApiProperty
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets

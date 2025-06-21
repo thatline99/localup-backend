@@ -12,7 +12,7 @@ import thatline.localup.request.LuLocgoRegnVisitrDDListRequest
 import thatline.localup.request.LuMetcoRegnVisitrDDListRequest
 import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.request.SearchTouristAttractionRequest
-import thatline.localup.response.BaseResponse
+import thatline.localup.common.response.BaseResponse
 import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.service.LocalUpService
 import thatline.localup.service.LuLocgoRegnVisitrDDListService

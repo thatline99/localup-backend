@@ -1,4 +1,4 @@
-package thatline.localup.property
+package thatline.localup.common.property
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.validation.annotation.Validated
