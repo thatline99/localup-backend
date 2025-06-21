@@ -8,6 +8,15 @@ tour-api:
   base-url: https://apis.data.go.kr
   mobile-os: WEB
   mobile-app: LocalUp
+  # 한국관광공사_관광지별 연관 관광지 정보
+  # link: https://www.data.go.kr/data/15128560/openapi.do
+  tar-rlte-tar-service:
+    first-path: /B551011/TarRlteTarService1
+    area-based-list:
+      # 지역기반 관광지별 연관 관광지 정보 목록 조회
+      second-path: /areaBasedList1
+      response-type: JSON
+
   # 한국관광공사_관광지 집중률 방문자 추이 예측 정보
   # link: https://www.data.go.kr/data/15128555/openapi.do
   tats-cnctr-rate-service:
@@ -15,6 +24,7 @@ tour-api:
     # 관광지 집중률 정보 목록조회
     tats-cnctr-rated-list:
       second-path: /tatsCnctrRatedList
+
   # 한국관광공사_관광빅데이터 정보서비스_GW
   # link: https://www.data.go.kr/data/15101972/openapi.do
   data-lab-service:
