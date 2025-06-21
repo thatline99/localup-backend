@@ -1,4 +1,4 @@
-package thatline.localup.response.dto
+package thatline.localup.localup.response.dto
 
 import java.time.LocalDate
 

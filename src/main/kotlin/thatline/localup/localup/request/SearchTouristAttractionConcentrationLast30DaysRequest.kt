@@ -1,4 +1,4 @@
-package thatline.localup.request
+package thatline.localup.localup.request
 
 import jakarta.validation.constraints.NotBlank
 

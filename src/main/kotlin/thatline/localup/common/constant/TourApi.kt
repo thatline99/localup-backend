@@ -1,6 +1,6 @@
-package thatline.localup.constant
+package thatline.localup.common.constant
 
-import thatline.localup.constant.dto.TourApiArea
+import thatline.localup.common.constant.dto.TourApiArea
 
 object TourApi {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보_v1.0

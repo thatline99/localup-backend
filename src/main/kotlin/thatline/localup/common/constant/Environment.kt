@@ -1,4 +1,4 @@
-package thatline.localup.constant
+package thatline.localup.common.constant
 
 object Environment {
     const val LOCAL = "local"

@@ -1,12 +1,12 @@
-package thatline.localup.service
+package thatline.localup.localup.service
 
 import org.springframework.cache.annotation.CachePut
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import thatline.localup.constant.TourApi
-import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
+import thatline.localup.common.constant.TourApi
+import thatline.localup.common.constant.dto.TourApiArea
+import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

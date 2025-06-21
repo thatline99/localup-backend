@@ -1,22 +1,22 @@
-package thatline.localup.controller
+package thatline.localup.localup.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.constant.dto.TourApiArea
-import thatline.localup.dto.localup.AreaStatistics
-import thatline.localup.dto.localup.SignguStatistics
-import thatline.localup.request.LuLocgoRegnVisitrDDListRequest
-import thatline.localup.request.LuMetcoRegnVisitrDDListRequest
-import thatline.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
-import thatline.localup.request.SearchTouristAttractionRequest
+import thatline.localup.common.constant.dto.TourApiArea
+import thatline.localup.localup.response.dto.AreaStatistics
+import thatline.localup.localup.response.dto.SignguStatistics
+import thatline.localup.localup.request.LuLocgoRegnVisitrDDListRequest
+import thatline.localup.localup.request.LuMetcoRegnVisitrDDListRequest
+import thatline.localup.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
+import thatline.localup.localup.request.SearchTouristAttractionRequest
 import thatline.localup.common.response.BaseResponse
-import thatline.localup.response.dto.TouristAttractionConcentrationRateLast30Days
-import thatline.localup.service.LocalUpService
-import thatline.localup.service.LuLocgoRegnVisitrDDListService
-import thatline.localup.service.LuMetcoRegnVisitrDDListService
+import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
+import thatline.localup.localup.service.LocalUpService
+import thatline.localup.localup.service.LuLocgoRegnVisitrDDListService
+import thatline.localup.localup.service.LuMetcoRegnVisitrDDListService
 
 // TODO: noah, API 경로 및 메서드명 합의 필요
 

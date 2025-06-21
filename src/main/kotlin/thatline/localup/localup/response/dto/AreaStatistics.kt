@@ -1,4 +1,4 @@
-package thatline.localup.dto.localup
+package thatline.localup.localup.response.dto
 
 /**
  * 한국관광공사_관광빅데이터 정보서비스_GW: 광역 지자체 지역방문자수 집계 데이터 정보 조회

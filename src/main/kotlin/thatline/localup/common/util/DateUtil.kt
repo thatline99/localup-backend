@@ -1,4 +1,4 @@
-package thatline.localup.util
+package thatline.localup.common.util
 
 import java.time.format.DateTimeFormatter
 

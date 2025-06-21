@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import thatline.localup.common.filter.AuthenticationFilter
-import thatline.localup.constant.Environment
+import thatline.localup.common.constant.Environment
 
 @Configuration
 class SecurityConfiguration(

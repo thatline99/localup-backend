@@ -1,4 +1,4 @@
-package thatline.localup.constant.dto
+package thatline.localup.common.constant.dto
 
 data class TourApiArea(
     val areaCd: String,
