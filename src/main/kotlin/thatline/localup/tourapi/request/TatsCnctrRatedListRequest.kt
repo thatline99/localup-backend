@@ -1,7 +1,7 @@
 package thatline.localup.tourapi.request
 
 /**
- * 한국관광공사_관광지 집중률 방문자 추이 예측 정보: 관광지 집중률 정보 목록조회
+ * 한국관광공사_관광지 집중률 방문자 추이 예측 정보: 관광지 집중률 정보 목록조회 요청
  *
  * @property pageNo 페이지 번호
  * @property numOfRows 한 페이지 결과 수
