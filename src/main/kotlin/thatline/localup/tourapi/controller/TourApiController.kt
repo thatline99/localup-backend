@@ -6,14 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.tourapi.exception.ExternalTourApiException
-import thatline.localup.tourapi.request.AreaBasedListRequest
-import thatline.localup.tourapi.request.LocgoRegnVisitrDDListRequest
-import thatline.localup.tourapi.request.MetcoRegnVisitrDDListRequest
-import thatline.localup.tourapi.request.TatsCnctrRatedListRequest
-import thatline.localup.tourapi.response.AreaBasedListResponse
-import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse
-import thatline.localup.tourapi.response.MetcoRegnVisitrDDListResponse
-import thatline.localup.tourapi.response.TatsCnctrRatedListResponse
+import thatline.localup.tourapi.request.*
+import thatline.localup.tourapi.response.*
 import thatline.localup.tourapi.restclient.TourApiRestClient
 
 @RestController
@@ -34,6 +28,29 @@ class TourApiController(
         request: AreaBasedListRequest,
     ): ResponseEntity<AreaBasedListResponse> {
         val response = tourApiRestClient.areaBasedList(
+            pageNo = request.pageNo,
+            numOfRows = request.numOfRows,
+            baseYm = request.baseYm,
+            areaCd = request.areaCd,
+            signguCd = request.signguCd,
+        )
+
+        return ResponseEntity.ok(response)
+    }
+
+    /**
+     * 한국관광공사_기초지자체 중심 관광지 정보: 지역기반 중심 관광지 정보 목록 조회
+     *
+     * @param request [AreaBasedListRequest2]
+     * @return [ResponseEntity]<[AreaBasedListResponse2]>
+     *
+     * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
+     */
+    @GetMapping("/areaBasedList2")
+    fun areaBasedList2(
+        request: AreaBasedListRequest2,
+    ): ResponseEntity<AreaBasedListResponse2> {
+        val response = tourApiRestClient.areaBasedList2(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             baseYm = request.baseYm,

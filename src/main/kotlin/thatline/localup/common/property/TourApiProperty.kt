@@ -10,6 +10,7 @@ class TourApiProperty(
     val mobileOS: String,
     val mobileApp: String,
     val tarRlteTarService: TarRlteTarService,
+    val locgoHubTarService: LocgoHubTarService,
     val tatsCnctrRateService: TatsCnctrRateService,
     val dataLabService: DataLabService,
 ) {
@@ -19,6 +20,22 @@ class TourApiProperty(
      * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
     data class TarRlteTarService(
+        val firstPath: String,
+        val serviceKey: String,
+        val areaBasedList: AreaBasedList,
+    ) {
+        data class AreaBasedList(
+            val secondPath: String,
+            val responseType: String,
+        )
+    }
+
+    /**
+     * 한국관광공사_기초지자체 중심 관광지 정보
+     *
+     * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
+     */
+    data class LocgoHubTarService(
         val firstPath: String,
         val serviceKey: String,
         val areaBasedList: AreaBasedList,
