@@ -1,7 +1,7 @@
-package thatline.localup.repository.jpa
+package thatline.localup.user.repository.jpa
 
 import org.springframework.data.jpa.repository.JpaRepository
-import thatline.localup.entity.jpa.UserJpaEntity
+import thatline.localup.user.entity.jpa.UserJpaEntity
 
 interface UserJpaRepository : JpaRepository<UserJpaEntity, Long> {
     fun findByEmail(email: String): UserJpaEntity?

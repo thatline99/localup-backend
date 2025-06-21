@@ -1,4 +1,4 @@
-package thatline.localup.entity.mongodb
+package thatline.localup.common.entity.mongodb
 
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass

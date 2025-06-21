@@ -1,4 +1,4 @@
-package thatline.localup.entity.jpa
+package thatline.localup.user.entity.jpa
 
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
@@ -25,5 +25,5 @@ class UserJpaEntity(
     val createdDate: LocalDateTime = LocalDateTime.now(),
 
     @LastModifiedDate
-    val lastModifiedDate: LocalDateTime = createdDate
+    val lastModifiedDate: LocalDateTime = createdDate,
 )

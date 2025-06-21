@@ -1,4 +1,4 @@
-package thatline.localup.entity.jpa
+package thatline.localup.auth.entity.jpa
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

@@ -6,8 +6,8 @@ import org.springframework.transaction.annotation.Transactional
 import thatline.localup.auth.dto.AuthToken
 import thatline.localup.auth.exception.DuplicateEmailException
 import thatline.localup.auth.exception.InvalidCredentialsException
-import thatline.localup.entity.mongodb.UserMongoDbEntity
-import thatline.localup.repository.mongodb.UserMongoDbRepository
+import thatline.localup.user.entity.mongodb.UserMongoDbEntity
+import thatline.localup.user.repository.mongodb.UserMongoDbRepository
 import java.util.*
 
 @Service

@@ -1,4 +1,4 @@
-package thatline.localup.entity.mongodb
+package thatline.localup.auth.entity.mongodb
 
 import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.mapping.Document
