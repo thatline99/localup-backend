@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-@ConfigurationPropertiesScan("thatline.localup.property")
+@ConfigurationPropertiesScan("thatline.localup.common.property")
 class LocalupApplication
 
 fun main(args: Array<String>) {
