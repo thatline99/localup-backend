@@ -56,8 +56,6 @@ class TourApiService(
             .build(true)
             .toUri()
 
-        println(uri.toString())
-
         val response = retrieveTourApi(uri, AreaBasedListResponse::class.java)
 
         return response
