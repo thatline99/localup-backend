@@ -14,12 +14,12 @@ import thatline.localup.request.AreaBasedListRequest
 import thatline.localup.request.LocgoRegnVisitrDDListRequest
 import thatline.localup.request.MetcoRegnVisitrDDListRequest
 import thatline.localup.request.TatsCnctrRatedListRequest
-import thatline.localup.service.TourApiService
+import thatline.localup.service.TourApiRestClient
 
 @RestController
 @RequestMapping("/api/tour-api")
 class TourApiController(
-    private val tourApiService: TourApiService,
+    private val tourApiRestClient: TourApiRestClient,
 ) {
     /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
@@ -31,7 +31,7 @@ class TourApiController(
     fun areaBasedList(
         request: AreaBasedListRequest,
     ): ResponseEntity<AreaBasedListResponse> {
-        val response = tourApiService.areaBasedList(
+        val response = tourApiRestClient.areaBasedList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             baseYm = request.baseYm,
@@ -49,7 +49,7 @@ class TourApiController(
     fun tatsCnctrRatedList(
         request: TatsCnctrRatedListRequest,
     ): TatsCnctrRatedListResponse {
-        return tourApiService.tatsCnctrRatedList(
+        return tourApiRestClient.tatsCnctrRatedList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             areaCd = request.areaCd,
@@ -65,7 +65,7 @@ class TourApiController(
     fun metcoRegnVisitrDDList(
         request: MetcoRegnVisitrDDListRequest,
     ): MetcoRegnVisitrDDListResponse {
-        return tourApiService.metcoRegnVisitrDDList(
+        return tourApiRestClient.metcoRegnVisitrDDList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             startYmd = request.startYmd,
@@ -80,7 +80,7 @@ class TourApiController(
     fun locgoRegnVisitrDDList(
         request: LocgoRegnVisitrDDListRequest,
     ): LocgoRegnVisitrDDListResponse {
-        return tourApiService.locgoRegnVisitrDDList(
+        return tourApiRestClient.locgoRegnVisitrDDList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             startYmd = request.startYmd,

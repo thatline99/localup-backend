@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class LocalUpService(
-    private val tourApiService: TourApiService,
+    private val tourApiRestClient: TourApiRestClient,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     fun getTourApiAreas(): List<TourApiArea> {
@@ -42,10 +42,10 @@ class LocalUpService(
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
     // areaCd와 signguCd로 관광지 목록 조회
     private fun fetchTouristAttractions(areaCd: String, signguCd: String): List<String> {
-        val totalCount = tourApiService.tatsCnctrRatedList(1, 1, areaCd, signguCd, "")
+        val totalCount = tourApiRestClient.tatsCnctrRatedList(1, 1, areaCd, signguCd, "")
             .response.body.totalCount
 
-        return tourApiService.tatsCnctrRatedList(1, totalCount, areaCd, signguCd, "")
+        return tourApiRestClient.tatsCnctrRatedList(1, totalCount, areaCd, signguCd, "")
             .response.body.items.item
             .map { it.tAtsNm }
             .distinct()
@@ -58,7 +58,7 @@ class LocalUpService(
         signguCd: String,
         tatsNm: String,
     ): TouristAttractionConcentrationRateLast30Days {
-        val response = tourApiService.tatsCnctrRatedList(1, 30, areaCd, signguCd, tatsNm)
+        val response = tourApiRestClient.tatsCnctrRatedList(1, 30, areaCd, signguCd, tatsNm)
 
         val items = response.response.body.items.item
 

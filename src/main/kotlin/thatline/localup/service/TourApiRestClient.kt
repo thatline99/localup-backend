@@ -15,7 +15,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Service
-class TourApiService(
+class TourApiRestClient(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {

@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
  */
 @Service
 class LuMetcoRegnVisitrDDListService(
-    private val tourApiService: TourApiService,
+    private val tourApiRestClient: TourApiRestClient,
 ) {
     fun searchData(
         startDate: LocalDate,
@@ -27,14 +27,14 @@ class LuMetcoRegnVisitrDDListService(
         val formattedStartDate = startDate.format(DATETIME_FORMATTER)
         val formattedEndDate = endDate.format(DATETIME_FORMATTER)
 
-        val totalCount = tourApiService.metcoRegnVisitrDDList(
+        val totalCount = tourApiRestClient.metcoRegnVisitrDDList(
             1,
             1,
             formattedStartDate,
             formattedEndDate
         ).response.body.totalCount
 
-        val items = tourApiService.metcoRegnVisitrDDList(
+        val items = tourApiRestClient.metcoRegnVisitrDDList(
             1,
             totalCount,
             formattedStartDate,
