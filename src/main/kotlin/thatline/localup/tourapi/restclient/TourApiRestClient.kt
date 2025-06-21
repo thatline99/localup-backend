@@ -69,7 +69,7 @@ class TourApiRestClient(
      * @param areaCd 관광지 지역 코드
      * @param signguCd 관광지 시군구 코드
      * @param tAtsNm 관광지명
-     * @return
+     * @return [TatsCnctrRatedListResponse]
      *
      * @see <a href="https://www.data.go.kr/data/15128555/openapi.do">공공데이터포털 API 문서</a>
      */
@@ -106,10 +106,11 @@ class TourApiRestClient(
     /**
      * 한국관광공사_관광빅데이터 정보서비스_GW: 광역 지자체 지역방문자수 집계 데이터 정보 조회
      *
-     * @property pageNo 페이지 번호
-     * @property numOfRows 한 페이지 결과 수
-     * @property startYmd 시작 연월일
-     * @property endYmd 종료 연월일
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param startYmd 시작 연월일
+     * @param endYmd 종료 연월일
+     * @return [MetcoRegnVisitrDDListResponse]
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
@@ -142,10 +143,11 @@ class TourApiRestClient(
     /**
      * 한국관광공사_관광빅데이터 정보서비스_GW: 기초 지자체 지역방문자수 집계 데이터 정보 조회
      *
-     * @property pageNo 페이지 번호
-     * @property numOfRows 한 페이지 결과 수
-     * @property startYmd 시작 연월일
-     * @property endYmd 종료 연월일
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param startYmd 시작 연월일
+     * @param endYmd 종료 연월일
+     * @return [LocgoRegnVisitrDDListResponse]
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */

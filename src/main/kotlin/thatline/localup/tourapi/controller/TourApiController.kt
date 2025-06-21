@@ -26,6 +26,8 @@ class TourApiController(
      *
      * @param request [AreaBasedListRequest]
      * @return [ResponseEntity]<[AreaBasedListResponse]>
+     *
+     * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
     @GetMapping("/areaBasedList")
     fun areaBasedList(
