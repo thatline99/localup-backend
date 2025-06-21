@@ -14,7 +14,7 @@ import thatline.localup.localup.request.SearchTouristAttractionConcentrationLast
 import thatline.localup.localup.request.SearchTouristAttractionRequest
 import thatline.localup.common.response.BaseResponse
 import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
-import thatline.localup.localup.service.LocalUpService
+import thatline.localup.localup.service.LocalUpFacade
 import thatline.localup.localup.service.LuLocgoRegnVisitrDDListService
 import thatline.localup.localup.service.LuMetcoRegnVisitrDDListService
 
@@ -23,14 +23,14 @@ import thatline.localup.localup.service.LuMetcoRegnVisitrDDListService
 @RestController
 @RequestMapping("/api/local-up")
 class LocalUpController(
-    private val localUpService: LocalUpService,
+    private val localUpFacade: LocalUpFacade,
     private val luMetcoRegnVisitrDDListService: LuMetcoRegnVisitrDDListService,
     private val luLocgoRegnVisitrDDListService: LuLocgoRegnVisitrDDListService,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     @GetMapping("/tour-api-areas")
     fun getTourApiAreas(): ResponseEntity<BaseResponse<List<TourApiArea>>> {
-        val tourApiAreas = localUpService.getTourApiAreas()
+        val tourApiAreas = localUpFacade.getTourApiAreas()
 
         return ResponseEntity.ok(BaseResponse.success(tourApiAreas))
     }
@@ -41,7 +41,7 @@ class LocalUpController(
     fun searchTouristAttractions(
         @RequestBody request: SearchTouristAttractionRequest,
     ): ResponseEntity<BaseResponse<List<String>>> {
-        val touristAttractions = localUpService.searchTouristAttractions(request.areaCd, request.signguCd)
+        val touristAttractions = localUpFacade.searchTouristAttractions(request.areaCd, request.signguCd)
 
         return ResponseEntity.ok(BaseResponse.success(touristAttractions))
     }
@@ -54,7 +54,7 @@ class LocalUpController(
         @RequestBody request: SearchTouristAttractionConcentrationLast30DaysRequest,
     ): ResponseEntity<BaseResponse<TouristAttractionConcentrationRateLast30Days>> {
         val touristAttractionConcentrationRateLast30Days =
-            localUpService.searchTouristAttractionConcentrationLast30Days(
+            localUpFacade.searchTouristAttractionConcentrationLast30Days(
                 request.areaCd,
                 request.signguCd,
                 request.tatsNm

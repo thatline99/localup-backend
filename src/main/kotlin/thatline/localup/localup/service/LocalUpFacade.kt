@@ -12,7 +12,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
-class LocalUpService(
+class LocalUpFacade(
     private val tourApiRestClient: TourApiRestClient,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
