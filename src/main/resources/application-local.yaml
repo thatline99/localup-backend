@@ -29,3 +29,9 @@ tour-api:
     service-key: ${TATS_CNCTR_RATE_SERVICE_KEY}
   data-lab-service:
     service-key: ${DATA_LAB_SERVICE}
+
+etc-api:
+  # 기상청 (Korea Meteorological Administration)
+  kma:
+    vilage-fcst-info-service:
+      service-key: ${VILAGE_FCST_INFO_SERVICE_KEY}
