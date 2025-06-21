@@ -1,4 +1,4 @@
-package thatline.localup.dto.tourApi
+package thatline.localup.tourapi.response
 
 data class LocgoRegnVisitrDDListResponse(
     val response: LocgoRegnVisitrDDListResponseWrapper = LocgoRegnVisitrDDListResponseWrapper(),

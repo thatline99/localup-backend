@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import thatline.localup.dto.localup.DailySignguStatistics
 import thatline.localup.dto.localup.SignguStatistics
 import thatline.localup.dto.localup.SignguVisitor
+import thatline.localup.tourapi.restclient.TourApiRestClient
 import thatline.localup.util.DateUtil.DATETIME_FORMATTER
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

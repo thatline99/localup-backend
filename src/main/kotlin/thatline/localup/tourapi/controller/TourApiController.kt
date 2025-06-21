@@ -1,20 +1,20 @@
-package thatline.localup.controller
+package thatline.localup.tourapi.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.dto.tourApi.AreaBasedListResponse
-import thatline.localup.dto.tourApi.LocgoRegnVisitrDDListResponse
-import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
-import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
-import thatline.localup.exception.ExternalTourApiException
-import thatline.localup.request.AreaBasedListRequest
-import thatline.localup.request.LocgoRegnVisitrDDListRequest
-import thatline.localup.request.MetcoRegnVisitrDDListRequest
-import thatline.localup.request.TatsCnctrRatedListRequest
-import thatline.localup.service.TourApiRestClient
+import thatline.localup.tourapi.response.AreaBasedListResponse
+import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse
+import thatline.localup.tourapi.response.MetcoRegnVisitrDDListResponse
+import thatline.localup.tourapi.response.TatsCnctrRatedListResponse
+import thatline.localup.tourapi.exception.ExternalTourApiException
+import thatline.localup.tourapi.request.AreaBasedListRequest
+import thatline.localup.tourapi.request.LocgoRegnVisitrDDListRequest
+import thatline.localup.tourapi.request.MetcoRegnVisitrDDListRequest
+import thatline.localup.tourapi.request.TatsCnctrRatedListRequest
+import thatline.localup.tourapi.restclient.TourApiRestClient
 
 @RestController
 @RequestMapping("/api/tour-api")

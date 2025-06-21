@@ -1,4 +1,4 @@
-package thatline.localup.request
+package thatline.localup.tourapi.request
 
 data class LocgoRegnVisitrDDListRequest(
     val pageNo: Long,

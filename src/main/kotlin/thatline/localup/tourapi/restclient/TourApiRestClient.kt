@@ -1,14 +1,14 @@
-package thatline.localup.service
+package thatline.localup.tourapi.restclient
 
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
-import thatline.localup.dto.tourApi.AreaBasedListResponse
-import thatline.localup.dto.tourApi.LocgoRegnVisitrDDListResponse
-import thatline.localup.dto.tourApi.MetcoRegnVisitrDDListResponse
-import thatline.localup.dto.tourApi.TatsCnctrRatedListResponse
-import thatline.localup.exception.ExternalTourApiException
+import thatline.localup.tourapi.response.AreaBasedListResponse
+import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse
+import thatline.localup.tourapi.response.MetcoRegnVisitrDDListResponse
+import thatline.localup.tourapi.response.TatsCnctrRatedListResponse
+import thatline.localup.tourapi.exception.ExternalTourApiException
 import thatline.localup.property.TourApiProperty
 import java.net.URI
 import java.net.URLEncoder

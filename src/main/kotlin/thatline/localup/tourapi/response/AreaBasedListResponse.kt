@@ -1,4 +1,4 @@
-package thatline.localup.dto.tourApi
+package thatline.localup.tourapi.response
 
 /**
  * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회 응답

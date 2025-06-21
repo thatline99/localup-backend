@@ -1,4 +1,4 @@
-package thatline.localup.request
+package thatline.localup.tourapi.request
 
 data class TatsCnctrRatedListRequest(
     val pageNo: Long,
