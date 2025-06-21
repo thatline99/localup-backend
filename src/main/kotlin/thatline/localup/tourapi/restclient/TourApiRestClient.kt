@@ -186,7 +186,7 @@ class TourApiRestClient(
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalTourApiException(cause = null)
+                ?: throw ExternalTourApiException()
         } catch (exception: RestClientException) {
             throw ExternalTourApiException(cause = exception)
         }
