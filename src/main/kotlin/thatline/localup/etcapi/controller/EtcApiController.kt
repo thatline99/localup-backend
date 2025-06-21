@@ -1,9 +1,11 @@
 package thatline.localup.etcapi.controller
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.request.GetFcstVersionRequest
 import thatline.localup.etcapi.request.GetUltraSrtNcstRequest
 import thatline.localup.etcapi.response.GetFcstVersionResponse
@@ -59,5 +61,11 @@ class EtcApiController(
         )
 
         return ResponseEntity.ok(response)
+    }
+
+    // TODO: noah, 추후 error body 정의
+    @ExceptionHandler(ExternalEtcApiException::class)
+    fun handleExternalTourApi(exception: ExternalEtcApiException): ResponseEntity<Void> {
+        return ResponseEntity.internalServerError().build()
     }
 }

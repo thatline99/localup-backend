@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
+import thatline.localup.common.property.EtcApiProperty
+import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
-import thatline.localup.tourapi.exception.ExternalTourApiException
-import thatline.localup.common.property.EtcApiProperty
 import java.net.URI
 
 @Service
@@ -123,9 +123,9 @@ class EtcApiRestClient(
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalTourApiException()
+                ?: throw ExternalEtcApiException()
         } catch (exception: RestClientException) {
-            throw ExternalTourApiException()
+            throw ExternalEtcApiException()
         }
     }
 }
