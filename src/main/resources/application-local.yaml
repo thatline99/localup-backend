@@ -29,6 +29,11 @@ tour-api:
   tar-rlte-tar-service:
     service-key: ${TAR_RLTE_TAR_SERVICE_KEY}
 
+  # 한국관광공사_기초지자체 중심 관광지 정보
+  # link: https://www.data.go.kr/data/15128559/openapi.do
+  locgo-hub-tar-service:
+    service-key: ${LOCGO_HUB_TAR_SERVICE_KEY}
+
   # 한국관광공사_관광지 집중률 방문자 추이 예측 정보
   tats-cnctr-rate-service:
     service-key: ${TATS_CNCTR_RATE_SERVICE_KEY}

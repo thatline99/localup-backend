@@ -6,10 +6,7 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.common.property.TourApiProperty
 import thatline.localup.tourapi.exception.ExternalTourApiException
-import thatline.localup.tourapi.response.AreaBasedListResponse
-import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse
-import thatline.localup.tourapi.response.MetcoRegnVisitrDDListResponse
-import thatline.localup.tourapi.response.TatsCnctrRatedListResponse
+import thatline.localup.tourapi.response.*
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -57,6 +54,48 @@ class TourApiRestClient(
             .toUri()
 
         val response = retrieveTourApi(uri, AreaBasedListResponse::class.java)
+
+        return response
+    }
+
+    /**
+     * 한국관광공사_기초지자체 중심 관광지 정보: 지역기반 중심 관광지 정보 목록 조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param baseYm 기준 날짜 조회
+     * @param areaCd 중심지 지역 코드
+     * @param signguCd 중심지 시군구 코드
+     * @return [AreaBasedListResponse2]
+     *
+     * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun areaBasedList2(
+        pageNo: Long,
+        numOfRows: Long,
+        baseYm: String,
+        areaCd: String,
+        signguCd: String,
+    ): AreaBasedListResponse2 {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.locgoHubTarService.firstPath}${tourApiProperty.locgoHubTarService.areaBasedList.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.locgoHubTarService.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("baseYm", baseYm)
+            .queryParam("areaCd", areaCd)
+            .queryParam("signguCd", signguCd)
+            .queryParam("_type", tourApiProperty.locgoHubTarService.areaBasedList.responseType)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, AreaBasedListResponse2::class.java)
 
         return response
     }
