@@ -16,4 +16,15 @@ class UserMongoDbEntity(
     val email: String,
 
     val password: String,
-) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
+
+    val zipCode: String?,
+
+    val address: String?,
+
+    val addressDetail: String?,
+
+    val latitude: Double?,
+
+    val longitude: Double?,
+
+    ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
