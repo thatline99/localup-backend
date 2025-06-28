@@ -18,8 +18,8 @@ class LuCommonService(
         ).response.body.totalCount
 
         val items = tourApiRestClient.ldongCode2(
-            1,
-            totalCount,
+            pageNo = 1,
+            numOfRows = totalCount,
         ).response.body.getItems(objectMapper)
 
         return items.map { Area(it.code, it.name) }
