@@ -1,7 +1,7 @@
 package thatline.localup.tourapi.request
 
 /**
- * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
+ * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회 요청
  *
  * @property pageNo 페이지 번호
  * @property numOfRows 한 페이지 결과 수
