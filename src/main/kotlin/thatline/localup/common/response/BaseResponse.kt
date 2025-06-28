@@ -1,6 +1,6 @@
 package thatline.localup.common.response
 
-data class BaseResponse<T>(
+class BaseResponse<T> private constructor(
     val code: String,
     val message: String,
     val data: T?,
