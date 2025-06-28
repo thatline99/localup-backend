@@ -1,20 +1,14 @@
 package thatline.localup.localup.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import thatline.localup.common.constant.dto.TourApiArea
 import thatline.localup.common.response.BaseResponse
 import thatline.localup.localup.request.LuLocgoRegnVisitrDDListRequest
 import thatline.localup.localup.request.LuMetcoRegnVisitrDDListRequest
 import thatline.localup.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.localup.request.SearchTouristAttractionRequest
-import thatline.localup.localup.response.dto.Area
-import thatline.localup.localup.response.dto.AreaStatistics
-import thatline.localup.localup.response.dto.SignguStatistics
-import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
+import thatline.localup.localup.response.dto.*
 import thatline.localup.localup.service.LocalUpFacade
 import thatline.localup.localup.service.LuLocgoRegnVisitrDDListService
 import thatline.localup.localup.service.LuMetcoRegnVisitrDDListService
@@ -44,8 +38,16 @@ class LocalUpController(
         return ResponseEntity.ok(BaseResponse.success(areas))
     }
 
-    // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
-    // areaCd와 signguCd로 관광지 목록 조회
+    @GetMapping("/sigungus")
+    fun searchSigungus(
+        @RequestParam("areaCode") areaCode: String,
+    ): ResponseEntity<BaseResponse<List<Sigungu>>> {
+        val sigungus = localUpFacade.searchSigungus(areaCode)
+
+        return ResponseEntity.ok(BaseResponse.success(sigungus))
+    }
+
+    // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회 // areaCd와 signguCd로 관광지 목록 조회
     @GetMapping("/tatsCnctrRatedList/tourist-attractions")
     fun searchTouristAttractions(
         @RequestBody request: SearchTouristAttractionRequest,
