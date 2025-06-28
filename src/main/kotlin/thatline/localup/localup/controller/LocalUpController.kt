@@ -6,13 +6,14 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.common.constant.dto.TourApiArea
-import thatline.localup.localup.response.dto.AreaStatistics
-import thatline.localup.localup.response.dto.SignguStatistics
+import thatline.localup.common.response.BaseResponse
 import thatline.localup.localup.request.LuLocgoRegnVisitrDDListRequest
 import thatline.localup.localup.request.LuMetcoRegnVisitrDDListRequest
 import thatline.localup.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
 import thatline.localup.localup.request.SearchTouristAttractionRequest
-import thatline.localup.common.response.BaseResponse
+import thatline.localup.localup.response.dto.Area
+import thatline.localup.localup.response.dto.AreaStatistics
+import thatline.localup.localup.response.dto.SignguStatistics
 import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.localup.service.LocalUpFacade
 import thatline.localup.localup.service.LuLocgoRegnVisitrDDListService
@@ -29,10 +30,18 @@ class LocalUpController(
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     @GetMapping("/tour-api-areas")
+    @Deprecated("searchAreas 사용")
     fun getTourApiAreas(): ResponseEntity<BaseResponse<List<TourApiArea>>> {
         val tourApiAreas = localUpFacade.getTourApiAreas()
 
         return ResponseEntity.ok(BaseResponse.success(tourApiAreas))
+    }
+
+    @GetMapping("/areas")
+    fun searchAreas(): ResponseEntity<BaseResponse<List<Area>>> {
+        val areas = localUpFacade.searchAreas()
+
+        return ResponseEntity.ok(BaseResponse.success(areas))
     }
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
