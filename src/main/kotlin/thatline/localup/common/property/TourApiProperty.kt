@@ -24,13 +24,18 @@ class TourApiProperty(
         val firstPath: String,
         val serviceKey: String,
         val areaCode2: AreaCode2,
+        val ldongCode2: LdongCode2,
     ) {
         data class AreaCode2(
             val secondPath: String,
             val responseType: String,
         )
-    }
 
+        data class LdongCode2(
+            val secondPath: String,
+            val responseType: String,
+        )
+    }
 
     /**
      * 한국관광공사_관광지별 연관 관광지 정보

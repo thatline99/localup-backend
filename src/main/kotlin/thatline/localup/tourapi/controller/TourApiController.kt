@@ -35,6 +35,25 @@ class TourApiController(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 법정동코드조회
+     *
+     * @param request [LdongCode2Request]
+     * @return [ResponseEntity]<[LdongCode2Response]>
+     */
+    @GetMapping("/ldongCode2")
+    fun ldongCode2(
+        request: LdongCode2Request,
+    ): ResponseEntity<LdongCode2Response> {
+        val response = tourApiRestClient.ldongCode2(
+            pageNo = request.pageNo,
+            numOfRows = request.numOfRows,
+            lDongRegnCd = request.lDongRegnCd,
+        )
+
+        return ResponseEntity.ok(response)
+    }
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param request [AreaBasedListRequest]

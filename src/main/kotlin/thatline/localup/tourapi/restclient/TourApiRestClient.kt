@@ -56,6 +56,45 @@ class TourApiRestClient(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 법정동코드조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param lDongRegnCd 법정동 시도코드 (선택)
+     * @return [LdongCode2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun ldongCode2(
+        pageNo: Long,
+        numOfRows: Long,
+        lDongRegnCd: String? = null,
+    ): LdongCode2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.ldongCode2.secondPath}"
+        )
+
+        val builder = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", tourApiProperty.korService2.ldongCode2.responseType)
+
+        lDongRegnCd?.let {
+            builder.queryParam("lDongRegnCd", it)
+        }
+
+        val uri = builder.build(true).toUri()
+
+        val response = retrieveTourApi(uri, LdongCode2Response::class.java)
+
+        return response
+    }
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param pageNo 페이지 번호
