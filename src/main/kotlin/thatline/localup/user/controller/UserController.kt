@@ -1,13 +1,13 @@
 package thatline.localup.user.controller
 
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import thatline.localup.common.response.BaseResponse
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.request.UpdateAddressRequest
 import thatline.localup.user.service.UserService
-
-// TODO: BaseResponse에 data가 없는 경우, 고려 필요
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,7 +18,7 @@ class UserController(
     fun updateAddress(
         @AuthenticationPrincipal id: String,
         @RequestBody request: UpdateAddressRequest,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<BaseResponse<Unit>> {
         userService.updateAddress(
             id = id,
             zipCode = request.zipCode,
@@ -28,12 +28,17 @@ class UserController(
             longitude = request.longitude
         )
 
-        return ResponseEntity.ok().build()
+        return ResponseEntity.ok(BaseResponse.success())
     }
 
-    // TODO: noah, 추후 error body 정의
     @ExceptionHandler(UserNotFoundException::class)
-    fun handleUserNotFoundException(exception: UserNotFoundException): ResponseEntity<Void> {
-        return ResponseEntity.notFound().build()
+    fun handleUserNotFoundException(exception: UserNotFoundException): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(
+                BaseResponse.failure(
+                    message = exception.message
+                )
+            )
     }
 }
