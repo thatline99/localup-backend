@@ -17,6 +17,45 @@ class TourApiRestClient(
     private val restClient: RestClient,
 ) {
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지 결과 수
+     * @param areaCode 시도 코드 (선택)
+     * @return [AreaCode2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun areaCode2(
+        pageNo: Long,
+        numOfRows: Long,
+        areaCode: String? = null,
+    ): AreaCode2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.areaCode2.secondPath}"
+        )
+
+        val builder = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", tourApiProperty.korService2.areaCode2.responseType)
+
+        areaCode?.let {
+            builder.queryParam("areaCode", it)
+        }
+
+        val uri = builder.build(true).toUri()
+
+        val response = retrieveTourApi(uri, AreaCode2Response::class.java)
+
+        return response
+    }
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param pageNo 페이지 번호
