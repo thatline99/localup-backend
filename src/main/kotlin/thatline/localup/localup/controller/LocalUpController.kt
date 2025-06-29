@@ -1,13 +1,13 @@
 package thatline.localup.localup.controller
 
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.common.constant.dto.TourApiArea
 import thatline.localup.common.response.BaseResponse
-import thatline.localup.localup.request.LuLocgoRegnVisitrDDListRequest
-import thatline.localup.localup.request.LuMetcoRegnVisitrDDListRequest
-import thatline.localup.localup.request.SearchTouristAttractionConcentrationLast30DaysRequest
-import thatline.localup.localup.request.SearchTouristAttractionRequest
+import thatline.localup.localup.exception.WeatherServiceException
+import thatline.localup.localup.request.*
 import thatline.localup.localup.response.dto.*
 import thatline.localup.localup.service.LocalUpFacade
 import thatline.localup.localup.service.LuLocgoRegnVisitrDDListService
@@ -45,6 +45,18 @@ class LocalUpController(
         val sigungus = localUpFacade.searchSigungus(areaCode)
 
         return ResponseEntity.ok(BaseResponse.success(sigungus))
+    }
+
+    @GetMapping("/weathers")
+    fun getHourlyWeatherInformation(
+        @RequestBody @Valid request: GetHourlyWeatherInformationRequest,
+    ): ResponseEntity<BaseResponse<HourlyWeatherInformation>> {
+        val hourlyWeatherInformation = localUpFacade.getHourlyWeatherInformationByCoordinates(
+            latitude = request.latitude,
+            longitude = request.longitude,
+        )
+
+        return ResponseEntity.ok(BaseResponse.success(hourlyWeatherInformation))
     }
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회 // areaCd와 signguCd로 관광지 목록 조회
@@ -120,5 +132,16 @@ class LocalUpController(
         } else {
             ResponseEntity.ok(BaseResponse.success(result))
         }
+    }
+
+    @ExceptionHandler(WeatherServiceException::class)
+    fun handleWeatherServiceException(exception: WeatherServiceException): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(
+                BaseResponse.failure(
+                    message = exception.message
+                )
+            )
     }
 }
