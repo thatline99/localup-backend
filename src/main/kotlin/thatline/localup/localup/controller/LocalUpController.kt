@@ -49,7 +49,7 @@ class LocalUpController(
 
     @GetMapping("/weathers")
     fun getHourlyWeatherInformation(
-        @RequestBody @Valid request: GetHourlyWeatherInformationRequest,
+        @Valid request: GetHourlyWeatherInformationRequest,
     ): ResponseEntity<BaseResponse<HourlyWeatherInformation>> {
         val hourlyWeatherInformation = localUpFacade.getHourlyWeatherInformationByCoordinates(
             latitude = request.latitude,
