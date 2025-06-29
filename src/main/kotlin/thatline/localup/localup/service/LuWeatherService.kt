@@ -2,13 +2,13 @@ package thatline.localup.localup.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.common.util.KmaUtil
 import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
 import thatline.localup.etcapi.restclient.EtcApiRestClient
 import thatline.localup.localup.exception.WeatherServiceException
 import thatline.localup.localup.response.dto.HourlyWeatherInformation
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 @Service
@@ -21,10 +21,9 @@ class LuWeatherService(
         latitude: Double,
         longitude: Double,
     ): HourlyWeatherInformation {
-        // TODO: noah, DateTimeFormatter 분리
         val baseDateTime = LocalDateTime.now().minusMinutes(BASE_TIME_DELAY_MINUTES).truncatedTo(ChronoUnit.HOURS)
-        val baseDate = baseDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-        val baseTime = baseDateTime.format(DateTimeFormatter.ofPattern("HHmm"))
+        val baseDate = baseDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val baseTime = baseDateTime.format(DateTimeUtil.DATETIME_FORMATTER_HHmm)
 
         val (nx, ny) = KmaUtil.convertCoordinatesToGrid(latitude, longitude)
 
