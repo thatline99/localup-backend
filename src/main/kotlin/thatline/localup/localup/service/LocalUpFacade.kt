@@ -43,7 +43,7 @@ class LocalUpFacade(
         latitude: Double,
         longitude: Double,
     ): HourlyWeatherInformation {
-        return luWeatherService.getHourlyWeatherInformationByCoordinates(latitude, longitude);
+        return luWeatherService.getHourlyWeatherInformationByCoordinates(latitude, longitude)
     }
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
