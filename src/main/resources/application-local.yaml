@@ -24,6 +24,11 @@ token:
     expiration-seconds: 86400
 
 tour-api:
+  # 한국관광공사_국문 관광정보 서비스_GW
+  # link: https://www.data.go.kr/data/15101578/openapi.do
+  kor-service2:
+    service-key: ${KOR_SERVICE2_KEY}
+
   # 한국관광공사_관광지별 연관 관광지 정보
   # link: https://www.data.go.kr/data/15128560/openapi.do
   tar-rlte-tar-service:

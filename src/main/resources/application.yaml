@@ -8,6 +8,19 @@ tour-api:
   base-url: https://apis.data.go.kr
   mobile-os: WEB
   mobile-app: LocalUp
+    # 한국관광공사_국문 관광정보 서비스_GW
+    # link: https://www.data.go.kr/data/15101578/openapi.do
+  kor-service2:
+    first-path: /B551011/KorService2
+    # 지역코드조회
+    area-code2:
+      second-path: /areaCode2
+      response-type: JSON
+    # 법정동코드조회
+    ldong-code2:
+      second-path: /ldongCode2
+      response-type: JSON
+
   # 한국관광공사_관광지별 연관 관광지 정보
   # link: https://www.data.go.kr/data/15128560/openapi.do
   tar-rlte-tar-service:

@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.constant.dto.TourApiArea
+import thatline.localup.localup.response.dto.Area
+import thatline.localup.localup.response.dto.Sigungu
 import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
@@ -14,10 +16,21 @@ import java.time.format.DateTimeFormatter
 @Service
 class LocalUpFacade(
     private val tourApiRestClient: TourApiRestClient,
+    private val luCommonService: LuCommonService,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     fun getTourApiAreas(): List<TourApiArea> {
         return TourApi.areas
+    }
+
+    fun searchAreas(): List<Area> {
+        return luCommonService.searchAreas()
+    }
+
+    fun searchSigungus(
+        areaCode: String,
+    ): List<Sigungu> {
+        return luCommonService.searchSigungus(areaCode)
     }
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
