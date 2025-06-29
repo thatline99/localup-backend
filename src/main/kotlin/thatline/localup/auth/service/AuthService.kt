@@ -43,7 +43,15 @@ class AuthService(
 
         val hashedPassword = passwordEncoder.encode(password)
 
-        val newUser = UserMongoDbEntity(email = email, password = hashedPassword)
+        val newUser = UserMongoDbEntity(
+            email = email,
+            password = hashedPassword,
+            zipCode = null,
+            address = null,
+            addressDetail = null,
+            latitude = null,
+            longitude = null,
+        )
 
         userRepository.save(newUser)
     }
