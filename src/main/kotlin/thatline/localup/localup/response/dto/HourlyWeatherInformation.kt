@@ -13,7 +13,7 @@ import java.time.LocalDateTime
  * @property windDirection 풍향 (VEC)
  * @property windEastWest 동서 바람 성분 (UUU)
  * @property windNorthSouth 남북 바람 성분 (VVV)
- * @property updatedAt 관측일시
+ * @property updateAt 관측일시
  */
 data class HourlyWeatherInformation(
     val temperature: Double,
