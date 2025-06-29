@@ -55,15 +55,25 @@ class LuWeatherService(
 
         val map = body.items.item.associate { it.category to it.obsrValue }
 
+        fun getDoubleValue(category: String): Double {
+            return map[category]?.toDoubleOrNull()
+                ?: throw WeatherServiceException("Missing or invalid data for category: $category")
+        }
+
+        fun getIntValue(category: String): Int {
+            return map[category]?.toIntOrNull()
+                ?: throw WeatherServiceException("Missing or invalid data for category: $category")
+        }
+
         return HourlyWeatherInformation(
-            temperature = map.getValue("T1H").toDouble(),
-            humidity = map.getValue("REH").toDouble(),
-            precipitationType = map.getValue("PTY").toInt(),
-            precipitation1h = map.getValue("RN1").toDouble(),
-            windSpeed = map.getValue("WSD").toDouble(),
-            windDirection = map.getValue("VEC").toInt(),
-            windEastWest = map.getValue("UUU").toDouble(),
-            windNorthSouth = map.getValue("VVV").toDouble(),
+            temperature = getDoubleValue("T1H"),
+            humidity = getDoubleValue("REH"),
+            precipitationType = getIntValue("PTY"),
+            precipitation1h = getDoubleValue("RN1"),
+            windSpeed = getDoubleValue("WSD"),
+            windDirection = getIntValue("VEC"),
+            windEastWest = getDoubleValue("UUU"),
+            windNorthSouth = getDoubleValue("VVV"),
         )
     }
 
