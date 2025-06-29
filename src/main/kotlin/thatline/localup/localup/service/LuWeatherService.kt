@@ -74,6 +74,7 @@ class LuWeatherService(
             windDirection = getIntValue("VEC"),
             windEastWest = getDoubleValue("UUU"),
             windNorthSouth = getDoubleValue("VVV"),
+            updateAt = baseDateTime,
         )
     }
 

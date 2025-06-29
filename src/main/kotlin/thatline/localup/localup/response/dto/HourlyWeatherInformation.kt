@@ -1,5 +1,7 @@
 package thatline.localup.localup.response.dto
 
+import java.time.LocalDateTime
+
 /**
  * 시간별 날씨 정보
  *
@@ -11,6 +13,7 @@ package thatline.localup.localup.response.dto
  * @property windDirection 풍향 (VEC)
  * @property windEastWest 동서 바람 성분 (UUU)
  * @property windNorthSouth 남북 바람 성분 (VVV)
+ * @property updatedAt 관측일시
  */
 data class HourlyWeatherInformation(
     val temperature: Double,
@@ -21,4 +24,5 @@ data class HourlyWeatherInformation(
     val windDirection: Int,
     val windEastWest: Double,
     val windNorthSouth: Double,
+    val updateAt: LocalDateTime,
 )
