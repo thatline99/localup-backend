@@ -1,11 +1,11 @@
 package thatline.localup.localup.service
 
 import org.springframework.stereotype.Service
+import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.localup.response.dto.DailySignguStatistics
 import thatline.localup.localup.response.dto.SignguStatistics
 import thatline.localup.localup.response.dto.SignguVisitor
 import thatline.localup.tourapi.restclient.TourApiRestClient
-import thatline.localup.common.util.DateUtil.DATETIME_FORMATTER
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -25,8 +25,8 @@ class LuLocgoRegnVisitrDDListService(
         endDate: LocalDate,
         signguCode: String,
     ): SignguStatistics? {
-        val formattedStartDate = startDate.format(DATETIME_FORMATTER)
-        val formattedEndDate = endDate.format(DATETIME_FORMATTER)
+        val formattedStartDate = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val formattedEndDate = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
         val totalCount = tourApiRestClient.locgoRegnVisitrDDList(
             1,

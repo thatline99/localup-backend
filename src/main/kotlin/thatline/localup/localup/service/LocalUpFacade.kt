@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.constant.dto.TourApiArea
 import thatline.localup.localup.response.dto.Area
+import thatline.localup.localup.response.dto.HourlyWeatherInformation
 import thatline.localup.localup.response.dto.Sigungu
 import thatline.localup.localup.response.dto.TouristAttractionConcentrationRateLast30Days
 import thatline.localup.tourapi.restclient.TourApiRestClient
@@ -17,11 +18,14 @@ import java.time.format.DateTimeFormatter
 class LocalUpFacade(
     private val tourApiRestClient: TourApiRestClient,
     private val luCommonService: LuCommonService,
+    private val luWeatherService: LuWeatherService,
 ) {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보 조회
     fun getTourApiAreas(): List<TourApiArea> {
         return TourApi.areas
     }
+
+    // 1. LuCommonService
 
     fun searchAreas(): List<Area> {
         return luCommonService.searchAreas()
@@ -31,6 +35,15 @@ class LocalUpFacade(
         areaCode: String,
     ): List<Sigungu> {
         return luCommonService.searchSigungus(areaCode)
+    }
+
+    // 2. LuWeatherService
+
+    fun getHourlyWeatherInformationByCoordinates(
+        latitude: Double,
+        longitude: Double,
+    ): HourlyWeatherInformation {
+        return luWeatherService.getHourlyWeatherInformationByCoordinates(latitude, longitude)
     }
 
     // 한국관광공사_관광지 집중률 방문자 추이 예측 정보, 관광지 집중률 정보 목록조회
