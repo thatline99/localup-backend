@@ -1,7 +1,6 @@
 package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
-import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.repository.mongodb.UserMongoDbRepository
