@@ -3,15 +3,17 @@ package thatline.localup.common.configuration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
-import thatline.localup.common.filter.AuthenticationFilter
 import thatline.localup.common.constant.Environment
+import thatline.localup.common.filter.AuthenticationFilter
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfiguration(
     private val authenticationFilter: AuthenticationFilter,
 ) {

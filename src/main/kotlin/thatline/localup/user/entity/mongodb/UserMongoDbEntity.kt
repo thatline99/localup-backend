@@ -3,6 +3,7 @@ package thatline.localup.user.entity.mongodb
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.mapping.Document
 import thatline.localup.common.entity.mongodb.BaseMongoDbEntity
+import thatline.localup.common.constant.Role
 import java.time.LocalDateTime
 
 @Document(collection = "user")
@@ -16,6 +17,8 @@ class UserMongoDbEntity(
     val email: String,
 
     val password: String,
+
+    val role: Role,
 
     val zipCode: String?,
 

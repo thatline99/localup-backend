@@ -1,6 +1,7 @@
 package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
+import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.repository.mongodb.UserMongoDbRepository
@@ -28,6 +29,7 @@ class UserService(
 
             email = user.email,
             password = user.password,
+            role = user.role,
 
             zipCode = zipCode,
             address = address,
@@ -38,4 +40,28 @@ class UserService(
 
         userRepository.save(updatedUser)
     }
+
+    // TODO: 추후
+//    fun updateUserRole(id: String, role: Role) {
+//        val user = userRepository.findById(id)
+//            .orElseThrow { UserNotFoundException() }
+//
+//        val updatedUser = UserMongoDbEntity(
+//            id = user.id,
+//            createdDate = user.createdDate,
+//            lastModifiedDate = LocalDateTime.now(),
+//
+//            email = user.email,
+//            password = user.password,
+//            role = role,
+//
+//            zipCode = user.zipCode,
+//            address = user.address,
+//            addressDetail = user.addressDetail,
+//            latitude = user.latitude,
+//            longitude = user.longitude
+//        )
+//
+//        userRepository.save(updatedUser)
+//    }
 }
