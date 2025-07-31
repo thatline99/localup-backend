@@ -3,6 +3,7 @@ package thatline.localup.common.filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -25,10 +26,12 @@ class AuthenticationFilter(
         val accessToken = cookies?.firstOrNull { it.name == tokenProperty.accessToken.name }?.value
 
         if (!accessToken.isNullOrBlank()) {
-            val userId = authService.findUserIdByAccessToken(accessToken)
+            val userDetails = authService.findUserDetailsByAccessToken(accessToken)
 
-            if (userId != null) {
-                SecurityContextHolder.getContext().authentication = AuthenticationToken(userId)
+            if (userDetails != null) {
+                val authorities = listOf(SimpleGrantedAuthority(userDetails.role.toAuthority()))
+
+                SecurityContextHolder.getContext().authentication = AuthenticationToken(userDetails.id, authorities)
             }
         }
 

@@ -1,11 +1,14 @@
 package thatline.localup.auth.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import thatline.localup.auth.dto.AuthToken
+import thatline.localup.auth.dto.UserDetails
 import thatline.localup.auth.exception.DuplicateEmailException
 import thatline.localup.auth.exception.InvalidCredentialsException
+import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
 import thatline.localup.user.repository.mongodb.UserMongoDbRepository
 import java.util.*
@@ -46,6 +49,7 @@ class AuthService(
         val newUser = UserMongoDbEntity(
             email = email,
             password = hashedPassword,
+            role = Role.USER,
             zipCode = null,
             address = null,
             addressDetail = null,
@@ -56,7 +60,16 @@ class AuthService(
         userRepository.save(newUser)
     }
 
-    fun findUserIdByAccessToken(accessToken: String): String? {
-        return userTokenRedisService.findUserIdByAccessToken(accessToken)
+    fun findUserDetailsByAccessToken(accessToken: String): UserDetails? {
+        val userId = userTokenRedisService.findUserIdByAccessToken(accessToken)
+            ?: return null
+
+        val user = userRepository.findByIdOrNull(userId)
+            ?: return null
+
+        return UserDetails(
+            id = user.id,
+            role = user.role
+        )
     }
 }
