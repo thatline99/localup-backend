@@ -44,8 +44,17 @@ jobs:
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Pull and deploy
+      - name: Stop existing container
         run: |
-          cd ~/test/localup-backend
-          docker-compose -f docker/production/docker-compose.yaml pull
-          docker-compose -f docker/production/docker-compose.yaml up -d
+          docker stop localup-backend || true
+          docker rm localup-backend || true
+
+      - name: Run new container
+        run: |
+          docker run -d \
+            --name localup-backend \
+            -p 8080:8080 \
+            --env-file /home/thatline/localup_environment/.env \
+            -e SPRING_PROFILES_ACTIVE=production \
+            --network localup_environment_default \
+            ghcr.io/thatline99/localup-backend:latest
