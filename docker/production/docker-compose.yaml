@@ -1,4 +1,4 @@
-# 실행: docker compose -f docker/production/docker-compose.yml up -d
+# 실행: docker compose -f docker/production/docker-compose.yaml up -d
 services:
   app:
     image: localup-backend:latest
