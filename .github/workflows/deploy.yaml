@@ -44,6 +44,12 @@ jobs:
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Check current user
+        run: |
+          whoami
+          groups
+          ls -la /var/run/docker.sock
+
       - name: Stop existing container
         run: |
           docker stop localup-backend || true
