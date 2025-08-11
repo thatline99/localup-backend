@@ -1,10 +1,11 @@
 services:
   app:
-    build: .
-    container_name: localup
+    image: localup-backend:latest
+    container_name: localup-backend
     ports:
       - "8080:8080"
     env_file:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=production
+    restart: unless-stopped
