@@ -10,3 +10,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=production
     restart: unless-stopped
+    networks:
+      - localup_environment_default
+networks:
+  localup_environment_default:
+    external: true
