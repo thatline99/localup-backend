@@ -1,6 +1,8 @@
 package thatline.localup.user.service
 
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MaxValidatorForLong
 import org.springframework.stereotype.Service
+import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.mongodb.BusinessMongoDbEntity
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
@@ -15,6 +17,29 @@ class UserService(
     private val userRepository: UserMongoDbRepository,
     private val businessRepository: BusinessMongoDbRepository,
 ) {
+    fun findBusiness(
+        userId: String,
+    ): FindBusinessDto? {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+
+        val businessId = foundUser.businessId ?: return null
+
+        val foundBusiness = businessRepository.findById(businessId)
+            .orElseThrow { BusinessNotRegisteredException() }
+
+        return FindBusinessDto(
+            name = foundBusiness.name,
+            zipCode = foundBusiness.zipCode,
+            address = foundBusiness.address,
+            addressDetail = foundBusiness.addressDetail,
+            latitude = foundBusiness.latitude,
+            longitude = foundBusiness.longitude,
+            type = foundBusiness.type,
+            item = foundBusiness.item,
+        )
+    }
+
     fun registerBusiness(
         userId: String,
         businessName: String,

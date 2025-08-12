@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import thatline.localup.common.response.BaseResponse
+import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
@@ -18,6 +19,19 @@ import thatline.localup.user.service.UserService
 class UserController(
     private val userService: UserService,
 ) {
+    @GetMapping("/business")
+    fun findBusiness(
+        @AuthenticationPrincipal userId: String,
+    ): ResponseEntity<BaseResponse<FindBusinessDto>> {
+        val findBusinessDto = userService.findBusiness(userId)
+
+        return ResponseEntity.ok(
+            BaseResponse.success(
+                data = findBusinessDto,
+            )
+        )
+    }
+
     @PostMapping("/business")
     fun registerBusiness(
         @AuthenticationPrincipal userId: String,
