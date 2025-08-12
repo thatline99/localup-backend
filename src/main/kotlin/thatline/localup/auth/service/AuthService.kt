@@ -50,11 +50,7 @@ class AuthService(
             email = email,
             password = hashedPassword,
             role = Role.USER,
-            zipCode = null,
-            address = null,
-            addressDetail = null,
-            latitude = null,
-            longitude = null,
+            businessId = null,
         )
 
         userRepository.save(newUser)

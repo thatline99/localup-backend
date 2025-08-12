@@ -5,21 +5,23 @@ import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.NotBlank
 import thatline.localup.common.annotation.NotBlankIfNotNull
 
-data class UpdateAddressRequest(
+data class UpdateBusinessRequest(
     @field:NotBlank
-    val zipCode: String,
-
+    val businessName: String,
     @field:NotBlank
-    val address: String,
-
+    val businessZipCode: String,
+    @field:NotBlank
+    val businessAddress: String,
     @field:NotBlankIfNotNull
-    val addressDetail: String?,
-
+    val businessAddressDetail: String?,
     @field:DecimalMin(value = "-90.0")
     @field:DecimalMax(value = "90.0")
-    val latitude: Double,
-
+    val businessLatitude: Double,
     @field:DecimalMin(value = "-180.0")
     @field:DecimalMax(value = "180.0")
-    val longitude: Double,
+    val businessLongitude: Double,
+    @field:NotBlank
+    val businessType: String,
+    @field:NotBlank
+    val businessItem: String,
 )

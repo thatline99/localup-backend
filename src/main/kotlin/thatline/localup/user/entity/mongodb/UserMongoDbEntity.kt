@@ -1,9 +1,10 @@
 package thatline.localup.user.entity.mongodb
 
 import org.bson.types.ObjectId
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
-import thatline.localup.common.entity.mongodb.BaseMongoDbEntity
 import thatline.localup.common.constant.Role
+import thatline.localup.common.entity.mongodb.BaseMongoDbEntity
 import java.time.LocalDateTime
 
 @Document(collection = "user")
@@ -20,14 +21,7 @@ class UserMongoDbEntity(
 
     val role: Role,
 
-    val zipCode: String?,
-
-    val address: String?,
-
-    val addressDetail: String?,
-
-    val latitude: Double?,
-
-    val longitude: Double?,
+    @Indexed(unique = true, sparse = true)
+    val businessId: String?,
 
     ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
