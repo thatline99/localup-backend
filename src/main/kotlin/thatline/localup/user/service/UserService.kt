@@ -1,43 +1,98 @@
 package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
+import thatline.localup.user.entity.mongodb.BusinessMongoDbEntity
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
+import thatline.localup.user.exception.BusinessAlreadyRegisteredException
+import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
+import thatline.localup.user.repository.mongodb.BusinessMongoDbRepository
 import thatline.localup.user.repository.mongodb.UserMongoDbRepository
 import java.time.LocalDateTime
 
 @Service
 class UserService(
     private val userRepository: UserMongoDbRepository,
+    private val businessRepository: BusinessMongoDbRepository,
 ) {
-    fun updateAddress(
-        id: String,
-        zipCode: String,
-        address: String,
-        addressDetail: String?,
-        latitude: Double,
-        longitude: Double,
+    fun registerBusiness(
+        userId: String,
+        businessName: String,
+        businessZipCode: String,
+        businessAddress: String,
+        businessAddressDetail: String?,
+        businessLatitude: Double,
+        businessLongitude: Double,
+        businessType: String,
+        businessItem: String,
     ) {
-        val user = userRepository.findById(id)
+        val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
 
+        if (foundUser.businessId != null) {
+            throw BusinessAlreadyRegisteredException()
+        }
+
+        val newBusiness = BusinessMongoDbEntity(
+            name = businessName,
+            zipCode = businessZipCode,
+            address = businessAddress,
+            addressDetail = businessAddressDetail,
+            latitude = businessLatitude,
+            longitude = businessLongitude,
+            type = businessType,
+            item = businessItem,
+        )
+
+        val savedBusiness = businessRepository.save(newBusiness)
+
         val updatedUser = UserMongoDbEntity(
-            id = user.id,
-            createdDate = user.createdDate,
+            id = foundUser.id,
+            createdDate = foundUser.createdDate,
             lastModifiedDate = LocalDateTime.now(),
-
-            email = user.email,
-            password = user.password,
-            role = user.role,
-
-            zipCode = zipCode,
-            address = address,
-            addressDetail = addressDetail,
-            latitude = latitude,
-            longitude = longitude
+            email = foundUser.email,
+            password = foundUser.password,
+            role = foundUser.role,
+            businessId = savedBusiness.id,
         )
 
         userRepository.save(updatedUser)
+    }
+
+    fun updateBusiness(
+        userId: String,
+        businessName: String,
+        businessZipCode: String,
+        businessAddress: String,
+        businessAddressDetail: String?,
+        businessLatitude: Double,
+        businessLongitude: Double,
+        businessType: String,
+        businessItem: String,
+    ) {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+
+        val businessId = foundUser.businessId ?: throw BusinessNotRegisteredException()
+
+        val foundBusiness = businessRepository.findById(businessId)
+            .orElseThrow { BusinessNotRegisteredException() }
+
+        val updatedBusiness = BusinessMongoDbEntity(
+            id = businessId,
+            createdDate = foundBusiness.createdDate,
+            lastModifiedDate = LocalDateTime.now(),
+            name = businessName,
+            zipCode = businessZipCode,
+            address = businessAddress,
+            addressDetail = businessAddressDetail,
+            latitude = businessLatitude,
+            longitude = businessLongitude,
+            type = businessType,
+            item = businessItem,
+        )
+
+        businessRepository.save(updatedBusiness)
     }
 
     // TODO: 추후
