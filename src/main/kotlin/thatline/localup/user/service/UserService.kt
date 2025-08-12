@@ -36,6 +36,8 @@ class UserService(
             longitude = foundBusiness.longitude,
             type = foundBusiness.type,
             item = foundBusiness.item,
+            averageOrderAmount = foundBusiness.averageOrderAmount,
+            seatCount = foundBusiness.seatCount,
         )
     }
 
@@ -49,6 +51,8 @@ class UserService(
         businessLongitude: Double,
         businessType: String,
         businessItem: String,
+        businessAverageOrderAmount: Double,
+        businessSeatCount: Int,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -66,6 +70,8 @@ class UserService(
             longitude = businessLongitude,
             type = businessType,
             item = businessItem,
+            averageOrderAmount = businessAverageOrderAmount,
+            seatCount = businessSeatCount,
         )
 
         val savedBusiness = businessRepository.save(newBusiness)
@@ -93,6 +99,8 @@ class UserService(
         businessLongitude: Double,
         businessType: String,
         businessItem: String,
+        businessAverageOrderAmount: Double,
+        businessSeatCount: Int,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -114,6 +122,8 @@ class UserService(
             longitude = businessLongitude,
             type = businessType,
             item = businessItem,
+            averageOrderAmount = businessAverageOrderAmount,
+            seatCount = businessSeatCount,
         )
 
         businessRepository.save(updatedBusiness)

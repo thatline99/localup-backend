@@ -36,4 +36,10 @@ class BusinessMongoDbEntity(
 
     // 업종, 주종목
     val item: String,
+
+    // 평균 객단가
+    val averageOrderAmount: Double,
+
+    // 좌석 수
+    val seatCount: Int,
 ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)

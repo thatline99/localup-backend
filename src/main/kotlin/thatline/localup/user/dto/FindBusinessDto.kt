@@ -9,4 +9,6 @@ data class FindBusinessDto(
     val longitude: Double,
     val type: String,
     val item: String,
+    val averageOrderAmount: Double,
+    val seatCount: Int,
 )
