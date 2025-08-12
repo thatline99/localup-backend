@@ -1,6 +1,5 @@
 package thatline.localup.user.service
 
-import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.MaxValidatorForLong
 import org.springframework.stereotype.Service
 import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.mongodb.BusinessMongoDbEntity
