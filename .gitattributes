@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Ensure yaml files always use LF
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Ensure properties files always use LF
+*.properties text eol=lf
+
+# Ensure source code files always use LF
+*.kt text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.gradle text eol=lf
+
+# Binary files
+*.jar binary
+*.exe binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
