@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
     basePackages = [
         "thatline.localup.auth.repository.mongodb",
         "thatline.localup.user.repository.mongodb",
+        "thatline.localup.storage.repository.mongodb",
     ]
 )
 class MongoDbConfiguration

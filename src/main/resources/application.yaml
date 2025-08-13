@@ -3,6 +3,10 @@ spring:
     name: localup
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 tour-api:
   base-url: https://apis.data.go.kr
@@ -69,8 +73,8 @@ etc-api:
       # 초단기실황조회
       get-ultra-srt-ncst:
         second-path: /getUltraSrtNcst
-        date-type: JSON
+        response-type: JSON
       # 예보버전조회
       get-fcst-version:
         second-path: /getFcstVersion
-        date-type: JSON
+        response-type: JSON
