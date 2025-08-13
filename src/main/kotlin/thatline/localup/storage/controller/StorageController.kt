@@ -13,6 +13,7 @@ import thatline.localup.storage.response.FileListResponse
 import thatline.localup.storage.response.FileUploadResponse
 import thatline.localup.storage.service.StorageService
 import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @RestController
 @RequestMapping("/api/storage")
@@ -20,6 +21,7 @@ class StorageController(
     private val storageService: StorageService,
 ) {
     @PostMapping("/upload")
+    @RequireUser
     fun uploadFile(
         @AuthenticationPrincipal userId: String,
         @RequestParam("file") file: MultipartFile,
@@ -30,6 +32,7 @@ class StorageController(
     }
     
     @GetMapping("/files")
+    @RequireUser
     fun getUserFiles(
         @AuthenticationPrincipal userId: String,
     ): ResponseEntity<BaseResponse<FileListResponse>> {
@@ -39,6 +42,7 @@ class StorageController(
     }
     
     @DeleteMapping("/files/{fileId}")
+    @RequireUser
     fun deleteFile(
         @AuthenticationPrincipal userId: String,
         @PathVariable fileId: String,
@@ -48,11 +52,12 @@ class StorageController(
         return if (isDeleted) {
             ResponseEntity.ok(BaseResponse.success())
         } else {
-            ResponseEntity.notFound().build()
+            ResponseEntity.status(404).body(BaseResponse.error("파일을 찾을 수 없습니다"))
         }
     }
     
     @GetMapping("/files/{fileId}/download")
+    @RequireUser
     fun downloadFile(
         @AuthenticationPrincipal userId: String,
         @PathVariable fileId: String,
@@ -61,7 +66,7 @@ class StorageController(
             ?: return ResponseEntity.notFound().build()
         
         val fileName = fileResource.second
-        val encodedFileName = URLEncoder.encode(fileName, "UTF-8")
+        val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
             .replace("+", "%20")
         
         return ResponseEntity.ok()
