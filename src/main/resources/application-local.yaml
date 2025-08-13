@@ -53,6 +53,9 @@ tour-api:
   data-lab-service:
     service-key: ${DATA_LAB_SERVICE}
 
+storage:
+  base-path: ./uploads
+
 etc-api:
   # 기상청 (Korea Meteorological Administration)
   kma:
