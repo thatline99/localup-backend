@@ -3,7 +3,6 @@ package thatline.localup.etcapi.service
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import thatline.localup.common.util.DateTimeUtil
-import thatline.localup.common.util.KmaUtil
 import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
 import thatline.localup.etcapi.dto.DailyWeather
 import thatline.localup.etcapi.dto.WeatherCondition
@@ -20,16 +19,14 @@ class WeatherService(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     fun getThreeDayWeatherSummaries(
-        latitude: Double,
-        longitude: Double,
+        nx: Int,
+        ny: Int,
     ): List<DailyWeather> {
         val baseDateTime = LocalDateTime.now()
             .minusMinutes(10) // 단기예보조회, API 제공 시간 10분 보정
             .truncatedTo(ChronoUnit.HOURS)
         val baseDate = baseDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val baseTime = "0200"
-
-        val (nx, ny) = KmaUtil.convertCoordinatesToGrid(latitude, longitude)
 
         val response = etcApiRestClient.getVilageFcst(
             pageNo = 1,
@@ -47,6 +44,7 @@ class WeatherService(
                 response.response.header.resultMsg
             )
 
+            // TODO: 로직 재사용함, 수정 필요
             throw WeatherServiceException(
                 message = UltraSrtNcstResponseCode.from(response.response.header.resultCode).message
             )
