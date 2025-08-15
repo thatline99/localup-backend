@@ -1,12 +1,14 @@
 package thatline.localup.etcapi.service
 
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
 import thatline.localup.etcapi.dto.DailyWeather
 import thatline.localup.etcapi.dto.WeatherCondition
+import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.etcapi.restclient.EtcApiRestClient
 import thatline.localup.localup.exception.WeatherServiceException
 import java.time.LocalDate
@@ -19,9 +21,13 @@ class WeatherService(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    @Cacheable(
+        value = ["weatherCache"],
+        key = "#sigunguCode + '-' + T(java.time.LocalDateTime).now().withMinute(0).withSecond(0).withNano(0).withHour((T(java.time.LocalDateTime).now().hour / 3) * 3).format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMdd-HHmm'))"
+    )
     fun getThreeDayWeatherSummaries(
         sigunguCode: String,
-    ): List<DailyWeather> {
+    ): WeatherInformation {
         val baseDateTime = LocalDateTime.now()
             .minusMinutes(10) // 단기예보조회, API 제공 시간 10분 보정
             .truncatedTo(ChronoUnit.HOURS)
@@ -57,7 +63,7 @@ class WeatherService(
         val body = response.response.body
             ?: throw WeatherServiceException(message = "BODY_IS_NULL")
 
-        return body.items.item
+        val dailyWeatherList = body.items.item
             .groupBy { it.fcstDate }
             .toSortedMap().entries.map { (date, items) ->
                 val precipitationTypeValues = items
@@ -85,6 +91,11 @@ class WeatherService(
                     maximumTemperature = maximumTemperature,
                 )
             }
+
+        return WeatherInformation(
+            updatedDate = getThreeHourBaseDateTime(),
+            dailyWeatherList = dailyWeatherList,
+        )
     }
 
     private fun determinePrecipitationCondition(precipitationTypeValues: List<String>): WeatherCondition {
@@ -130,5 +141,12 @@ class WeatherService(
             "1" -> WeatherCondition.SUNNY
             else -> WeatherCondition.UNKNOWN
         }
+    }
+
+    private fun getThreeHourBaseDateTime(): LocalDateTime {
+        val now = LocalDateTime.now()
+
+        return now.truncatedTo(ChronoUnit.HOURS)
+            .withHour((now.hour / 3) * 3)
     }
 }
