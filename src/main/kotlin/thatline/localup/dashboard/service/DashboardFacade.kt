@@ -1,7 +1,6 @@
 package thatline.localup.dashboard.service
 
 import org.springframework.stereotype.Service
-import thatline.localup.common.constant.TourApi
 import thatline.localup.etcapi.dto.DailyWeather
 import thatline.localup.etcapi.service.WeatherService
 import thatline.localup.user.service.UserService
@@ -14,13 +13,6 @@ class DashboardFacade(
     fun getDashboardOverview(userId: String): List<DailyWeather> {
         val foundUserBusinessDto = userService.findBusiness(userId)
 
-        // TODO: 로직 개선 필요
-        val tourApiArea = TourApi.getTourApiAreaBySigunguCode(foundUserBusinessDto.sigunguCode)
-            ?: throw IllegalArgumentException()
-
-        return weatherService.getThreeDayWeatherSummaries(
-            nx = tourApiArea.nx,
-            ny = tourApiArea.ny,
-        )
+        return weatherService.getThreeDayWeatherSummaries(foundUserBusinessDto.sigunguCode)
     }
 }

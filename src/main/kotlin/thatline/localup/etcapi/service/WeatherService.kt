@@ -2,6 +2,7 @@ package thatline.localup.etcapi.service
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
 import thatline.localup.etcapi.dto.DailyWeather
@@ -19,8 +20,7 @@ class WeatherService(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     fun getThreeDayWeatherSummaries(
-        nx: Int,
-        ny: Int,
+        sigunguCode: String,
     ): List<DailyWeather> {
         val baseDateTime = LocalDateTime.now()
             .minusMinutes(10) // 단기예보조회, API 제공 시간 10분 보정
@@ -28,13 +28,17 @@ class WeatherService(
         val baseDate = baseDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val baseTime = "0200"
 
+        // TODO: 로직 개선 필요
+        val tourApiArea = TourApi.getTourApiAreaBySigunguCode(sigunguCode)
+            ?: throw IllegalArgumentException()
+
         val response = etcApiRestClient.getVilageFcst(
             pageNo = 1,
             numOfRows = 834, // 기준 날짜(254개) + 내일(290개) + 모레(290개)
             baseDate = baseDate,
             baseTime = baseTime,
-            nx = nx,
-            ny = ny,
+            nx = tourApiArea.nx,
+            ny = tourApiArea.ny,
         )
 
         if (response.response.header.resultCode != "00") {
