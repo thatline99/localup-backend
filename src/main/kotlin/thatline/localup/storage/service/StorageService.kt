@@ -4,9 +4,9 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import thatline.localup.storage.entity.mongodb.FileMongoDbEntity
+import thatline.localup.storage.entity.FileMongoDbEntity
 import thatline.localup.storage.property.StorageProperty
-import thatline.localup.storage.repository.mongodb.FileMongoDbRepository
+import thatline.localup.storage.repository.FileMongoDbRepository
 import thatline.localup.storage.response.FileInfo
 import thatline.localup.storage.response.FileListResponse
 import thatline.localup.storage.response.FileUploadResponse

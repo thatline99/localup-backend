@@ -1,12 +1,10 @@
-package thatline.localup.auth.entity.mongodb
+package thatline.localup.auth.entity
 
-import jakarta.persistence.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDateTime
 
 @Document(collection = "user_token")
 class UserTokenMongoDbEntity(
-    @Id
     val accessToken: String,
 
     val userId: String,

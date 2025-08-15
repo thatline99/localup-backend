@@ -5,7 +5,7 @@ import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import thatline.localup.common.annotation.NotBlankIfNotNull
-import thatline.localup.user.entity.mongodb.CustomerSegment
+import thatline.localup.user.entity.CustomerSegment
 
 data class RegisterBusinessRequest(
     @field:NotBlank

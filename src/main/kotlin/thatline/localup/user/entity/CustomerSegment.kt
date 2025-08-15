@@ -1,4 +1,4 @@
-package thatline.localup.user.entity.mongodb
+package thatline.localup.user.entity
 
 enum class CustomerSegment {
     FAMILY,         // 가족

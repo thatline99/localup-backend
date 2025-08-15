@@ -2,14 +2,14 @@ package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
 import thatline.localup.user.dto.FindBusinessDto
-import thatline.localup.user.entity.mongodb.BusinessMongoDbEntity
-import thatline.localup.user.entity.mongodb.CustomerSegment
-import thatline.localup.user.entity.mongodb.UserMongoDbEntity
+import thatline.localup.user.entity.BusinessMongoDbEntity
+import thatline.localup.user.entity.CustomerSegment
+import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
-import thatline.localup.user.repository.mongodb.BusinessMongoDbRepository
-import thatline.localup.user.repository.mongodb.UserMongoDbRepository
+import thatline.localup.user.repository.BusinessMongoDbRepository
+import thatline.localup.user.repository.UserMongoDbRepository
 import java.time.LocalDateTime
 
 @Service

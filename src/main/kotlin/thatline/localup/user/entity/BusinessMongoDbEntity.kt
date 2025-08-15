@@ -1,8 +1,8 @@
-package thatline.localup.user.entity.mongodb
+package thatline.localup.user.entity
 
 import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.mapping.Document
-import thatline.localup.common.entity.mongodb.BaseMongoDbEntity
+import thatline.localup.common.entity.BaseMongoDbEntity
 import java.time.LocalDateTime
 
 @Document(collection = "business")
