@@ -19,11 +19,11 @@ class UserService(
 ) {
     fun findBusiness(
         userId: String,
-    ): FindBusinessDto? {
+    ): FindBusinessDto {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
 
-        val businessId = foundUser.businessId ?: return null
+        val businessId = foundUser.businessId ?: throw BusinessNotRegisteredException()
 
         val foundBusiness = businessRepository.findById(businessId)
             .orElseThrow { BusinessNotRegisteredException() }
