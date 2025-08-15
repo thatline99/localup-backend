@@ -30,7 +30,7 @@ class UserService(
 
         return FindBusinessDto(
             name = foundBusiness.name,
-
+            sigunguCode = foundBusiness.sigunguCode,
             zipCode = foundBusiness.zipCode,
             address = foundBusiness.address,
             addressDetail = foundBusiness.addressDetail,
