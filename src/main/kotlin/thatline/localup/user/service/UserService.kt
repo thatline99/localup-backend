@@ -30,6 +30,7 @@ class UserService(
 
         return FindBusinessDto(
             name = foundBusiness.name,
+
             zipCode = foundBusiness.zipCode,
             address = foundBusiness.address,
             addressDetail = foundBusiness.addressDetail,
@@ -46,6 +47,7 @@ class UserService(
     fun registerBusiness(
         userId: String,
         businessName: String,
+        businessSigunguCode: String,
         businessZipCode: String,
         businessAddress: String,
         businessAddressDetail: String?,
@@ -66,6 +68,7 @@ class UserService(
 
         val newBusiness = BusinessMongoDbEntity(
             name = businessName,
+            sigunguCode = businessSigunguCode,
             zipCode = businessZipCode,
             address = businessAddress,
             addressDetail = businessAddressDetail,
@@ -96,6 +99,7 @@ class UserService(
     fun updateBusiness(
         userId: String,
         businessName: String,
+        businessSigunguCode: String,
         businessZipCode: String,
         businessAddress: String,
         businessAddressDetail: String?,
@@ -120,6 +124,7 @@ class UserService(
             createdDate = foundBusiness.createdDate,
             lastModifiedDate = LocalDateTime.now(),
             name = businessName,
+            sigunguCode = businessSigunguCode,
             zipCode = businessZipCode,
             address = businessAddress,
             addressDetail = businessAddressDetail,
