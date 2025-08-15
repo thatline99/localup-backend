@@ -27,20 +27,20 @@ class StorageController(
         @RequestParam("file") file: MultipartFile,
     ): ResponseEntity<BaseResponse<FileUploadResponse>> {
         val uploadedFile = storageService.uploadFile(userId, file)
-        
+
         return ResponseEntity.ok(BaseResponse.success(uploadedFile))
     }
-    
+
     @GetMapping("/files")
     @RequireUser
     fun getUserFiles(
         @AuthenticationPrincipal userId: String,
     ): ResponseEntity<BaseResponse<FileListResponse>> {
         val fileList = storageService.getUserFiles(userId)
-        
+
         return ResponseEntity.ok(BaseResponse.success(fileList))
     }
-    
+
     @DeleteMapping("/files/{fileId}")
     @RequireUser
     fun deleteFile(
@@ -48,14 +48,14 @@ class StorageController(
         @PathVariable fileId: String,
     ): ResponseEntity<BaseResponse<Unit>> {
         val isDeleted = storageService.deleteFile(userId, fileId)
-        
+
         return if (isDeleted) {
             ResponseEntity.ok(BaseResponse.success())
         } else {
-            ResponseEntity.status(404).body(BaseResponse.error("파일을 찾을 수 없습니다"))
+            ResponseEntity.status(404).body(BaseResponse.failure(message = "파일을 찾을 수 없습니다"))
         }
     }
-    
+
     @GetMapping("/files/{fileId}/download")
     @RequireUser
     fun downloadFile(
@@ -64,11 +64,11 @@ class StorageController(
     ): ResponseEntity<Resource> {
         val fileResource = storageService.downloadFile(userId, fileId)
             ?: return ResponseEntity.notFound().build()
-        
+
         val fileName = fileResource.second
         val encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8)
             .replace("+", "%20")
-        
+
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(

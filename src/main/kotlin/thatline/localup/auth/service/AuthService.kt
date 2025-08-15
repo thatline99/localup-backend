@@ -9,8 +9,8 @@ import thatline.localup.auth.dto.UserDetails
 import thatline.localup.auth.exception.DuplicateEmailException
 import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.common.constant.Role
-import thatline.localup.user.entity.mongodb.UserMongoDbEntity
-import thatline.localup.user.repository.mongodb.UserMongoDbRepository
+import thatline.localup.user.entity.UserMongoDbEntity
+import thatline.localup.user.repository.UserMongoDbRepository
 import java.util.*
 
 @Service
