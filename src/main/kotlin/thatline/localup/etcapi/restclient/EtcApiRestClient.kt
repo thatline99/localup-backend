@@ -9,7 +9,11 @@ import thatline.localup.common.property.EtcApiProperty
 import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
+import thatline.localup.etcapi.response.GetVilageFcstResponse
 import java.net.URI
+
+// TODO: RENAME
+// - EtcApi 라고 정의해서 알기 어렵다. 분리가 필요하다.
 
 @Service
 class EtcApiRestClient(
@@ -57,6 +61,57 @@ class EtcApiRestClient(
             .toUri()
 
         val response = retrieveTourApi(uri, GetUltraSrtNcstResponse::class.java)
+
+        if (response.response.header.resultCode != "00") {
+            log.warn(
+                "resultCode={}, resultMsg={}",
+                response.response.header.resultCode,
+                response.response.header.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
+     * 기상청_단기예보 ((구) 동네예보) 조회서비스: 단기예보조회
+     *
+     * @param pageNo 페이지 번호
+     * @param numOfRows 한 페이지에 포함할 결과 수
+     * @param baseDate 발표 일자
+     * @param baseTime 발표 시각
+     * @param nx 예보 지점의 X 좌표
+     * @param ny 예보 지점의 Y 좌표
+     * @return [GetVilageFcstResponse]
+     *
+     * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun getVilageFcst(
+        pageNo: Long,
+        numOfRows: Long,
+        baseDate: String,
+        baseTime: String,
+        nx: Int,
+        ny: Int,
+    ): GetVilageFcstResponse {
+        val fromUri = URI.create(
+            "${etcApiProperty.kma.baseUrl}${etcApiProperty.kma.vilageFcstInfoService.firstPath}${etcApiProperty.kma.vilageFcstInfoService.getVilageFcst.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", etcApiProperty.kma.vilageFcstInfoService.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("dataType", etcApiProperty.kma.vilageFcstInfoService.getUltraSrtNcst.dataType)
+            .queryParam("base_date", baseDate)
+            .queryParam("base_time", baseTime)
+            .queryParam("nx", nx)
+            .queryParam("ny", ny)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, GetVilageFcstResponse::class.java)
 
         if (response.response.header.resultCode != "00") {
             log.warn(
