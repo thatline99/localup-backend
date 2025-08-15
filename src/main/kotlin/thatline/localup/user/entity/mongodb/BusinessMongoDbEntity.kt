@@ -42,4 +42,7 @@ class BusinessMongoDbEntity(
 
     // 좌석 수
     val seatCount: Int,
+
+    // 주요 고객층 (선택)
+    val customerSegments: Set<CustomerSegment>,
 ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)

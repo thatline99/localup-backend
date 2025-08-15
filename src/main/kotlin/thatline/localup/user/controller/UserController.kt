@@ -49,6 +49,7 @@ class UserController(
             businessItem = request.businessItem,
             businessAverageOrderAmount = request.businessAverageOrderAmount,
             businessSeatCount = request.businessSeatCount,
+            businessCustomerSegments = request.businessCustomerSegments,
         )
 
         return ResponseEntity.ok(BaseResponse.success())
@@ -71,6 +72,7 @@ class UserController(
             businessItem = request.businessItem,
             businessAverageOrderAmount = request.businessAverageOrderAmount,
             businessSeatCount = request.businessSeatCount,
+            businessCustomerSegments = request.businessCustomerSegments,
         )
 
         return ResponseEntity.ok(BaseResponse.success())

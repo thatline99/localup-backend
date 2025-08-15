@@ -5,6 +5,7 @@ import jakarta.validation.constraints.DecimalMin
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import thatline.localup.common.annotation.NotBlankIfNotNull
+import thatline.localup.user.entity.mongodb.CustomerSegment
 
 data class RegisterBusinessRequest(
     @field:NotBlank
@@ -29,4 +30,6 @@ data class RegisterBusinessRequest(
     val businessAverageOrderAmount: Double,
     @field:Min(value = 0)
     val businessSeatCount: Int,
+    // TODO: 유효성 검사, 고민
+    val businessCustomerSegments: Set<CustomerSegment>,
 )

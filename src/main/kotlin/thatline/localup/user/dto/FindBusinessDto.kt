@@ -1,5 +1,7 @@
 package thatline.localup.user.dto
 
+import thatline.localup.user.entity.mongodb.CustomerSegment
+
 data class FindBusinessDto(
     val name: String,
     val zipCode: String,
@@ -11,4 +13,5 @@ data class FindBusinessDto(
     val item: String,
     val averageOrderAmount: Double,
     val seatCount: Int,
+    val customerSegments: Set<CustomerSegment>,
 )

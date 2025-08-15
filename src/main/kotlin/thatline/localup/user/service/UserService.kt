@@ -3,6 +3,7 @@ package thatline.localup.user.service
 import org.springframework.stereotype.Service
 import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.mongodb.BusinessMongoDbEntity
+import thatline.localup.user.entity.mongodb.CustomerSegment
 import thatline.localup.user.entity.mongodb.UserMongoDbEntity
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
@@ -38,6 +39,7 @@ class UserService(
             item = foundBusiness.item,
             averageOrderAmount = foundBusiness.averageOrderAmount,
             seatCount = foundBusiness.seatCount,
+            customerSegments = foundBusiness.customerSegments,
         )
     }
 
@@ -53,6 +55,7 @@ class UserService(
         businessItem: String,
         businessAverageOrderAmount: Double,
         businessSeatCount: Int,
+        businessCustomerSegments: Set<CustomerSegment>,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -72,6 +75,7 @@ class UserService(
             item = businessItem,
             averageOrderAmount = businessAverageOrderAmount,
             seatCount = businessSeatCount,
+            customerSegments = businessCustomerSegments,
         )
 
         val savedBusiness = businessRepository.save(newBusiness)
@@ -101,6 +105,7 @@ class UserService(
         businessItem: String,
         businessAverageOrderAmount: Double,
         businessSeatCount: Int,
+        businessCustomerSegments: Set<CustomerSegment>,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -124,6 +129,7 @@ class UserService(
             item = businessItem,
             averageOrderAmount = businessAverageOrderAmount,
             seatCount = businessSeatCount,
+            customerSegments = businessCustomerSegments,
         )
 
         businessRepository.save(updatedBusiness)
