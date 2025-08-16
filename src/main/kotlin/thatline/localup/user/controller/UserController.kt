@@ -40,6 +40,7 @@ class UserController(
         userService.registerBusiness(
             userId = userId,
             businessName = request.businessName,
+            businessSigunguCode = request.businessSigunguCode,
             businessZipCode = request.businessZipCode,
             businessAddress = request.businessAddress,
             businessAddressDetail = request.businessAddressDetail,
@@ -63,6 +64,7 @@ class UserController(
         userService.updateBusiness(
             userId = userId,
             businessName = request.businessName,
+            businessSigunguCode = request.businessSigunguCode,
             businessZipCode = request.businessZipCode,
             businessAddress = request.businessAddress,
             businessAddressDetail = request.businessAddressDetail,

@@ -16,9 +16,15 @@ class EtcApiProperty(
             val firstPath: String,
             val serviceKey: String,
             val getUltraSrtNcst: GetUltraSrtNcst,
+            val getVilageFcst: GetVilageFcst,
             val getFcstVersion: GetFcstVersion,
         ) {
             data class GetUltraSrtNcst(
+                val secondPath: String,
+                val dataType: String,
+            )
+
+            data class GetVilageFcst(
                 val secondPath: String,
                 val dataType: String,
             )

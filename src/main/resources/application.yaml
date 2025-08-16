@@ -13,7 +13,7 @@ tour-api:
   mobile-os: WEB
   mobile-app: LocalUp
     # 한국관광공사_국문 관광정보 서비스_GW
-    # link: https://www.data.go.kr/data/15101578/openapi.do
+  # link: https://www.data.go.kr/data/15101578/openapi.do
   kor-service2:
     first-path: /B551011/KorService2
     # 지역코드조회
@@ -73,6 +73,10 @@ etc-api:
       # 초단기실황조회
       get-ultra-srt-ncst:
         second-path: /getUltraSrtNcst
+        data-type: JSON
+      # 단기예보조회
+      get-vilage-fcst:
+        second-path: /getVilageFcst
         data-type: JSON
       # 예보버전조회
       get-fcst-version:

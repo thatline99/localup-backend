@@ -11,6 +11,8 @@ data class UpdateBusinessRequest(
     @field:NotBlank
     val businessName: String,
     @field:NotBlank
+    val businessSigunguCode: String,
+    @field:NotBlank
     val businessZipCode: String,
     @field:NotBlank
     val businessAddress: String,

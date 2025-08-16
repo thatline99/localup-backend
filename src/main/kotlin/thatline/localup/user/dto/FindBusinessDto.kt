@@ -4,6 +4,7 @@ import thatline.localup.user.entity.CustomerSegment
 
 data class FindBusinessDto(
     val name: String,
+    val sigunguCode: String,
     val zipCode: String,
     val address: String,
     val addressDetail: String?,

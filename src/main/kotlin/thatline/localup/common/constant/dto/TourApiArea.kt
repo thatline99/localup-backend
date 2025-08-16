@@ -5,4 +5,6 @@ data class TourApiArea(
     val areaNm: String,
     val sigunguCd: String,
     val sigunguNm: String,
+    val nx: Int,
+    val ny: Int,
 )

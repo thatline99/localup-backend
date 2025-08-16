@@ -16,6 +16,9 @@ class BusinessMongoDbEntity(
     // 상호명
     val name: String,
 
+    // 시군구 코드
+    val sigunguCode: String,
+
     // 사업장(단체) 소재지, 우편번호
     val zipCode: String,
 
