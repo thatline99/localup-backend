@@ -2,6 +2,8 @@ package thatline.localup.tourapi.service
 
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import thatline.localup.common.constant.CacheKeyGeneratorName
+import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRanking
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
@@ -13,8 +15,8 @@ class TouristAttractionService(
     private val tourApiRestClient: TourApiRestClient,
 ) {
     @Cacheable(
-        cacheNames = ["lastMonthlyTouristAttractionRankingInformation"],
-        keyGenerator = "lastMonthlyTouristAttractionRankingKeyGenerator",
+        cacheNames = [CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING,
         sync = true
     )
     fun findLastMonthlyTouristAttractionRanking(
