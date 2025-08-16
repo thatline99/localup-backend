@@ -22,7 +22,7 @@ class WeatherService(
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @Cacheable(
-        value = ["weatherCache"],
+        value = ["weatherInformation"],
         key = "#sigunguCode + '-' + T(java.time.LocalDateTime).now().withMinute(0).withSecond(0).withNano(0).withHour((T(java.time.LocalDateTime).now().hour / 3) * 3).format(T(java.time.format.DateTimeFormatter).ofPattern('yyyyMMdd-HHmm'))"
     )
     fun getThreeDayWeatherSummaries(

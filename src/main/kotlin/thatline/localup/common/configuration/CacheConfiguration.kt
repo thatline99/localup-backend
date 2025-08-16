@@ -21,16 +21,29 @@ class CacheConfiguration(
     private val objectMapper: ObjectMapper,
 ) {
     @Bean
-    fun cacheManager(rcf: RedisConnectionFactory): CacheManager {
-        val serializer = Jackson2JsonRedisSerializer(objectMapper, WeatherInformation::class.java)
-
-        val redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+    fun cacheManager(redisConnectionFactory: RedisConnectionFactory): CacheManager {
+        // 기본 캐시 설정
+        val defaultCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
-            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
+            .disableCachingNullValues()
+
+        // 대시보드, 날씨 캐시 설정
+        val weatherInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(objectMapper, WeatherInformation::class.java)
+                )
+            )
             .entryTtl(Duration.ofHours(3))
 
-        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(rcf)
-            .cacheDefaults(redisCacheConfiguration)
+        val cacheConfigurations = mapOf(
+            "weatherInformation" to weatherInformationCacheConfiguration,
+            // 다른 캐시 설정 추가
+        )
+
+        return RedisCacheManager.builder(redisConnectionFactory)
+            .cacheDefaults(defaultCacheConfiguration)
+            .withInitialCacheConfigurations(cacheConfigurations)
             .build()
     }
 }
