@@ -14,8 +14,10 @@ import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.WeatherInformation
+import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import java.time.Duration
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.temporal.ChronoUnit
 
 
@@ -31,17 +33,35 @@ class CacheConfiguration(
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
             .disableCachingNullValues()
 
-        // 대시보드, 날씨 캐시 설정
+        // TODO: 네이밍 통일 필요
+
+        // 대시보드, 지난 달 관광지 랭킹 정보 캐시 설정
+        val lastMonthlyTouristAttractionRankingInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        LastMonthlyTouristAttractionRankingInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofDays(31))
+
+        // 대시보드, 날씨 정보 캐시 설정
         val weatherInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
-                    Jackson2JsonRedisSerializer(objectMapper, WeatherInformation::class.java)
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        WeatherInformation::class.java
+                    )
                 )
             )
             .entryTtl(Duration.ofHours(3))
 
         val cacheConfigurations = mapOf(
             "weatherInformation" to weatherInformationCacheConfiguration,
+            "lastMonthlyTouristAttractionRankingInformation" to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
 
@@ -49,6 +69,17 @@ class CacheConfiguration(
             .cacheDefaults(defaultCacheConfiguration)
             .withInitialCacheConfigurations(cacheConfigurations)
             .build()
+    }
+
+    @Bean
+    fun lastMonthlyTouristAttractionRankingKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[1] as String
+
+            val savedDateTime = YearMonth.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM)
+
+            "$sigunguCode-$savedDateTime"
+        }
     }
 
     @Bean

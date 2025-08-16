@@ -15,15 +15,18 @@ class DashboardFacade(
     fun getDashboardOverview(userId: String): DashboardOverview {
         val foundUserBusinessDto = userService.findBusiness(userId)
 
-        val lastMonthlyTouristAttractionRankingList = touristAttractionService.findLastMonthlyTouristAttractionRanking(
-            areaCode = foundUserBusinessDto.sigunguCode.substring(0, 2),
+        val lastMonthlyTouristAttractionRankingInformation =
+            touristAttractionService.findLastMonthlyTouristAttractionRanking(
+                areaCode = foundUserBusinessDto.sigunguCode.substring(0, 2),
+                sigunguCode = foundUserBusinessDto.sigunguCode
+            )
+
+        val weatherInformation = weatherService.getThreeDayWeatherSummaries(
             sigunguCode = foundUserBusinessDto.sigunguCode
         )
 
-        val weatherInformation = weatherService.getThreeDayWeatherSummaries(foundUserBusinessDto.sigunguCode)
-
         return DashboardOverview(
-            lastMonthlyTouristAttractionRankingList = lastMonthlyTouristAttractionRankingList,
+            lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             weatherInformation = weatherInformation,
         )
     }

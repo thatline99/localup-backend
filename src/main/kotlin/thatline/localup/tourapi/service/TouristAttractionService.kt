@@ -1,8 +1,10 @@
 package thatline.localup.tourapi.service
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRanking
+import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.YearMonth
 
@@ -10,14 +12,21 @@ import java.time.YearMonth
 class TouristAttractionService(
     private val tourApiRestClient: TourApiRestClient,
 ) {
+    @Cacheable(
+        cacheNames = ["lastMonthlyTouristAttractionRankingInformation"],
+        keyGenerator = "lastMonthlyTouristAttractionRankingKeyGenerator",
+        sync = true
+    )
     fun findLastMonthlyTouristAttractionRanking(
         areaCode: String,
         sigunguCode: String,
-    ): List<LastMonthlyTouristAttractionRanking> {
+    ): LastMonthlyTouristAttractionRankingInformation {
+        val yearMonth = YearMonth.now().minusMonths(1)
+
         val response = tourApiRestClient.areaBasedList2(
             pageNo = 1,
             numOfRows = 100,
-            baseYm = YearMonth.now().minusMonths(1).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM),
+            baseYm = yearMonth.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM),
             areaCd = areaCode,
             signguCd = sigunguCode,
         )
@@ -26,7 +35,7 @@ class TouristAttractionService(
 
         // TODO: 예외 처리 필요
 
-        return items
+        val lastMonthlyTouristAttractionRankingList = items
             .map { item ->
                 LastMonthlyTouristAttractionRanking(
                     rank = item.hubRank.toInt(),
@@ -38,5 +47,10 @@ class TouristAttractionService(
                 )
             }
             .sortedBy { it.rank }
+
+        return LastMonthlyTouristAttractionRankingInformation(
+            updatedDate = yearMonth.atDay(1).atStartOfDay(),
+            lastMonthlyTouristAttractionRankingList = lastMonthlyTouristAttractionRankingList
+        )
     }
 }
