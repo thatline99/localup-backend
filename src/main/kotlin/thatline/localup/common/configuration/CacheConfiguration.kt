@@ -12,6 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
+import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
@@ -19,7 +20,6 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.temporal.ChronoUnit
-
 
 @Configuration
 @EnableCaching
@@ -60,8 +60,8 @@ class CacheConfiguration(
             .entryTtl(Duration.ofHours(3))
 
         val cacheConfigurations = mapOf(
-            "weatherInformation" to weatherInformationCacheConfiguration,
-            "lastMonthlyTouristAttractionRankingInformation" to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
+            CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
+            CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
 
