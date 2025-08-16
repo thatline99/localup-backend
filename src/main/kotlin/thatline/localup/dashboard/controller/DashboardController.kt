@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import thatline.localup.common.annotation.RequireUser
 import thatline.localup.common.response.BaseResponse
+import thatline.localup.dashboard.dto.DashboardOverview
 import thatline.localup.dashboard.service.DashboardFacade
-import thatline.localup.etcapi.dto.WeatherInformation
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -19,9 +19,9 @@ class DashboardController(
     @RequireUser
     fun getDashboardOverview(
         @AuthenticationPrincipal userId: String,
-    ): ResponseEntity<BaseResponse<WeatherInformation>> {
-        val cachedWeather = dashboardFacade.getDashboardOverview(userId)
+    ): ResponseEntity<BaseResponse<DashboardOverview>> {
+        val dashboardOverview = dashboardFacade.getDashboardOverview(userId)
 
-        return ResponseEntity.ok(BaseResponse.success(data = cachedWeather))
+        return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
     }
 }
