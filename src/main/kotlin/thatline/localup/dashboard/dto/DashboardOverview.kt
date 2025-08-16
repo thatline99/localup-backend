@@ -2,10 +2,10 @@ package thatline.localup.dashboard.dto
 
 import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
-import thatline.localup.tourapi.dto.VisitorStatistic
+import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 
 data class DashboardOverview(
     val lastMonthlyTouristAttractionRankingInformation: LastMonthlyTouristAttractionRankingInformation,
-    val lastYearSameWeekVisitorStatistics: List<VisitorStatistic>,
+    val lastYearSameWeekVisitorStatisticsInformation: LastYearSameWeekVisitorStatisticsInformation,
     val weatherInformation: WeatherInformation,
 )

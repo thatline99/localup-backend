@@ -7,9 +7,11 @@ import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRanking
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
+import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import thatline.localup.tourapi.dto.VisitorStatistic
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 import kotlin.math.roundToInt
 
@@ -17,7 +19,6 @@ import kotlin.math.roundToInt
 class TouristAttractionService(
     private val tourApiRestClient: TourApiRestClient,
 ) {
-    //
     @Cacheable(
         cacheNames = [CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION],
         keyGenerator = CacheKeyGeneratorName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING,
@@ -61,9 +62,14 @@ class TouristAttractionService(
     }
 
     // TODO-noah: API의 한계로 별도의 배치 작업으로 개선하면 좋을 것 같음
+    @Cacheable(
+        cacheNames = [CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS,
+        sync = true
+    )
     fun findLastYearSameWeekVisitorStatistics(
         sigunguCode: String,
-    ): List<VisitorStatistic> {
+    ): LastYearSameWeekVisitorStatisticsInformation {
         val (startDate, endDate) = DateTimeUtil.getLastYearSameIsoWeekRange()
 
         val startYmd = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
@@ -105,6 +111,9 @@ class TouristAttractionService(
             }
             .sortedBy { it.date }
 
-        return visitorStatistics
+        return LastYearSameWeekVisitorStatisticsInformation(
+            updatedDate = LocalDateTime.now(),
+            visitorStatistics = visitorStatistics
+        )
     }
 }
