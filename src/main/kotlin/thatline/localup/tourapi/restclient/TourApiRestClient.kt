@@ -7,6 +7,7 @@ import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.common.property.TourApiProperty
 import thatline.localup.tourapi.exception.ExternalTourApiException
+import thatline.localup.tourapi.exception.TourApiKorService2AreaBasedList2Exception
 import thatline.localup.tourapi.response.*
 import java.net.URI
 import java.net.URLEncoder
@@ -29,6 +30,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaCode2(
         pageNo: Long,
         numOfRows: Long,
@@ -68,6 +70,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun ldongCode2(
         pageNo: Long,
         numOfRows: Long,
@@ -111,7 +114,6 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun korService2AreaBasedList2(
         pageNo: Long? = null,
         numOfRows: Long? = null,
@@ -144,13 +146,24 @@ class TourApiRestClient(
 
         val response = retrieveTourApi(uri, KorService2AreaBasedList2Response::class.java)
 
-        if (response.response.header.resultCode != "00") {
+        val responseHeader = response.response.header
 
+        if (response.response.header.resultCode != "0000") {
+            log.error(
+                "Tour API KorService2 AreaBasedList2 failed. URI: {}, resultCode: {}, resultMessage: {}",
+                uri.toString(),
+                responseHeader.resultCode,
+                responseHeader.resultMsg
+            )
+
+            throw TourApiKorService2AreaBasedList2Exception(
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
         }
 
         return response
     }
-
 
     /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
@@ -164,6 +177,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList(
         pageNo: Long,
         numOfRows: Long,
@@ -206,6 +220,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList2(
         pageNo: Long,
         numOfRows: Long,
@@ -248,6 +263,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128555/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun tatsCnctrRatedList(
         pageNo: Long,
         numOfRows: Long,
@@ -289,6 +305,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun metcoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
@@ -326,6 +343,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun locgoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
