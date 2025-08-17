@@ -1,7 +1,5 @@
 package thatline.localup.tourapi.response
 
-import thatline.localup.tourapi.response.LocgoRegnVisitrDDListResponse.*
-
 /**
  * 한국관광공사_국문 관광정보 서비스_GW: 지역 기반 관광 정보 조회
  *
