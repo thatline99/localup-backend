@@ -2,12 +2,14 @@ package thatline.localup.auth.controller
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import thatline.localup.auth.exception.DuplicateEmailException
-import thatline.localup.auth.exception.InvalidCredentialsException
+import thatline.localup.auth.exception.*
+import thatline.localup.auth.request.KakaoCheckRequest
+import thatline.localup.auth.request.KakaoSignupRequest
 import thatline.localup.auth.request.SignInRequest
 import thatline.localup.auth.request.SignUpRequest
 import thatline.localup.auth.service.AuthService
@@ -60,6 +62,37 @@ class AuthController(
         return ResponseEntity.ok().build()
     }
 
+    @PostMapping("/kakao/check")
+    fun checkKakao(
+        @Valid @RequestBody request: KakaoCheckRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<Void> {
+        val authToken = authService.checkKakaoUser(request.kakaoId, request.email)
+
+        val accessTokenCookie = cookieProvider.createAccessTokenCookie(authToken.accessToken)
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/kakao/signup")
+    fun signUpKakao(
+        @Valid @RequestBody request: KakaoSignupRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<Void> {
+        val authToken = authService.signUpKakaoUser(
+            request.kakaoId,
+            request.email,
+            request.name,
+            request.profileImage
+        )
+
+        val accessTokenCookie = cookieProvider.createAccessTokenCookie(authToken.accessToken)
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+
+        return ResponseEntity.status(HttpStatus.CREATED).build()
+    }
+
     // TODO: noah, 추후 error body 정의
     @ExceptionHandler(InvalidCredentialsException::class)
     fun handleInvalidCredentials(exception: InvalidCredentialsException): ResponseEntity<Void> {
@@ -70,5 +103,20 @@ class AuthController(
     @ExceptionHandler(DuplicateEmailException::class)
     fun handleDuplicateEmail(exception: DuplicateEmailException): ResponseEntity<Void> {
         return ResponseEntity.badRequest().build()
+    }
+
+    @ExceptionHandler(UserNotFoundException::class)
+    fun handleUserNotFound(exception: UserNotFoundException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+    }
+
+    @ExceptionHandler(AccountDisabledException::class)
+    fun handleAccountDisabled(exception: AccountDisabledException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException::class)
+    fun handleEmailAlreadyExists(exception: EmailAlreadyExistsException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.CONFLICT).build()
     }
 }

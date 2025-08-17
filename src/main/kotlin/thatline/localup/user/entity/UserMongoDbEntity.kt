@@ -17,11 +17,19 @@ class UserMongoDbEntity(
 
     val email: String,
 
-    val password: String,
+    val password: String? = null,
 
     val role: Role,
 
     @Indexed(unique = true, sparse = true)
     val businessId: String?,
+
+    val kakaoId: String? = null,
+
+    val name: String? = null,
+
+    val profileImage: String? = null,
+
+    val isActive: Boolean = true,
 
     ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)

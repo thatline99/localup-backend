@@ -6,8 +6,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import thatline.localup.auth.dto.AuthToken
 import thatline.localup.auth.dto.UserDetails
+import thatline.localup.auth.exception.AccountDisabledException
 import thatline.localup.auth.exception.DuplicateEmailException
+import thatline.localup.auth.exception.EmailAlreadyExistsException
 import thatline.localup.auth.exception.InvalidCredentialsException
+import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.repository.UserMongoDbRepository
@@ -67,5 +70,44 @@ class AuthService(
             id = user.id,
             role = user.role
         )
+    }
+
+    fun checkKakaoUser(kakaoId: String, email: String): AuthToken {
+        val user = userRepository.findByKakaoIdAndEmail(kakaoId, email)
+            ?: throw UserNotFoundException()
+
+        if (!user.isActive) {
+            throw AccountDisabledException()
+        }
+
+        val accessToken = UUID.randomUUID().toString()
+        userTokenRedisService.save(accessToken, user.id)
+
+        return AuthToken(accessToken)
+    }
+
+    @Transactional
+    fun signUpKakaoUser(kakaoId: String, email: String, name: String, profileImage: String?): AuthToken {
+        if (userRepository.existsByEmail(email)) {
+            throw EmailAlreadyExistsException()
+        }
+
+        val newUser = UserMongoDbEntity(
+            email = email,
+            password = null,
+            role = Role.USER,
+            businessId = null,
+            kakaoId = kakaoId,
+            name = name,
+            profileImage = profileImage,
+            isActive = true,
+        )
+
+        val savedUser = userRepository.save(newUser)
+
+        val accessToken = UUID.randomUUID().toString()
+        userTokenRedisService.save(accessToken, savedUser.id)
+
+        return AuthToken(accessToken)
     }
 }
