@@ -6,6 +6,7 @@ import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.common.property.TourApiProperty
+import thatline.localup.common.util.queryParamIfNotNull
 import thatline.localup.tourapi.exception.TourApiException
 import thatline.localup.tourapi.exception.TourApiKorService2AreaBasedList2Exception
 import thatline.localup.tourapi.response.*
@@ -130,17 +131,17 @@ class TourApiRestClient(
         val uri = UriComponentsBuilder
             .fromUri(fromUri)
             .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
-            .queryParam("pageNo", pageNo)
-            .queryParam("numOfRows", numOfRows)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", "JSON")
             .queryParam("arrange", "A") // 정렬구분 (A=제목순, C=수정일순, D=생성일순) 대표이미지가반드시있는정렬(O=제목순, Q=수정일순, R=생성일순)
-            .queryParam("lDongRegnCd", lDongRegnCd)
-            .queryParam("lDongSignguCd", lDongSignguCd)
-            .queryParam("lclsSystm1", lclsSystm1)
-            .queryParam("lclsSystm2", lclsSystm2)
-            .queryParam("lclsSystm3", lclsSystm3)
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
+            .queryParamIfNotNull("lDongSignguCd", lDongSignguCd)
+            .queryParamIfNotNull("lclsSystm1", lclsSystm1)
+            .queryParamIfNotNull("lclsSystm2", lclsSystm2)
+            .queryParamIfNotNull("lclsSystm3", lclsSystm3)
             .build(true)
             .toUri()
 

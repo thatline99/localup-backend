@@ -116,4 +116,13 @@ class TouristAttractionService(
             visitorStatistics = visitorStatistics
         )
     }
+
+//    fun findSigunguEvent(
+//        sigunguCode: String,
+//    ) {
+//        val response = tourApiRestClient.korService2AreaBasedList2(
+//            pageNo = 1,
+//            numOfRows =
+//        )
+//    }
 }
