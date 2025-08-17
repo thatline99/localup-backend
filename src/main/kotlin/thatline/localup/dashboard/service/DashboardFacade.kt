@@ -21,12 +21,18 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
+        val lastYearSameWeekVisitorStatisticsInformation =
+            touristAttractionService.findLastYearSameWeekVisitorStatistics(
+                sigunguCode = foundUserBusinessDto.sigunguCode
+            )
+
         val weatherInformation = weatherService.getThreeDayWeatherSummaries(
             sigunguCode = foundUserBusinessDto.sigunguCode
         )
 
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
+            lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
             weatherInformation = weatherInformation,
         )
     }

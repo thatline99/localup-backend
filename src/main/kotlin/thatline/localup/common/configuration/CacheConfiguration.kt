@@ -16,6 +16,7 @@ import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
+import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -47,6 +48,18 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(31))
 
+        // 대시보드, 작년, 같은 주, 지역 방문자 수 통계 정보 캐시 설정
+        val lastYearSameWeekVisitorStatisticsInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        LastYearSameWeekVisitorStatisticsInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofDays(7))
+
         // 대시보드, 날씨 정보 캐시 설정
         val weatherInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
@@ -61,6 +74,7 @@ class CacheConfiguration(
 
         val cacheConfigurations = mapOf(
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
+            CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
             CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
@@ -79,6 +93,20 @@ class CacheConfiguration(
             val savedDateTime = YearMonth.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM)
 
             "$sigunguCode-$savedDateTime"
+        }
+    }
+
+    @Bean
+    fun lastYearSameWeekVisitorStatistics(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[0] as String
+
+            val (startDate, endDate) = DateTimeUtil.getLastYearSameIsoWeekRange()
+
+            val startDateFormat = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+            val endDateFormat = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+            "$sigunguCode-$startDateFormat-$endDateFormat"
         }
     }
 
