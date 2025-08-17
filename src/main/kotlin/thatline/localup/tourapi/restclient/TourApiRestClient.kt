@@ -95,6 +95,57 @@ class TourApiRestClient(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 지역 기반 관광 정보 조회
+     *
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @param lDongRegnCd 법정동 시도 코드 (선택)
+     * @param lDongSignguCd 법정동 시군구 코드 (선택)
+     * @param lclsSystm1 분류 체계 대분류 (선택)
+     * @param lclsSystm2 분류 체계 중분류 (선택)
+     * @param lclsSystm3 분류 체계 소분류 (선택)
+     * @return [KorService2AreaBasedList2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
+    fun korService2AreaBasedList2(
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+        lDongRegnCd: String? = null,
+        lDongSignguCd: String? = null,
+        lclsSystm1: String? = null,
+        lclsSystm2: String? = null,
+        lclsSystm3: String? = null,
+    ): KorService2AreaBasedList2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.areaBasedList2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParam("pageNo", pageNo)
+            .queryParam("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("arrange", "A") // 정렬구분 (A=제목순, C=수정일순, D=생성일순) 대표이미지가반드시있는정렬(O=제목순, Q=수정일순, R=생성일순)
+            .queryParam("lDongRegnCd", lDongRegnCd)
+            .queryParam("lDongSignguCd", lDongSignguCd)
+            .queryParam("lclsSystm1", lclsSystm1)
+            .queryParam("lclsSystm2", lclsSystm2)
+            .queryParam("lclsSystm3", lclsSystm3)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2AreaBasedList2Response::class.java)
+
+        return response
+    }
+
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param pageNo 페이지 번호
