@@ -149,14 +149,8 @@ class TourApiRestClient(
         val responseHeader = response.response.header
 
         if (response.response.header.resultCode != "0000") {
-            log.error(
-                "Tour API KorService2 AreaBasedList2 failed. URI: {}, resultCode: {}, resultMessage: {}",
-                uri.toString(),
-                responseHeader.resultCode,
-                responseHeader.resultMsg
-            )
-
             throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
                 resultMessage = responseHeader.resultMsg
             )
@@ -381,9 +375,14 @@ class TourApiRestClient(
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalTourApiException()
+                ?: throw ExternalTourApiException(
+                    failedUri = uri.toString()
+                )
         } catch (exception: RestClientException) {
-            throw ExternalTourApiException(cause = exception)
+            throw ExternalTourApiException(
+                failedUri = uri.toString(),
+                cause = exception
+            )
         }
     }
 }
