@@ -12,6 +12,7 @@ class DashboardFacade(
     private val touristAttractionService: TouristAttractionService,
     private val weatherService: WeatherService,
 ) {
+    // TODO-noah: rename sigunguCode -> legalDongSigunguCode
     fun getDashboardOverview(userId: String): DashboardOverview {
         val foundUserBusinessDto = userService.findBusiness(userId)
 
@@ -26,6 +27,10 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
+        val sigunguEvents = touristAttractionService.findSigunguEvent(
+            legalDongSigunguCode = foundUserBusinessDto.sigunguCode,
+        )
+
         val weatherInformation = weatherService.getThreeDayWeatherSummaries(
             sigunguCode = foundUserBusinessDto.sigunguCode
         )
@@ -33,6 +38,7 @@ class DashboardFacade(
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
+            sigunguEvents = sigunguEvents,
             weatherInformation = weatherInformation,
         )
     }
