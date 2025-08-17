@@ -1,5 +1,11 @@
 package thatline.localup.tourapi.response
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+
 /**
  * 한국관광공사_국문 관광정보 서비스_GW: 지역 기반 관광 정보 조회
  *
@@ -52,6 +58,7 @@ data class KorService2AreaBasedList2Response(
      *
      * @property item 항목들
      */
+    @JsonDeserialize(using = ItemsJsonDeserializer::class)
     data class Items(
         val item: List<Item>,
     )
@@ -112,4 +119,34 @@ data class KorService2AreaBasedList2Response(
         val lclsSystm2: String,
         val lclsSystm3: String,
     )
+}
+
+private class ItemsJsonDeserializer : JsonDeserializer<KorService2AreaBasedList2Response.Items>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): KorService2AreaBasedList2Response.Items {
+        val jsonNode = p.codec.readTree<JsonNode>(p)
+
+        return when {
+            // 빈 문자열인 경우
+            jsonNode.isTextual && jsonNode.asText().isEmpty() -> {
+                KorService2AreaBasedList2Response.Items(emptyList())
+            }
+
+            // 정상
+            jsonNode.isObject && jsonNode.has("item") -> {
+                val itemJsonNode = jsonNode.get("item")
+
+                val items = if (itemJsonNode.isArray) {
+                    p.codec.treeToValue(itemJsonNode, Array<KorService2AreaBasedList2Response.Item>::class.java)
+                        .toList()
+                } else {
+                    emptyList()
+                }
+                KorService2AreaBasedList2Response.Items(items)
+            }
+
+            else -> {
+                KorService2AreaBasedList2Response.Items(emptyList())
+            }
+        }
+    }
 }
