@@ -6,7 +6,7 @@ import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.common.property.TourApiProperty
-import thatline.localup.tourapi.exception.ExternalTourApiException
+import thatline.localup.tourapi.exception.TourApiException
 import thatline.localup.tourapi.exception.TourApiKorService2AreaBasedList2Exception
 import thatline.localup.tourapi.response.*
 import java.net.URI
@@ -375,11 +375,11 @@ class TourApiRestClient(
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalTourApiException(
+                ?: throw TourApiException(
                     failedUri = uri.toString()
                 )
         } catch (exception: RestClientException) {
-            throw ExternalTourApiException(
+            throw TourApiException(
                 failedUri = uri.toString(),
                 cause = exception
             )

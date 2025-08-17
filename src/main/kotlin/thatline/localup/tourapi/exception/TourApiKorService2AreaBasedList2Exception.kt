@@ -5,7 +5,7 @@ class TourApiKorService2AreaBasedList2Exception(
     val resultCode: String,
     val resultMessage: String,
     cause: Throwable? = null,
-) : ExternalTourApiException(
+) : TourApiException(
     failedUri = failedUri,
     message = resultMessage,
     cause = cause

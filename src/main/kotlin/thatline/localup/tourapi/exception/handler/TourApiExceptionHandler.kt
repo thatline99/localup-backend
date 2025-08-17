@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import thatline.localup.common.response.BaseResponse
+import thatline.localup.tourapi.exception.TourApiException
 import thatline.localup.tourapi.exception.TourApiKorService2AreaBasedList2Exception
 
 @RestControllerAdvice
@@ -26,7 +27,20 @@ class TourApiExceptionHandler {
         )
 
         return ResponseEntity
-            .status(HttpStatus.BAD_GATEWAY)
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(BaseResponse.failure())
+    }
+
+    @ExceptionHandler(TourApiException::class)
+    fun handleTourApiException(exception: TourApiException): ResponseEntity<BaseResponse<Unit>> {
+        log.error(
+            "Tour API failed. URI: {}, message: {}",
+            exception.failedUri,
+            exception.cause?.message,
+        )
+
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(BaseResponse.failure())
     }
 }
