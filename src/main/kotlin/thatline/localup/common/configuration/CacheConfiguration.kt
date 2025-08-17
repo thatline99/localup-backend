@@ -17,6 +17,7 @@ import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
+import thatline.localup.tourapi.dto.SigunguEventInformation
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -60,6 +61,18 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(7))
 
+        // 대시보드, 법정동 시군구 기준, 축제/공연/행사 정보 캐시 설정
+        val sigunguEventInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        SigunguEventInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofDays(1))
+
         // 대시보드, 날씨 정보 캐시 설정
         val weatherInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
@@ -76,6 +89,7 @@ class CacheConfiguration(
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
             CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
             CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
+            CacheObjectName.SIGUNGU_EVENT_INFORMATION to sigunguEventInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
 
@@ -107,6 +121,17 @@ class CacheConfiguration(
             val endDateFormat = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
             "$sigunguCode-$startDateFormat-$endDateFormat"
+        }
+    }
+
+    @Bean
+    fun sigunguEventKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[0] as String
+
+            val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+            "$sigunguCode-$savedDateTime"
         }
     }
 

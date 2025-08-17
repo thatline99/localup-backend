@@ -114,9 +114,14 @@ class TouristAttractionService(
         )
     }
 
+    @Cacheable(
+        cacheNames = [CacheObjectName.SIGUNGU_EVENT_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
+        sync = true
+    )
     fun findSigunguEvent(
         legalDongSigunguCode: String,
-    ): List<SigunguEvent> {
+    ): SigunguEventInformation {
         val response1 = tourApiRestClient.korService2AreaBasedList2(
             pageNo = 1,
             numOfRows = 1,
@@ -151,6 +156,9 @@ class TouristAttractionService(
                 }
             }
 
-        return sigunguEvents
+        return SigunguEventInformation(
+            updatedDate = LocalDateTime.now(),
+            sigunguEvents = sigunguEvents
+        )
     }
 }
