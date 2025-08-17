@@ -136,7 +136,7 @@ class TourApiRestClient(
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", "JSON")
-            .queryParam("arrange", "A") // 정렬구분 (A=제목순, C=수정일순, D=생성일순) 대표이미지가반드시있는정렬(O=제목순, Q=수정일순, R=생성일순)
+            .queryParam("arrange", KorService2Arrange.TITLE.code)
             .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
             .queryParamIfNotNull("lDongSignguCd", lDongSignguCd)
             .queryParamIfNotNull("lclsSystm1", lclsSystm1)
