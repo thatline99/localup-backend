@@ -1,5 +1,6 @@
 package thatline.localup.tourapi.restclient
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
@@ -16,6 +17,8 @@ class TourApiRestClient(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     /**
      * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
      *
@@ -140,6 +143,10 @@ class TourApiRestClient(
             .toUri()
 
         val response = retrieveTourApi(uri, KorService2AreaBasedList2Response::class.java)
+
+        if (response.response.header.resultCode != "00") {
+
+        }
 
         return response
     }
@@ -350,6 +357,8 @@ class TourApiRestClient(
         responseType: Class<T>,
     ): T {
         try {
+            log.debug("URI: {}", uri.toString())
+
             return restClient.get()
                 .uri(uri)
                 .retrieve()

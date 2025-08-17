@@ -7,10 +7,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestPropertySource
 import thatline.localup.tourapi.restclient.TourApiRestClient
 
 @SpringBootTest
 @ActiveProfiles("local")
+@TestPropertySource(properties = ["logging.level.thatline.localup.tourapi.restclient.TourApiRestClient=DEBUG"])
 class KorService2Tests {
     private val log = LoggerFactory.getLogger(this::class.java)
 
