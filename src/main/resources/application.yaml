@@ -24,6 +24,9 @@ tour-api:
     ldong-code2:
       second-path: /ldongCode2
       response-type: JSON
+    # 지역기반 관광 정보 조회
+    area-based-list2:
+      second-path: /areaBasedList2
 
   # 한국관광공사_관광지별 연관 관광지 정보
   # link: https://www.data.go.kr/data/15128560/openapi.do

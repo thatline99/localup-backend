@@ -5,10 +5,7 @@ import org.springframework.stereotype.Service
 import thatline.localup.common.constant.CacheKeyGeneratorName
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
-import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRanking
-import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
-import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
-import thatline.localup.tourapi.dto.VisitorStatistic
+import thatline.localup.tourapi.dto.*
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -114,6 +111,54 @@ class TouristAttractionService(
         return LastYearSameWeekVisitorStatisticsInformation(
             updatedDate = LocalDateTime.now(),
             visitorStatistics = visitorStatistics
+        )
+    }
+
+    @Cacheable(
+        cacheNames = [CacheObjectName.SIGUNGU_EVENT_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
+        sync = true
+    )
+    fun findSigunguEvent(
+        legalDongSigunguCode: String,
+    ): SigunguEventInformation {
+        val response1 = tourApiRestClient.korService2AreaBasedList2(
+            pageNo = 1,
+            numOfRows = 1,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+            lclsSystm1 = "EV"
+        )
+
+        val response2 = tourApiRestClient.korService2AreaBasedList2(
+            pageNo = 1,
+            numOfRows = response1.response.body.totalCount,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+            lclsSystm1 = "EV"
+        )
+
+        val sigunguEvents = response2.response.body.items.item
+            .map {
+                with(it) {
+                    SigunguEvent(
+                        contentTypeId = contenttypeid,
+                        contentId = contentid,
+                        title = title,
+                        zipCode = zipcode,
+                        address = listOf(addr1, addr2).filter { it.isNotBlank() }.joinToString(", "),
+                        latitude = mapy.toDouble(),
+                        longitude = mapx.toDouble(),
+                        originalImageUrl = firstimage,
+                        thumbnailImageUrl = firstimage2,
+                        telephone = tel,
+                    )
+                }
+            }
+
+        return SigunguEventInformation(
+            updatedDate = LocalDateTime.now(),
+            sigunguEvents = sigunguEvents
         )
     }
 }

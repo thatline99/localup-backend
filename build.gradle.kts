@@ -55,4 +55,25 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    loadDotEnv().forEach { (key, value) -> environment(key, value) }
+}
+
+private fun loadDotEnv(): Map<String, String> {
+    val dotEnvFile = rootProject.file(".env")
+
+    if (!dotEnvFile.exists()) {
+        return emptyMap()
+    }
+
+    return dotEnvFile.readLines()
+        .filter { it.isNotBlank() && !it.trim().startsWith("#") }
+        .map {
+            val (key, value) = it.split("=", limit = 2)
+
+            key.trim() to value.trim()
+                .removePrefix("\"").removeSuffix("\"")
+                .removePrefix("'").removeSuffix("'")
+        }
+        .toMap()
 }
