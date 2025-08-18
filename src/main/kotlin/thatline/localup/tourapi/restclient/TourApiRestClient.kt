@@ -161,6 +161,55 @@ class TourApiRestClient(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 소개 정보 조회 15 (축제/공연/행사)
+     *
+     * @param contentId 콘텐츠 ID
+     * @param contentTypeId 콘텐츠 타입 ID, 15로 고정
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @return [KorService2DetailIntro215Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun korService2DetailIntro215(
+        contentId: String,
+        contentTypeId: String = "15",
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+    ): KorService2DetailIntro215Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.detailIntro2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("contentId", contentId)
+            .queryParam("contentTypeId", contentTypeId)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2DetailIntro215Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (response.response.header.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param pageNo 페이지 번호
