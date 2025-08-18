@@ -161,6 +161,62 @@ class TourApiRestClient(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 행사 정보 조회
+     *
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @param eventStartDate 행사 시작일
+     * @param eventEndDate 행사 종료일 (선택)
+     * @param lDongRegnCd 법정동 시도 코드 (선택)
+     * @param lDongSignguCd 법정동 시군구 코드 (선택)
+     * @return [KorService2SearchFestival2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun korService2SearchFestival2(
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+        eventStartDate: String,
+        eventEndDate: String? = null,
+        lDongRegnCd: String? = null,
+        lDongSignguCd: String? = null,
+    ): KorService2SearchFestival2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.searchFestival2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("arrange", KorService2Arrange.TITLE.code)
+            .queryParam("eventStartDate", eventStartDate)
+            .queryParamIfNotNull("eventEndDate", eventEndDate)
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
+            .queryParamIfNotNull("lDongSignguCd", lDongSignguCd)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2SearchFestival2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (response.response.header.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
      * 한국관광공사_국문 관광정보 서비스_GW: 소개 정보 조회 15 (축제/공연/행사)
      *
      * @param contentId 콘텐츠 ID

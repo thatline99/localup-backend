@@ -27,6 +27,9 @@ tour-api:
     # 지역기반 관광 정보 조회
     area-based-list2:
       second-path: /areaBasedList2
+    # 행사 정보 조회
+    search-festival2:
+      second-path: /searchFestival2
     # 소개 정보 조회
     detail-intro2:
       second-path: /detailIntro2
