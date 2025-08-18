@@ -166,7 +166,7 @@ class TouristAttractionService(
 
     @Cacheable(
         cacheNames = [CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION],
-        keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
+        keyGenerator = CacheKeyGeneratorName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END,
         sync = true
     )
     fun findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
