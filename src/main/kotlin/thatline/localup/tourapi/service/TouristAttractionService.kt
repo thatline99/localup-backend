@@ -164,9 +164,14 @@ class TouristAttractionService(
         )
     }
 
+    @Cacheable(
+        cacheNames = [CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
+        sync = true
+    )
     fun findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
         legalDongSigunguCode: String,
-    ): List<SigunguEventWithDates> {
+    ): OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation {
         val now = LocalDate.now()
         val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
@@ -221,6 +226,9 @@ class TouristAttractionService(
                 ongoingEvents.sortedWith(compareBy({ it.endDate }, { it.startDate }, { it.title }, { it.contentId })) +
                 upcomingEvents.sortedWith(compareBy({ it.startDate }, { it.endDate }, { it.title }, { it.contentId }))
 
-        return sortedEvents
+        return OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation(
+            updatedDate = LocalDateTime.now(),
+            sigunguEventsWithDates = sortedEvents
+        )
     }
 }

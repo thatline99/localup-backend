@@ -27,7 +27,7 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
-        val ongoingOrUpComingSigunguEventsFromTodayToMonthEnd =
+        val ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation =
             touristAttractionService.findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
                 legalDongSigunguCode = foundUserBusinessDto.sigunguCode,
             )
@@ -39,7 +39,7 @@ class DashboardFacade(
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
-            ongoingOrUpComingSigunguEventsFromTodayToMonthEnd = ongoingOrUpComingSigunguEventsFromTodayToMonthEnd,
+            ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
             weatherInformation = weatherInformation,
         )
     }
