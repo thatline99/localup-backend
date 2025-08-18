@@ -27,9 +27,10 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
-        val sigunguEventInformation = touristAttractionService.findSigunguEvent(
-            legalDongSigunguCode = foundUserBusinessDto.sigunguCode,
-        )
+        val ongoingOrUpComingSigunguEventsFromTodayToMonthEnd =
+            touristAttractionService.findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
+                legalDongSigunguCode = foundUserBusinessDto.sigunguCode,
+            )
 
         val weatherInformation = weatherService.getThreeDayWeatherSummaries(
             sigunguCode = foundUserBusinessDto.sigunguCode
@@ -38,7 +39,7 @@ class DashboardFacade(
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
-            sigunguEventInformation = sigunguEventInformation,
+            ongoingOrUpComingSigunguEventsFromTodayToMonthEnd = ongoingOrUpComingSigunguEventsFromTodayToMonthEnd,
             weatherInformation = weatherInformation,
         )
     }

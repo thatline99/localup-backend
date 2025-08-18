@@ -10,6 +10,7 @@ import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Service
@@ -114,6 +115,7 @@ class TouristAttractionService(
         )
     }
 
+    @Deprecated("noah: findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd() 메서드로 대체")
     @Cacheable(
         cacheNames = [CacheObjectName.SIGUNGU_EVENT_INFORMATION],
         keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
@@ -160,5 +162,53 @@ class TouristAttractionService(
             updatedDate = LocalDateTime.now(),
             sigunguEvents = sigunguEvents
         )
+    }
+
+    fun findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
+        legalDongSigunguCode: String,
+    ): List<SigunguEventWithDates> {
+        val now = LocalDate.now()
+        val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+        val response1 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = 1,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val response2 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = response1.response.body.totalCount,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val sigunguEventsWithDates = response2.response.body.items.item
+            .map { it ->
+                with(it) {
+                    SigunguEventWithDates(
+                        contentTypeId = contenttypeid,
+                        contentId = contentid,
+                        title = title,
+                        startDate = LocalDate.parse(eventstartdate, DateTimeFormatter.BASIC_ISO_DATE),
+                        endDate = LocalDate.parse(eventenddate, DateTimeFormatter.BASIC_ISO_DATE),
+                        zipCode = zipcode,
+                        address = listOf(addr1, addr2).filter { it.isNotBlank() }.joinToString(", "),
+                        latitude = mapy.toDouble(),
+                        longitude = mapx.toDouble(),
+                        telephone = tel,
+                        originalImageUrl = firstimage,
+                        thumbnailImageUrl = firstimage2,
+                    )
+                }
+            }
+
+        return sigunguEventsWithDates
     }
 }
