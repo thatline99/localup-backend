@@ -209,6 +209,18 @@ class TouristAttractionService(
                 }
             }
 
-        return sigunguEventsWithDates
+        // 오늘 날짜(행사 종료일, 제목, 컨텐츠 ID), 진행 중(행사 종료일, 행사 시작일, 제목, 컨텐츠 ID), 진행 예정(행사 시작일, 행사 종료일, 제목, 컨텐츠 ID) 정렬로 진행
+
+        // 1) 오늘 시작 / 나머지
+        val (todayStartEvents, restEvents) = sigunguEventsWithDates.partition { it.startDate == now }
+        // 2) 진행 중 / 진행 예정
+        val (ongoingEvents, upcomingEvents) = restEvents.partition { it.startDate <= now && now <= it.endDate }
+
+        // 3) 섹션별 정렬 후 합치기
+        val sortedEvents = todayStartEvents.sortedWith(compareBy({ it.endDate }, { it.title }, { it.contentId })) +
+                ongoingEvents.sortedWith(compareBy({ it.endDate }, { it.startDate }, { it.title }, { it.contentId })) +
+                upcomingEvents.sortedWith(compareBy({ it.startDate }, { it.endDate }, { it.title }, { it.contentId }))
+
+        return sortedEvents
     }
 }
