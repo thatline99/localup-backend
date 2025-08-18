@@ -55,10 +55,6 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-tasks.test {
-    useJUnitPlatform()
 
     loadDotEnv().forEach { (key, value) -> environment(key, value) }
 }
