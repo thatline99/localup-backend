@@ -33,4 +33,33 @@ class KorService2Tests {
 
         log.info("\n{}", responseString)
     }
+
+    @Test
+    @DisplayName("한국관광공사_국문 관광정보 서비스_GW: 행사 정보 조회 실행 테스트")
+    fun runKorService2SearchFestival2() {
+        val response = restClient.korService2SearchFestival2(
+            eventStartDate = "20250801"
+        )
+
+        val responseString = objectMapper
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(response)
+
+        log.info("\n{}", responseString)
+    }
+
+    @Test
+    @DisplayName("한국관광공사_국문 관광정보 서비스_GW,  소개 정보 조회 15 (축제/공연/행사) 실행 테스트")
+    fun runKorService2DetailIntro215() {
+        val response = restClient.korService2DetailIntro215(
+            contentId = "3391612",
+            contentTypeId = "15",
+        )
+
+        val responseString = objectMapper
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(response)
+
+        log.info("\n{}", responseString)
+    }
 }

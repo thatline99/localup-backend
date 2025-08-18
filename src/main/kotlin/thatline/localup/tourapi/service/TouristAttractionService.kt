@@ -10,6 +10,7 @@ import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @Service
@@ -114,6 +115,7 @@ class TouristAttractionService(
         )
     }
 
+    @Deprecated("noah: findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd() 메서드로 대체")
     @Cacheable(
         cacheNames = [CacheObjectName.SIGUNGU_EVENT_INFORMATION],
         keyGenerator = CacheKeyGeneratorName.SIGUNGU_EVENT,
@@ -159,6 +161,74 @@ class TouristAttractionService(
         return SigunguEventInformation(
             updatedDate = LocalDateTime.now(),
             sigunguEvents = sigunguEvents
+        )
+    }
+
+    @Cacheable(
+        cacheNames = [CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END,
+        sync = true
+    )
+    fun findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
+        legalDongSigunguCode: String,
+    ): OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation {
+        val now = LocalDate.now()
+        val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+        val response1 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = 1,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val response2 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = response1.response.body.totalCount,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val sigunguEventsWithDates = response2.response.body.items.item
+            .map { it ->
+                with(it) {
+                    SigunguEventWithDates(
+                        contentTypeId = contenttypeid,
+                        contentId = contentid,
+                        title = title,
+                        startDate = LocalDate.parse(eventstartdate, DateTimeFormatter.BASIC_ISO_DATE),
+                        endDate = LocalDate.parse(eventenddate, DateTimeFormatter.BASIC_ISO_DATE),
+                        zipCode = zipcode,
+                        address = listOf(addr1, addr2).filter { it.isNotBlank() }.joinToString(", "),
+                        latitude = mapy.toDouble(),
+                        longitude = mapx.toDouble(),
+                        telephone = tel,
+                        originalImageUrl = firstimage,
+                        thumbnailImageUrl = firstimage2,
+                    )
+                }
+            }
+
+        // 오늘 날짜(행사 종료일, 제목, 컨텐츠 ID), 진행 중(행사 종료일, 행사 시작일, 제목, 컨텐츠 ID), 진행 예정(행사 시작일, 행사 종료일, 제목, 컨텐츠 ID) 정렬로 진행
+
+        // 1) 오늘 시작 / 나머지
+        val (todayStartEvents, restEvents) = sigunguEventsWithDates.partition { it.startDate == now }
+        // 2) 진행 중 / 진행 예정
+        val (ongoingEvents, upcomingEvents) = restEvents.partition { it.startDate <= now && now <= it.endDate }
+
+        // 3) 섹션별 정렬 후 합치기
+        val sortedEvents = todayStartEvents.sortedWith(compareBy({ it.endDate }, { it.title }, { it.contentId })) +
+                ongoingEvents.sortedWith(compareBy({ it.endDate }, { it.startDate }, { it.title }, { it.contentId })) +
+                upcomingEvents.sortedWith(compareBy({ it.startDate }, { it.endDate }, { it.title }, { it.contentId }))
+
+        return OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation(
+            updatedDate = LocalDateTime.now(),
+            sigunguEventsWithDates = sortedEvents
         )
     }
 }

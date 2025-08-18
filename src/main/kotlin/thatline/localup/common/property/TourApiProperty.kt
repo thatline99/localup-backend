@@ -26,6 +26,8 @@ class TourApiProperty(
         val areaCode2: AreaCode2,
         val ldongCode2: LdongCode2,
         val areaBasedList2: AreaBasedList2,
+        val searchFestival2: SearchFestival2,
+        val detailIntro2: DetailIntro2,
     ) {
         data class AreaCode2(
             val secondPath: String,
@@ -38,6 +40,14 @@ class TourApiProperty(
         )
 
         data class AreaBasedList2(
+            val secondPath: String,
+        )
+
+        data class SearchFestival2(
+            val secondPath: String,
+        )
+
+        data class DetailIntro2(
             val secondPath: String,
         )
     }
