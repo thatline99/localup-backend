@@ -23,6 +23,8 @@ class UserController(
     fun findBusiness(
         @AuthenticationPrincipal userId: String,
     ): ResponseEntity<BaseResponse<FindBusinessDto>> {
+
+        System.out.println(userId+userService.findBusiness(userId))
         val findBusinessDto = userService.findBusiness(userId)
 
         return ResponseEntity.ok(

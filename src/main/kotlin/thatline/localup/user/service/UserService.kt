@@ -91,6 +91,10 @@ class UserService(
             password = foundUser.password,
             role = foundUser.role,
             businessId = savedBusiness.id,
+            kakaoId = foundUser.kakaoId,
+            name = foundUser.name,
+            profileImage = foundUser.profileImage,
+            isActive = foundUser.isActive,
         )
 
         userRepository.save(updatedUser)
@@ -149,16 +153,14 @@ class UserService(
 //            id = user.id,
 //            createdDate = user.createdDate,
 //            lastModifiedDate = LocalDateTime.now(),
-//
 //            email = user.email,
 //            password = user.password,
 //            role = role,
-//
-//            zipCode = user.zipCode,
-//            address = user.address,
-//            addressDetail = user.addressDetail,
-//            latitude = user.latitude,
-//            longitude = user.longitude
+//            businessId = user.businessId,
+//            kakaoId = user.kakaoId,
+//            name = user.name,
+//            profileImage = user.profileImage,
+//            isActive = user.isActive,
 //        )
 //
 //        userRepository.save(updatedUser)
