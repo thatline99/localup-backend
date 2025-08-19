@@ -9,18 +9,21 @@ import thatline.localup.auth.dto.UserDetails
 import thatline.localup.auth.exception.AccountDisabledException
 import thatline.localup.auth.exception.DuplicateEmailException
 import thatline.localup.auth.exception.EmailAlreadyExistsException
+import thatline.localup.auth.exception.EmailNotVerifiedException
 import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.repository.UserMongoDbRepository
 import java.util.*
+import jakarta.servlet.http.HttpServletRequest
 
 @Service
 class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserMongoDbRepository,
     private val userTokenRedisService: UserTokenRedisService,
+    private val emailService: EmailService,
 ) {
     fun signIn(email: String, password: String): AuthToken {
         val user = userRepository.findByEmail(email)
@@ -28,6 +31,11 @@ class AuthService(
 
         if (!passwordEncoder.matches(password, user.password)) {
             throw InvalidCredentialsException()
+        }
+
+        // 이메일 인증 상태 확인 (카카오 사용자는 자동으로 인증 완료)
+        if (!user.isEmailVerified) {
+            throw EmailNotVerifiedException()
         }
 
         val accessToken = UUID.randomUUID().toString()
@@ -42,7 +50,7 @@ class AuthService(
     }
 
     @Transactional
-    fun signUp(email: String, password: String) {
+    fun signUp(email: String, password: String, request: HttpServletRequest) {
         if (userRepository.existsByEmail(email)) {
             throw DuplicateEmailException()
         }
@@ -54,9 +62,14 @@ class AuthService(
             password = hashedPassword,
             role = Role.USER,
             businessId = null,
+            isEmailVerified = false,
         )
 
         userRepository.save(newUser)
+        
+        // 이메일 인증 링크 발송
+        val baseUrl = "${request.scheme}://${request.serverName}:${request.serverPort}"
+        emailService.sendVerificationEmail(email, baseUrl)
     }
 
     fun findUserDetailsByAccessToken(accessToken: String): UserDetails? {
@@ -101,6 +114,7 @@ class AuthService(
             name = name,
             profileImage = profileImage,
             isActive = true,
+            isEmailVerified = true,
         )
 
         val savedUser = userRepository.save(newUser)
@@ -109,5 +123,28 @@ class AuthService(
         userTokenRedisService.save(accessToken, savedUser.id)
 
         return AuthToken(accessToken)
+    }
+
+    @Transactional
+    fun verifyEmail(email: String) {
+        val user = userRepository.findByEmail(email)
+            ?: throw UserNotFoundException()
+
+        val updatedUser = UserMongoDbEntity(
+            id = user.id,
+            createdDate = user.createdDate,
+            lastModifiedDate = user.lastModifiedDate,
+            email = user.email,
+            password = user.password,
+            role = user.role,
+            businessId = user.businessId,
+            kakaoId = user.kakaoId,
+            name = user.name,
+            profileImage = user.profileImage,
+            isActive = user.isActive,
+            isEmailVerified = true,
+        )
+
+        userRepository.save(updatedUser)
     }
 }

@@ -95,6 +95,7 @@ class UserService(
             name = foundUser.name,
             profileImage = foundUser.profileImage,
             isActive = foundUser.isActive,
+            isEmailVerified = foundUser.isEmailVerified,
         )
 
         userRepository.save(updatedUser)
@@ -161,6 +162,7 @@ class UserService(
 //            name = user.name,
 //            profileImage = user.profileImage,
 //            isActive = user.isActive,
+//            isEmailVerified = user.isEmailVerified,
 //        )
 //
 //        userRepository.save(updatedUser)

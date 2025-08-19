@@ -56,8 +56,9 @@ class AuthController(
     @PostMapping("/sign-up")
     fun signUp(
         @RequestBody request: SignUpRequest,
+        httpRequest: HttpServletRequest,
     ): ResponseEntity<Void> {
-        authService.signUp(request.email, request.password)
+        authService.signUp(request.email, request.password, httpRequest)
 
         return ResponseEntity.ok().build()
     }
@@ -118,5 +119,10 @@ class AuthController(
     @ExceptionHandler(EmailAlreadyExistsException::class)
     fun handleEmailAlreadyExists(exception: EmailAlreadyExistsException): ResponseEntity<Void> {
         return ResponseEntity.status(HttpStatus.CONFLICT).build()
+    }
+
+    @ExceptionHandler(EmailNotVerifiedException::class)
+    fun handleEmailNotVerified(exception: EmailNotVerifiedException): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
     }
 }
