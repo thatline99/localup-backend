@@ -33,6 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -56,6 +57,10 @@ allOpen {
 tasks.withType<Test> {
     useJUnitPlatform()
 
+    loadDotEnv().forEach { (key, value) -> environment(key, value) }
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     loadDotEnv().forEach { (key, value) -> environment(key, value) }
 }
 
