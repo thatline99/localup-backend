@@ -112,9 +112,7 @@ class UserService(
         val foundBusiness = businessRepository.findById(businessId)
             .orElseThrow { BusinessNotRegisteredException() }
 
-        val updatedBusiness = BusinessMongoDbEntity(
-            id = businessId,
-            createdDate = foundBusiness.createdDate,
+        val updatedBusiness = foundBusiness.copy(
             lastModifiedDate = LocalDateTime.now(),
             name = businessName,
             sigunguCode = businessSigunguCode,
