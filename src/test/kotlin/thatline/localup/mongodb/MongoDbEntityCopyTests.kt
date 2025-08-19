@@ -59,7 +59,7 @@ class MongoDbEntityCopyTests {
         val foundMongoDbEntity = businessMongoDbRepository.findById(savedMongoDbEntity.id)
             .orElseThrow()
 
-        val copiedMongoDbEntity = foundMongoDbEntity.copy(
+        val copiedMongoDbEntity = foundMongoDbEntity.update(
             name = "테스트",
             customerSegments = setOf(CustomerSegment.COUPLE),
         )

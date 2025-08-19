@@ -112,8 +112,7 @@ class UserService(
         val foundBusiness = businessRepository.findById(businessId)
             .orElseThrow { BusinessNotRegisteredException() }
 
-        val updatedBusiness = foundBusiness.copy(
-            lastModifiedDate = LocalDateTime.now(),
+        val updatedBusiness = foundBusiness.update(
             name = businessName,
             sigunguCode = businessSigunguCode,
             zipCode = businessZipCode,

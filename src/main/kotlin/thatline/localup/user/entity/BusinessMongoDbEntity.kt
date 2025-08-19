@@ -49,10 +49,7 @@ class BusinessMongoDbEntity(
     // 주요 고객층 (선택)
     val customerSegments: Set<CustomerSegment>,
 ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
-    fun copy(
-        id: String = this.id,
-        createdDate: LocalDateTime = this.createdDate,
-        lastModifiedDate: LocalDateTime = this.lastModifiedDate,
+    fun update(
         name: String = this.name,
         sigunguCode: String = this.sigunguCode,
         zipCode: String = this.zipCode,
@@ -67,9 +64,9 @@ class BusinessMongoDbEntity(
         customerSegments: Set<CustomerSegment> = this.customerSegments,
     ): BusinessMongoDbEntity {
         return BusinessMongoDbEntity(
-            id = id,
-            createdDate = createdDate,
-            lastModifiedDate = lastModifiedDate,
+            id = this.id,
+            createdDate = this.createdDate,
+            lastModifiedDate = LocalDateTime.now(),
             name = name,
             sigunguCode = sigunguCode,
             zipCode = zipCode,
