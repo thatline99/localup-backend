@@ -8,7 +8,7 @@ spring:
       password: root
 logging:
   level:
-    mongodb-query: DEBUG
+    mongodb-command: DEBUG
 
 token:
   access-token:

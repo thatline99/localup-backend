@@ -16,12 +16,12 @@ class MongoDbConfiguration {
     @Bean
     fun mongoClientSettingsBuilderCustomizer() = MongoClientSettingsBuilderCustomizer { builder ->
         builder.addCommandListener(object : CommandListener {
-            private val log = LoggerFactory.getLogger("mongodb-query")
+            private val log = LoggerFactory.getLogger("mongodb-command")
             private val jsonWriterSettings = JsonWriterSettings.builder().indent(true).build()
 
             override fun commandStarted(event: CommandStartedEvent) {
                 if (log.isDebugEnabled) {
-                    log.debug("\nMongoDB Query:\n${event.command.toJson(jsonWriterSettings)}")
+                    log.debug("\nMongoDB Command:\n${event.command.toJson(jsonWriterSettings)}")
                 }
             }
 
