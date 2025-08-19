@@ -1,19 +1,48 @@
 package thatline.localup.common.configuration
 
 object MongoDbCommandCounter {
-    private val commandCount = ThreadLocal.withInitial { 0 }
+    data class EndResult(
+        val isOutermostExit: Boolean,
+        val totalCommandCount: Int = 0,
+    )
+
+    private data class CounterState(var depth: Int = 0, var commandCount: Int = 0)
+
+    private val threadLocalState = ThreadLocal.withInitial { CounterState() }
+
+    fun begin() {
+        val state = threadLocalState.get()
+
+        state.depth += 1
+
+        if (state.depth == 1) {
+            state.commandCount = 0
+        }
+    }
+
+    fun end(): EndResult {
+        val state = threadLocalState.get()
+
+        state.depth -= 1
+
+        val isOutermostExit = (state.depth == 0)
+
+        return if (isOutermostExit) {
+            val totalCommands = state.commandCount
+
+            threadLocalState.remove()
+
+            EndResult(isOutermostExit = true, totalCommandCount = totalCommands)
+        } else {
+            EndResult(isOutermostExit = false, totalCommandCount = 0)
+        }
+    }
 
     fun increment() {
-        commandCount.set(commandCount.get() + 1)
-    }
+        val state = threadLocalState.get()
 
-    fun get(): Int = commandCount.get()
-
-    fun reset() {
-        commandCount.set(0)
-    }
-
-    fun clear() {
-        commandCount.remove()
+        if (state.depth > 0) {
+            state.commandCount += 1
+        }
     }
 }

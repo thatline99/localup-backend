@@ -1,6 +1,7 @@
 package thatline.localup.dashboard.service
 
 import org.springframework.stereotype.Service
+import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
 import thatline.localup.etcapi.service.WeatherService
 import thatline.localup.tourapi.service.TouristAttractionService
@@ -13,6 +14,7 @@ class DashboardFacade(
     private val weatherService: WeatherService,
 ) {
     // TODO-noah: rename sigunguCode -> legalDongSigunguCode
+    @CountMongoDbCommands
     fun getDashboardOverview(userId: String): DashboardOverview {
         val foundUserBusinessDto = userService.findBusiness(userId)
 
