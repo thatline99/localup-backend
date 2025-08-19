@@ -20,16 +20,21 @@ class MongoDbCommandCountAspect {
         joinPoint: ProceedingJoinPoint,
         countMongoDbCommands: CountMongoDbCommands,
     ): Any? {
-        MongoDbCommandCounter.begin()
+        MongoDbCommandCounter.startScope()
+
         return try {
             joinPoint.proceed()
         } finally {
-            val endResult = MongoDbCommandCounter.end()
-            if (endResult.isOutermostExit && logger.isDebugEnabled) {
+            val result = MongoDbCommandCounter.finishScope()
+
+            if (logger.isDebugEnabled) {
+                val suffix = if (result.isRootScopeExit) " (total)" else ""
+
                 logger.debug(
-                    "{} executed {} MongoDB commands",
+                    "{} executed {} MongoDB commands{}",
                     joinPoint.signature.toShortString(),
-                    endResult.totalCommandCount
+                    result.commandCountInScope,
+                    suffix,
                 )
             }
         }

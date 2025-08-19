@@ -1,48 +1,50 @@
 package thatline.localup.common.configuration
 
 object MongoDbCommandCounter {
-    data class EndResult(
-        val isOutermostExit: Boolean,
-        val totalCommandCount: Int = 0,
-    )
+    private val commandStackTL = ThreadLocal.withInitial { ArrayDeque<Int>() }
 
-    private data class CounterState(var depth: Int = 0, var commandCount: Int = 0)
-
-    private val threadLocalState = ThreadLocal.withInitial { CounterState() }
-
-    fun begin() {
-        val state = threadLocalState.get()
-
-        state.depth += 1
-
-        if (state.depth == 1) {
-            state.commandCount = 0
-        }
-    }
-
-    fun end(): EndResult {
-        val state = threadLocalState.get()
-
-        state.depth -= 1
-
-        val isOutermostExit = (state.depth == 0)
-
-        return if (isOutermostExit) {
-            val totalCommands = state.commandCount
-
-            threadLocalState.remove()
-
-            EndResult(isOutermostExit = true, totalCommandCount = totalCommands)
-        } else {
-            EndResult(isOutermostExit = false, totalCommandCount = 0)
-        }
+    fun startScope() {
+        commandStackTL.get().addLast(0)
     }
 
     fun increment() {
-        val state = threadLocalState.get()
+        val stack = commandStackTL.get()
 
-        if (state.depth > 0) {
-            state.commandCount += 1
+        if (stack.isNotEmpty()) {
+            val current = stack.removeLast()
+
+            stack.addLast(current + 1)
         }
     }
+
+    fun finishScope(): CommandCountScopeResult {
+        val stack = commandStackTL.get()
+
+        if (stack.isEmpty()) {
+            return CommandCountScopeResult(isRootScopeExit = true, commandCountInScope = 0, remainingNestedDepth = 0)
+        }
+
+        val scopeCount = stack.removeLast()
+        val isRootScopeExit = stack.isEmpty()
+
+        if (!isRootScopeExit) {
+            val parent = stack.removeLast()
+
+            stack.addLast(parent + scopeCount)
+        } else {
+            commandStackTL.remove()
+        }
+
+        return CommandCountScopeResult(
+            isRootScopeExit = isRootScopeExit,
+            commandCountInScope = scopeCount,
+            remainingNestedDepth = stack.size
+        )
+    }
+
+    data class CommandCountScopeResult(
+        val isRootScopeExit: Boolean,
+        val commandCountInScope: Int = 0,
+        val remainingNestedDepth: Int = 0,
+    )
 }
