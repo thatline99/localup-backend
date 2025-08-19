@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service
 import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.BusinessMongoDbEntity
 import thatline.localup.user.entity.CustomerSegment
-import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
@@ -83,13 +82,7 @@ class UserService(
 
         val savedBusiness = businessRepository.save(newBusiness)
 
-        val updatedUser = UserMongoDbEntity(
-            id = foundUser.id,
-            createdDate = foundUser.createdDate,
-            lastModifiedDate = LocalDateTime.now(),
-            email = foundUser.email,
-            password = foundUser.password,
-            role = foundUser.role,
+        val updatedUser = foundUser.update(
             businessId = savedBusiness.id,
         )
 

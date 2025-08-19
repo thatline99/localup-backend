@@ -23,5 +23,21 @@ class UserMongoDbEntity(
 
     @Indexed(unique = true, sparse = true)
     val businessId: String?,
-
-    ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
+) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
+    fun update(
+        email: String = this.email,
+        password: String = this.password,
+        role: Role = this.role,
+        businessId: String? = this.businessId,
+    ): UserMongoDbEntity {
+        return UserMongoDbEntity(
+            id = this.id,
+            createdDate = this.createdDate,
+            lastModifiedDate = LocalDateTime.now(),
+            email = email,
+            password = password,
+            role = role,
+            businessId = businessId,
+        )
+    }
+}
