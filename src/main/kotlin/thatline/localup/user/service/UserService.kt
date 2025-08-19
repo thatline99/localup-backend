@@ -9,7 +9,6 @@ import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.repository.BusinessMongoDbRepository
 import thatline.localup.user.repository.UserMongoDbRepository
-import java.time.LocalDateTime
 
 @Service
 class UserService(
