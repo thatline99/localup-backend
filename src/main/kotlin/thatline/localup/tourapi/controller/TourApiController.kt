@@ -1,11 +1,9 @@
 package thatline.localup.tourapi.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.tourapi.exception.ExternalTourApiException
 import thatline.localup.tourapi.request.*
 import thatline.localup.tourapi.response.*
 import thatline.localup.tourapi.restclient.TourApiRestClient
@@ -164,11 +162,5 @@ class TourApiController(
         )
 
         return ResponseEntity.ok(response)
-    }
-
-    // TODO: noah, 추후 error body 정의
-    @ExceptionHandler(ExternalTourApiException::class)
-    fun handleExternalTourApi(exception: ExternalTourApiException): ResponseEntity<Void> {
-        return ResponseEntity.internalServerError().build()
     }
 }

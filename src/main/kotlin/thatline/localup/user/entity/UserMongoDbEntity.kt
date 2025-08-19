@@ -34,4 +34,31 @@ class UserMongoDbEntity(
 
     val isEmailVerified: Boolean = false,
 
-    ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
+    ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
+    fun update(
+        email: String = this.email,
+        password: String? = this.password,
+        role: Role = this.role,
+        businessId: String? = this.businessId,
+        kakaoId: String?,
+        name: String?,
+        profileImage: String?,
+        isActive: Boolean = true,
+        isEmailVerified: Boolean = false,
+    ): UserMongoDbEntity {
+        return UserMongoDbEntity(
+            id = this.id,
+            createdDate = this.createdDate,
+            lastModifiedDate = LocalDateTime.now(),
+            email = email,
+            password = password,
+            role = role,
+            businessId = businessId,
+            kakaoId = kakaoId,
+            name = name,
+            profileImage = profileImage,
+            isActive = isActive,
+            isEmailVerified = isEmailVerified,
+        )
+    }
+}

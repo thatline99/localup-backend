@@ -2,6 +2,8 @@ package thatline.localup.tourapi.exception
 
 import thatline.localup.common.exception.BaseException
 
-class ExternalTourApiException(
+open class TourApiException(
+    message: String = "TOUR_API",
     cause: Throwable? = null,
-) : BaseException("EXTERNAL_TOUR_API", cause)
+    val failedUri: String,
+) : BaseException(message, cause)

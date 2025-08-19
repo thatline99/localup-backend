@@ -4,6 +4,26 @@ import thatline.localup.common.constant.dto.TourApiArea
 
 // TODO-noah: 수정 고민
 
+/**
+ * Tour API
+ *
+ * Tour API 중 한국관광공사_국문 관광정보 서비스_GW와 다른 Tour API 명세를 비교한 결과,
+ * 일부에서는 지역 코드(areaCode)/시군구 코드(sigunguCode)를 사용하고,
+ * 다른 일부에서는 법정동 시도 코드(legalDongRegionCode)/법정동 시군구 코드(legalDongSigunguCode)를 사용하는 등 혼용 사례가 확인되었습니다.
+ * (실제 변수명은 API에 따라 다를 수 있습니다.)
+ *
+ * 한국관광공사 Tour API 활용 매뉴얼(국문) 4.3 버전,
+ * 오퍼레이션 번호 1, 오퍼레이션명(국문) 지역코드조회 명세서에 따르면,
+ * 지역 코드 및 시군구 코드 조회 기능은 2025년 12월 말까지만 제공되며,
+ * 이후에는 신규 법정동 지역 코드로 대체될 예정입니다.
+ *
+ * API 사용 시 이에 유의해야 합니다.
+ *
+ * @author noah
+ *
+ * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서: 한국관광공사_국문 관광정보 서비스_GW</a>
+ * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서: 한국관광공사_관광빅데이터 정보서비스_ GW</a>
+ */
 object TourApi {
     // 한국관광공사_TourAPI_관광지_시군구_코드정보_v1.0
     val areas = listOf(

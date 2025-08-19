@@ -3,6 +3,8 @@ package thatline.localup.etcapi.service
 import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import thatline.localup.common.constant.CacheKeyGeneratorName
+import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
@@ -21,7 +23,11 @@ class WeatherService(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    @Cacheable(cacheNames = ["weatherInformation"], keyGenerator = "weatherInformationKeyGenerator", sync = true)
+    @Cacheable(
+        cacheNames = [CacheObjectName.WEATHER_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.WEATHER_INFORMATION,
+        sync = true
+    )
     fun getThreeDayWeatherSummaries(
         sigunguCode: String,
     ): WeatherInformation {

@@ -12,7 +12,7 @@ tour-api:
   base-url: https://apis.data.go.kr
   mobile-os: WEB
   mobile-app: LocalUp
-    # 한국관광공사_국문 관광정보 서비스_GW
+  # 한국관광공사_국문 관광정보 서비스_GW
   # link: https://www.data.go.kr/data/15101578/openapi.do
   kor-service2:
     first-path: /B551011/KorService2
@@ -24,6 +24,15 @@ tour-api:
     ldong-code2:
       second-path: /ldongCode2
       response-type: JSON
+    # 지역기반 관광 정보 조회
+    area-based-list2:
+      second-path: /areaBasedList2
+    # 행사 정보 조회
+    search-festival2:
+      second-path: /searchFestival2
+    # 소개 정보 조회
+    detail-intro2:
+      second-path: /detailIntro2
 
   # 한국관광공사_관광지별 연관 관광지 정보
   # link: https://www.data.go.kr/data/15128560/openapi.do

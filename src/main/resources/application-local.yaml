@@ -19,12 +19,7 @@ spring:
             enable: true
 logging:
   level:
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              MongoTemplate: DEBUG
+    mongodb-command: DEBUG
 
 token:
   access-token:
@@ -61,3 +56,12 @@ etc-api:
   kma:
     vilage-fcst-info-service:
       service-key: ${VILAGE_FCST_INFO_SERVICE_KEY}
+
+# OpenAI ChatGPT API 설정
+openai:
+  api-key: ${OPENAI_API_KEY}                           # OpenAI API 키 (환경변수로 관리)
+  api-url: https://api.openai.com/v1/chat/completions  # ChatGPT API 엔드포인트
+  model: gpt-4o-mini                                   # 사용할 GPT 모델 (gpt-4o-mini, gpt-4, gpt-3.5-turbo 등)
+  temperature: 0.7                                     # 응답 창의성 수준 (0.0~2.0, 낮을수록 일관성 높음)
+  max-tokens: 1000                                     # 응답 최대 토큰 수 (응답 길이 제한)
+  max-context-tokens: 3000                             # 컨텍스트 최대 토큰 수 (대화 기록 제한)

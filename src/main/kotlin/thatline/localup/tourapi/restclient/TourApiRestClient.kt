@@ -1,11 +1,14 @@
 package thatline.localup.tourapi.restclient
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import thatline.localup.common.property.TourApiProperty
-import thatline.localup.tourapi.exception.ExternalTourApiException
+import thatline.localup.common.util.queryParamIfNotNull
+import thatline.localup.tourapi.exception.TourApiException
+import thatline.localup.tourapi.exception.TourApiKorService2AreaBasedList2Exception
 import thatline.localup.tourapi.response.*
 import java.net.URI
 import java.net.URLEncoder
@@ -16,6 +19,8 @@ class TourApiRestClient(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     /**
      * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
      *
@@ -26,6 +31,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaCode2(
         pageNo: Long,
         numOfRows: Long,
@@ -65,6 +71,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun ldongCode2(
         pageNo: Long,
         numOfRows: Long,
@@ -95,6 +102,170 @@ class TourApiRestClient(
     }
 
     /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 지역 기반 관광 정보 조회
+     *
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @param lDongRegnCd 법정동 시도 코드 (선택)
+     * @param lDongSignguCd 법정동 시군구 코드 (선택)
+     * @param lclsSystm1 분류 체계 대분류 (선택)
+     * @param lclsSystm2 분류 체계 중분류 (선택)
+     * @param lclsSystm3 분류 체계 소분류 (선택)
+     * @return [KorService2AreaBasedList2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun korService2AreaBasedList2(
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+        lDongRegnCd: String? = null,
+        lDongSignguCd: String? = null,
+        lclsSystm1: String? = null,
+        lclsSystm2: String? = null,
+        lclsSystm3: String? = null,
+    ): KorService2AreaBasedList2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.areaBasedList2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("arrange", KorService2Arrange.TITLE.code)
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
+            .queryParamIfNotNull("lDongSignguCd", lDongSignguCd)
+            .queryParamIfNotNull("lclsSystm1", lclsSystm1)
+            .queryParamIfNotNull("lclsSystm2", lclsSystm2)
+            .queryParamIfNotNull("lclsSystm3", lclsSystm3)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2AreaBasedList2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (response.response.header.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 행사 정보 조회
+     *
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @param eventStartDate 행사 시작일
+     * @param eventEndDate 행사 종료일 (선택)
+     * @param lDongRegnCd 법정동 시도 코드 (선택)
+     * @param lDongSignguCd 법정동 시군구 코드 (선택)
+     * @return [KorService2SearchFestival2Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun korService2SearchFestival2(
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+        eventStartDate: String,
+        eventEndDate: String? = null,
+        lDongRegnCd: String? = null,
+        lDongSignguCd: String? = null,
+    ): KorService2SearchFestival2Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.searchFestival2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("arrange", KorService2Arrange.TITLE.code)
+            .queryParam("eventStartDate", eventStartDate)
+            .queryParamIfNotNull("eventEndDate", eventEndDate)
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
+            .queryParamIfNotNull("lDongSignguCd", lDongSignguCd)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2SearchFestival2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (response.response.header.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
+     * 한국관광공사_국문 관광정보 서비스_GW: 소개 정보 조회 15 (축제/공연/행사)
+     *
+     * @param contentId 콘텐츠 ID
+     * @param contentTypeId 콘텐츠 타입 ID, 15로 고정
+     * @param pageNo 페이지 번호 (선택)
+     * @param numOfRows 한 페이지 결과 수 (선택)
+     * @return [KorService2DetailIntro215Response]
+     *
+     * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
+     */
+    fun korService2DetailIntro215(
+        contentId: String,
+        contentTypeId: String = "15",
+        pageNo: Long? = null,
+        numOfRows: Long? = null,
+    ): KorService2DetailIntro215Response {
+        val fromUri = URI.create(
+            "${tourApiProperty.baseUrl}${tourApiProperty.korService2.firstPath}${tourApiProperty.korService2.detailIntro2.secondPath}"
+        )
+
+        val uri = UriComponentsBuilder
+            .fromUri(fromUri)
+            .queryParam("serviceKey", tourApiProperty.korService2.serviceKey)
+            .queryParam("MobileOS", tourApiProperty.mobileOS)
+            .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParam("_type", "JSON")
+            .queryParam("contentId", contentId)
+            .queryParam("contentTypeId", contentTypeId)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
+            .build(true)
+            .toUri()
+
+        val response = retrieveTourApi(uri, KorService2DetailIntro215Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (response.response.header.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
+    }
+
+    /**
      * 한국관광공사_관광지별 연관 관광지 정보: 지역기반 관광지별 연관 관광지 정보 목록 조회
      *
      * @param pageNo 페이지 번호
@@ -106,6 +277,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList(
         pageNo: Long,
         numOfRows: Long,
@@ -148,6 +320,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList2(
         pageNo: Long,
         numOfRows: Long,
@@ -190,6 +363,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128555/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun tatsCnctrRatedList(
         pageNo: Long,
         numOfRows: Long,
@@ -231,6 +405,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun metcoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
@@ -268,6 +443,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun locgoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
@@ -299,13 +475,20 @@ class TourApiRestClient(
         responseType: Class<T>,
     ): T {
         try {
+            log.debug("URI: {}", uri.toString())
+
             return restClient.get()
                 .uri(uri)
                 .retrieve()
                 .body(responseType)
-                ?: throw ExternalTourApiException()
+                ?: throw TourApiException(
+                    failedUri = uri.toString()
+                )
         } catch (exception: RestClientException) {
-            throw ExternalTourApiException(cause = exception)
+            throw TourApiException(
+                failedUri = uri.toString(),
+                cause = exception
+            )
         }
     }
 }
