@@ -8,12 +8,7 @@ spring:
       password: root
 logging:
   level:
-    org:
-      springframework:
-        data:
-          mongodb:
-            core:
-              MongoTemplate: DEBUG
+    mongodb-command: DEBUG
 
 token:
   access-token:
