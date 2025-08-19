@@ -48,4 +48,40 @@ class BusinessMongoDbEntity(
 
     // 주요 고객층 (선택)
     val customerSegments: Set<CustomerSegment>,
-) : BaseMongoDbEntity(id, createdDate, lastModifiedDate)
+) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
+    fun copy(
+        id: String = this.id,
+        createdDate: LocalDateTime = this.createdDate,
+        lastModifiedDate: LocalDateTime = this.lastModifiedDate,
+        name: String = this.name,
+        sigunguCode: String = this.sigunguCode,
+        zipCode: String = this.zipCode,
+        address: String = this.address,
+        addressDetail: String? = this.addressDetail,
+        latitude: Double = this.latitude,
+        longitude: Double = this.longitude,
+        type: String = this.type,
+        item: String = this.item,
+        averageOrderAmount: Double = this.averageOrderAmount,
+        seatCount: Int = this.seatCount,
+        customerSegments: Set<CustomerSegment> = this.customerSegments,
+    ): BusinessMongoDbEntity {
+        return BusinessMongoDbEntity(
+            id = id,
+            createdDate = createdDate,
+            lastModifiedDate = lastModifiedDate,
+            name = name,
+            sigunguCode = sigunguCode,
+            zipCode = zipCode,
+            address = address,
+            addressDetail = addressDetail,
+            latitude = latitude,
+            longitude = longitude,
+            type = type,
+            item = item,
+            averageOrderAmount = averageOrderAmount,
+            seatCount = seatCount,
+            customerSegments = customerSegments.toSet(),
+        )
+    }
+}
