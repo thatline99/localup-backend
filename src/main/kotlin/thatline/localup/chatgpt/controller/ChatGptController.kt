@@ -1,10 +1,9 @@
 package thatline.localup.chatgpt.controller
 
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
-import thatline.localup.chatgpt.dto.ChatSessionRequest
-import thatline.localup.chatgpt.dto.ChatSessionResponse
-import thatline.localup.chatgpt.entity.ChatSession
+import thatline.localup.chatgpt.dto.*
 import thatline.localup.chatgpt.service.ChatGptService
 import thatline.localup.common.response.BaseResponse
 
@@ -15,10 +14,13 @@ class ChatGptController(
 ) {
     
     @PostMapping("/chat")
-    fun chat(@RequestBody request: ChatSessionRequest): ResponseEntity<BaseResponse<ChatSessionResponse>> {
+    fun chat(
+        @RequestBody request: ChatSessionRequest,
+        @AuthenticationPrincipal userId: String
+    ): ResponseEntity<BaseResponse<ChatSessionResponse>> {
         val response = chatGptService.chat(
             sessionId = request.sessionId,
-            userId = request.userId,
+            userId = userId,
             userMessage = request.message
         )
         
@@ -26,8 +28,8 @@ class ChatGptController(
     }
     
     @GetMapping("/sessions/{sessionId}")
-    fun getSession(@PathVariable sessionId: String): ResponseEntity<BaseResponse<ChatSession?>> {
-        val session = chatGptService.getSession(sessionId)
+    fun getSession(@PathVariable sessionId: String): ResponseEntity<BaseResponse<ChatSessionDetailResponse?>> {
+        val session = chatGptService.getSessionDetail(sessionId)
         
         return if (session != null) {
             ResponseEntity.ok(BaseResponse.success(session))
@@ -36,10 +38,20 @@ class ChatGptController(
         }
     }
     
-    @GetMapping("/users/{userId}/sessions")
-    fun getUserSessions(@PathVariable userId: String): ResponseEntity<BaseResponse<List<ChatSession>>> {
+    @GetMapping("/sessions")
+    fun getUserSessions(@AuthenticationPrincipal userId: String): ResponseEntity<BaseResponse<List<ChatSessionListResponse>>> {
         val sessions = chatGptService.getUserSessions(userId)
         
         return ResponseEntity.ok(BaseResponse.success(sessions))
+    }
+    
+    @DeleteMapping("/sessions/{sessionId}")
+    fun deleteSession(
+        @PathVariable sessionId: String,
+        @AuthenticationPrincipal userId: String
+    ): ResponseEntity<BaseResponse<String>> {
+        chatGptService.deleteSession(sessionId, userId)
+        
+        return ResponseEntity.ok(BaseResponse.success("세션이 삭제되었습니다."))
     }
 }

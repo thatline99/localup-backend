@@ -1,5 +1,6 @@
 package thatline.localup.chatgpt.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -16,9 +17,23 @@ class ChatGptService(
     private val chatGptRestClient: ChatGptRestClient,
     private val chatSessionRepository: ChatSessionRepository,
     private val tokenCounter: TokenCounter,
+    private val objectMapper: ObjectMapper,
     @Value("\${openai.max-context-tokens:3000}")
-    private val maxContextTokens: Int
+    private val maxContextTokens: Int,
+    @Value("\${openai.model:gpt-4o-mini}")
+    private val defaultModel: String,
+    @Value("\${openai.temperature:0.7}")
+    private val defaultTemperature: Double,
+    @Value("\${openai.max-tokens:1000}")
+    private val defaultMaxTokens: Int
 ) {
+    companion object {
+        private const val TITLE_MAX_LENGTH = 30
+        private const val TITLE_PROMPT_MAX_TOKENS = 50
+        private const val NEW_SESSION_MESSAGE_COUNT = 2
+        private const val DEFAULT_SESSION_TITLE = "새 대화"
+    }
+    
     private val log = LoggerFactory.getLogger(this::class.java)
     
     private val systemPrompt = """
@@ -29,14 +44,41 @@ class ChatGptService(
     """.trimIndent()
     
     fun chat(sessionId: String?, userId: String?, userMessage: String): ChatSessionResponse {
-        val session = if (sessionId != null) {
+        val session = getOrCreateSession(sessionId, userId)
+        
+        addUserMessage(session, userMessage)
+        
+        return try {
+            val response = sendChatRequest(session.messages)
+            val reply = extractReply(response)
+            
+            if (reply.isNullOrBlank()) {
+                return createErrorResponse(session, "죄송합니다. 응답을 생성할 수 없습니다.")
+            }
+            
+            addAssistantMessage(session, reply)
+            
+            val sessionTitle = determineSessionTitle(session, userMessage, reply)
+            val savedSession = saveSession(session, sessionTitle)
+            
+            createSuccessResponse(savedSession, reply)
+        } catch (e: Exception) {
+            log.error("ChatGPT 서비스 처리 중 오류 발생", e)
+            createErrorResponse(session, "죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        }
+    }
+    
+    private fun getOrCreateSession(sessionId: String?, userId: String?): ChatSession {
+        return if (sessionId != null) {
             chatSessionRepository.findById(sessionId).orElseGet {
                 createNewSession(userId)
             }
         } else {
             createNewSession(userId)
         }
-        
+    }
+    
+    private fun addUserMessage(session: ChatSession, userMessage: String) {
         val userMessageTokens = tokenCounter.countTokens(userMessage)
         session.messages.add(
             ChatMessage(
@@ -45,61 +87,89 @@ class ChatGptService(
                 tokens = userMessageTokens
             )
         )
+    }
+    
+    private fun sendChatRequest(messages: List<ChatMessage>): ChatGptResponse {
+        val messagesToSend = optimizeMessages(messages)
+        val apiMessages = buildApiMessages(messagesToSend)
         
-        val messagesToSend = optimizeMessages(session.messages)
+        val request = ChatGptRequest(
+            model = defaultModel,
+            messages = apiMessages,
+            temperature = defaultTemperature,
+            maxTokens = defaultMaxTokens
+        )
         
+        return chatGptRestClient.chat(request)
+    }
+    
+    private fun buildApiMessages(messages: List<ChatMessage>): List<Message> {
         val apiMessages = mutableListOf(
             Message(role = "system", content = systemPrompt)
         )
         apiMessages.addAll(
-            messagesToSend.map { Message(role = it.role, content = it.content) }
+            messages.map { Message(role = it.role, content = it.content) }
         )
-        
-        val request = ChatGptRequest(
-            model = "gpt-5-nano",
-            messages = apiMessages,
-            temperature = 0.7,
-            maxTokens = 1000
-        )
-        
-        return try {
-            val response = chatGptRestClient.chat(request)
-            val reply = response.choices.firstOrNull()?.message?.content 
-                ?: "죄송합니다. 응답을 생성할 수 없습니다."
-            
-            val assistantTokens = tokenCounter.countTokens(reply)
-            session.messages.add(
-                ChatMessage(
-                    role = "assistant",
-                    content = reply,
-                    tokens = assistantTokens
-                )
-            )
-            
-            val updatedSession = session.copy(
-                updatedAt = LocalDateTime.now(),
-                totalTokens = session.messages.sumOf { it.tokens }
-            )
-            
-            val savedSession = chatSessionRepository.save(updatedSession)
-            
-            log.info("ChatGPT 응답 생성 완료 - 세션 ID: ${savedSession.id}, 총 토큰: ${savedSession.totalTokens}")
-            
-            ChatSessionResponse(
-                sessionId = savedSession.id!!,
-                reply = reply,
-                totalMessages = savedSession.messages.size,
-                totalTokens = savedSession.totalTokens
-            )
-        } catch (e: Exception) {
-            log.error("ChatGPT 서비스 처리 중 오류 발생", e)
-            ChatSessionResponse(
-                sessionId = session.id ?: "",
-                reply = "죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-                totalMessages = session.messages.size,
-                totalTokens = session.totalTokens
-            )
+        return apiMessages
+    }
+    
+    private fun extractReply(response: ChatGptResponse): String? {
+        return response.choices.firstOrNull()?.message?.content?.also { reply ->
+            if (reply.isNullOrBlank()) {
+                log.warn("ChatGPT 응답이 비어있습니다")
+            }
         }
+    }
+    
+    private fun addAssistantMessage(session: ChatSession, reply: String) {
+        val assistantTokens = tokenCounter.countTokens(reply)
+        session.messages.add(
+            ChatMessage(
+                role = "assistant",
+                content = reply,
+                tokens = assistantTokens
+            )
+        )
+    }
+    
+    private fun determineSessionTitle(session: ChatSession, userMessage: String, reply: String): String? {
+        return if (session.title == null && session.messages.size == NEW_SESSION_MESSAGE_COUNT) {
+            generateSessionTitle(userMessage, reply)
+        } else {
+            session.title
+        }
+    }
+    
+    private fun saveSession(session: ChatSession, title: String?): ChatSession {
+        val updatedSession = session.copy(
+            title = title,
+            updatedAt = LocalDateTime.now(),
+            totalTokens = session.messages.sumOf { it.tokens }
+        )
+        
+        return chatSessionRepository.save(updatedSession).also {
+            log.info("ChatGPT 응답 생성 완료 - 세션 ID: ${it.id}, 총 토큰: ${it.totalTokens}")
+        }
+    }
+    
+    private fun createSuccessResponse(session: ChatSession, reply: String): ChatSessionResponse {
+        return ChatSessionResponse(
+            sessionId = session.id!!,
+            reply = reply,
+            title = session.title,
+            totalMessages = session.messages.size,
+            totalTokens = session.totalTokens
+        )
+    }
+    
+    private fun createErrorResponse(session: ChatSession, errorMessage: String): ChatSessionResponse {
+        return ChatSessionResponse(
+            sessionId = session.id ?: "",
+            reply = errorMessage,
+            title = session.title,
+            totalMessages = session.messages.size,
+            totalTokens = session.totalTokens
+        )
     }
     
     fun createNewSession(userId: String?): ChatSession {
@@ -110,8 +180,39 @@ class ChatGptService(
         return chatSessionRepository.findById(sessionId).orElse(null)
     }
     
-    fun getUserSessions(userId: String): List<ChatSession> {
-        return chatSessionRepository.findByUserId(userId)
+    fun getUserSessions(userId: String): List<ChatSessionListResponse> {
+        return chatSessionRepository.findByUserId(userId).map { session ->
+            ChatSessionListResponse(
+                id = session.id!!,
+                title = session.title ?: DEFAULT_SESSION_TITLE,
+                userId = session.userId,
+                totalMessages = session.messages.size,
+                totalTokens = session.totalTokens,
+                createdAt = session.createdAt,
+                updatedAt = session.updatedAt
+            )
+        }
+    }
+    
+    fun getSessionDetail(sessionId: String): ChatSessionDetailResponse? {
+        val session = chatSessionRepository.findById(sessionId).orElse(null)
+        return session?.let {
+            ChatSessionDetailResponse(
+                id = it.id!!,
+                title = it.title,
+                userId = it.userId,
+                messages = it.messages.map { message ->
+                    ChatMessageResponse(
+                        role = message.role,
+                        content = message.content,
+                        timestamp = message.timestamp
+                    )
+                },
+                totalTokens = it.totalTokens,
+                createdAt = it.createdAt,
+                updatedAt = it.updatedAt
+            )
+        }
     }
     
     private fun optimizeMessages(messages: List<ChatMessage>): List<ChatMessage> {
@@ -137,5 +238,54 @@ class ChatGptService(
         }
         
         return optimizedMessages
+    }
+    
+    private fun generateSessionTitle(userMessage: String, assistantReply: String): String {
+        return try {
+            val titlePrompt = """
+                사용자 메시지: "$userMessage"
+                
+                위 메시지의 주제를 10자 이내의 짧은 한글 제목으로 만들어주세요.
+                JSON 형식으로 응답: {"title": "제목"}
+            """.trimIndent()
+            
+            val request = ChatGptRequest(
+                model = defaultModel,
+                messages = listOf(
+                    Message(role = "system", content = "대화 제목을 생성하는 도우미입니다."),
+                    Message(role = "user", content = titlePrompt)
+                ),
+                temperature = defaultTemperature,
+                maxTokens = TITLE_PROMPT_MAX_TOKENS
+            )
+            
+            val response = chatGptRestClient.chat(request)
+            val content = response.choices.firstOrNull()?.message?.content?.trim()
+            
+            if (!content.isNullOrBlank()) {
+                try {
+                    val jsonNode = objectMapper.readTree(content)
+                    val title = jsonNode.get("title")?.asText()
+                    
+                    if (!title.isNullOrBlank()) {
+                        return title.take(TITLE_MAX_LENGTH)
+                    }
+                } catch (e: Exception) {
+                    log.warn("제목 생성 JSON 파싱 실패: $content")
+                }
+            }
+            
+            DEFAULT_SESSION_TITLE
+        } catch (e: Exception) {
+            log.error("세션 제목 생성 중 오류 발생", e)
+            DEFAULT_SESSION_TITLE
+        }
+    }
+    
+    fun deleteSession(sessionId: String, userId: String) {
+        val session = chatSessionRepository.findById(sessionId).orElse(null)
+        if (session != null && session.userId == userId) {
+            chatSessionRepository.deleteById(sessionId)
+        }
     }
 }
