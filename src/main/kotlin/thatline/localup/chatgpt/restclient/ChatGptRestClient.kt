@@ -31,8 +31,8 @@ class ChatGptRestClient(
     
     fun chat(request: ChatGptRequest): ChatGptResponse {
         try {
-            val requestBody = objectMapper.writeValueAsString(request)
-                .toRequestBody("application/json".toMediaType())
+            val requestBodyJson = objectMapper.writeValueAsString(request)
+            val requestBody = requestBodyJson.toRequestBody("application/json".toMediaType())
             
             val httpRequest = Request.Builder()
                 .url(apiUrl)
@@ -42,13 +42,17 @@ class ChatGptRestClient(
                 .build()
             
             client.newCall(httpRequest).execute().use { response ->
+                val responseBody = response.body?.string()
+                
                 if (!response.isSuccessful) {
                     log.error("ChatGPT API 호출 실패: ${response.code} - ${response.message}")
-                    throw ChatGptException("ChatGPT API 호출 실패: ${response.message}")
+                    log.error("응답 본문: $responseBody")
+                    throw ChatGptException("ChatGPT API 호출 실패: ${response.message} - $responseBody")
                 }
                 
-                val responseBody = response.body?.string() 
-                    ?: throw ChatGptException("응답 본문이 비어있습니다")
+                if (responseBody.isNullOrBlank()) {
+                    throw ChatGptException("응답 본문이 비어있습니다")
+                }
                 
                 return objectMapper.readValue(responseBody, ChatGptResponse::class.java)
             }
