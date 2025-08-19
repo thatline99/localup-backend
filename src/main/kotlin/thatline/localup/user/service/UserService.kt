@@ -4,13 +4,11 @@ import org.springframework.stereotype.Service
 import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.BusinessMongoDbEntity
 import thatline.localup.user.entity.CustomerSegment
-import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.repository.BusinessMongoDbRepository
 import thatline.localup.user.repository.UserMongoDbRepository
-import java.time.LocalDateTime
 
 @Service
 class UserService(
@@ -83,13 +81,7 @@ class UserService(
 
         val savedBusiness = businessRepository.save(newBusiness)
 
-        val updatedUser = UserMongoDbEntity(
-            id = foundUser.id,
-            createdDate = foundUser.createdDate,
-            lastModifiedDate = LocalDateTime.now(),
-            email = foundUser.email,
-            password = foundUser.password,
-            role = foundUser.role,
+        val updatedUser = foundUser.update(
             businessId = savedBusiness.id,
         )
 
@@ -119,8 +111,7 @@ class UserService(
         val foundBusiness = businessRepository.findById(businessId)
             .orElseThrow { BusinessNotRegisteredException() }
 
-        val updatedBusiness = foundBusiness.copy(
-            lastModifiedDate = LocalDateTime.now(),
+        val updatedBusiness = foundBusiness.update(
             name = businessName,
             sigunguCode = businessSigunguCode,
             zipCode = businessZipCode,
