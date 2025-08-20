@@ -1,6 +1,7 @@
 package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
+import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.user.dto.FindBusinessDto
 import thatline.localup.user.entity.BusinessMongoDbEntity
 import thatline.localup.user.entity.CustomerSegment
@@ -15,6 +16,7 @@ class UserService(
     private val userRepository: UserMongoDbRepository,
     private val businessRepository: BusinessMongoDbRepository,
 ) {
+    @CountMongoDbCommands
     fun findBusiness(
         userId: String,
     ): FindBusinessDto {
@@ -42,6 +44,7 @@ class UserService(
         )
     }
 
+    @CountMongoDbCommands
     fun registerBusiness(
         userId: String,
         businessName: String,
@@ -88,6 +91,7 @@ class UserService(
         userRepository.save(updatedUser)
     }
 
+    @CountMongoDbCommands
     fun updateBusiness(
         userId: String,
         businessName: String,
