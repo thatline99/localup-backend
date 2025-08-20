@@ -20,6 +20,11 @@ spring:
 logging:
   level:
     mongodb-command: DEBUG
+    thatline:
+      localup:
+        common:
+          aspect:
+            MongoDbCommandCountAspect: DEBUG
 
 token:
   access-token:

@@ -3,7 +3,6 @@ package thatline.localup.auth.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import thatline.localup.auth.dto.AuthToken
 import thatline.localup.auth.dto.UserDetails
 import thatline.localup.auth.exception.AccountDisabledException
@@ -12,6 +11,7 @@ import thatline.localup.auth.exception.EmailAlreadyExistsException
 //import thatline.localup.auth.exception.EmailNotVerifiedException
 import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.auth.exception.UserNotFoundException
+import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.repository.UserMongoDbRepository
@@ -25,6 +25,7 @@ class AuthService(
     private val userTokenRedisService: UserTokenRedisService,
 //    private val emailService: EmailService,
 ) {
+    @CountMongoDbCommands
     fun signIn(email: String, password: String): AuthToken {
         val user = userRepository.findByEmail(email)
             ?: throw InvalidCredentialsException()
@@ -49,7 +50,7 @@ class AuthService(
         userTokenRedisService.deleteByAccessToken(accessToken)
     }
 
-    @Transactional
+    @CountMongoDbCommands
     fun signUp(email: String, password: String, request: HttpServletRequest) {
         if (userRepository.existsByEmail(email)) {
             throw DuplicateEmailException()
@@ -72,6 +73,7 @@ class AuthService(
 //        emailService.sendVerificationEmail(email, baseUrl)
     }
 
+    @CountMongoDbCommands
     fun findUserDetailsByAccessToken(accessToken: String): UserDetails? {
         val userId = userTokenRedisService.findUserIdByAccessToken(accessToken)
             ?: return null

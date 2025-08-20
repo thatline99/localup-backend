@@ -4,6 +4,8 @@ plugins {
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
+    // Ktlint
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
 }
 
 group = "thatline"
@@ -26,6 +28,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-mail")
@@ -63,6 +66,10 @@ tasks.withType<Test> {
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
     loadDotEnv().forEach { (key, value) -> environment(key, value) }
+}
+
+tasks.named("check") {
+    dependsOn("ktlintCheck")
 }
 
 private fun loadDotEnv(): Map<String, String> {
