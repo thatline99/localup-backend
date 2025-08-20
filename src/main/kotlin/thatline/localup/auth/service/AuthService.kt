@@ -1,22 +1,18 @@
 package thatline.localup.auth.service
 
+//import thatline.localup.auth.exception.EmailNotVerifiedException
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import thatline.localup.auth.dto.AuthToken
 import thatline.localup.auth.dto.UserDetails
-import thatline.localup.auth.exception.AccountDisabledException
-import thatline.localup.auth.exception.DuplicateEmailException
-import thatline.localup.auth.exception.EmailAlreadyExistsException
-//import thatline.localup.auth.exception.EmailNotVerifiedException
-import thatline.localup.auth.exception.InvalidCredentialsException
-import thatline.localup.auth.exception.UserNotFoundException
+import thatline.localup.auth.exception.*
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.repository.UserMongoDbRepository
 import java.util.*
-import jakarta.servlet.http.HttpServletRequest
 
 @Service
 class AuthService(
@@ -67,7 +63,7 @@ class AuthService(
         )
 
         userRepository.save(newUser)
-        
+
         // 이메일 인증 링크 발송
 //        val baseUrl = "${request.scheme}://${request.serverName}:${request.serverPort}"
 //        emailService.sendVerificationEmail(email, baseUrl)
@@ -101,7 +97,6 @@ class AuthService(
         return AuthToken(accessToken)
     }
 
-    @Transactional
     fun signUpKakaoUser(kakaoId: String, email: String, name: String, profileImage: String?): AuthToken {
         if (userRepository.existsByEmail(email)) {
             throw EmailAlreadyExistsException()
@@ -127,7 +122,6 @@ class AuthService(
         return AuthToken(accessToken)
     }
 
-    @Transactional
     fun verifyEmail(email: String) {
         val user = userRepository.findByEmail(email)
             ?: throw UserNotFoundException()
