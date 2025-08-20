@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import thatline.localup.auth.exception.AccountDisabledException
 import thatline.localup.auth.exception.EmailAlreadyExistsException
-import thatline.localup.auth.exception.EmailNotVerifiedException
+//import thatline.localup.auth.exception.EmailNotVerifiedException
 import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.response.BaseResponse
 
@@ -53,12 +53,12 @@ class GlobalExceptionHandler {
             .body(BaseResponse.failure(message = exception.message ?: "Email already exists"))
     }
 
-    @ExceptionHandler(EmailNotVerifiedException::class)
-    fun handleEmailNotVerifiedException(
-        exception: EmailNotVerifiedException,
-    ): ResponseEntity<BaseResponse<Unit>> {
-        return ResponseEntity
-            .status(HttpStatus.FORBIDDEN)
-            .body(BaseResponse.failure(message = exception.message ?: "Email not verified"))
-    }
+//    @ExceptionHandler(EmailNotVerifiedException::class)
+//    fun handleEmailNotVerifiedException(
+//        exception: EmailNotVerifiedException,
+//    ): ResponseEntity<BaseResponse<Unit>> {
+//        return ResponseEntity
+//            .status(HttpStatus.FORBIDDEN)
+//            .body(BaseResponse.failure(message = exception.message ?: "Email not verified"))
+//    }
 }

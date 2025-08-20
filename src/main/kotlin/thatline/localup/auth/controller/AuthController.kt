@@ -121,8 +121,8 @@ class AuthController(
         return ResponseEntity.status(HttpStatus.CONFLICT).build()
     }
 
-    @ExceptionHandler(EmailNotVerifiedException::class)
-    fun handleEmailNotVerified(exception: EmailNotVerifiedException): ResponseEntity<Void> {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-    }
+//    @ExceptionHandler(EmailNotVerifiedException::class)
+//    fun handleEmailNotVerified(exception: EmailNotVerifiedException): ResponseEntity<Void> {
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+//    }
 }

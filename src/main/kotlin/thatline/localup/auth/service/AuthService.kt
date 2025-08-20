@@ -9,7 +9,7 @@ import thatline.localup.auth.dto.UserDetails
 import thatline.localup.auth.exception.AccountDisabledException
 import thatline.localup.auth.exception.DuplicateEmailException
 import thatline.localup.auth.exception.EmailAlreadyExistsException
-import thatline.localup.auth.exception.EmailNotVerifiedException
+//import thatline.localup.auth.exception.EmailNotVerifiedException
 import thatline.localup.auth.exception.InvalidCredentialsException
 import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.constant.Role
@@ -23,7 +23,7 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserMongoDbRepository,
     private val userTokenRedisService: UserTokenRedisService,
-    private val emailService: EmailService,
+//    private val emailService: EmailService,
 ) {
     fun signIn(email: String, password: String): AuthToken {
         val user = userRepository.findByEmail(email)
@@ -35,7 +35,7 @@ class AuthService(
 
         // 이메일 인증 상태 확인 (카카오 사용자는 자동으로 인증 완료)
         if (!user.isEmailVerified) {
-            throw EmailNotVerifiedException()
+//            throw EmailNotVerifiedException()
         }
 
         val accessToken = UUID.randomUUID().toString()
@@ -68,8 +68,8 @@ class AuthService(
         userRepository.save(newUser)
         
         // 이메일 인증 링크 발송
-        val baseUrl = "${request.scheme}://${request.serverName}:${request.serverPort}"
-        emailService.sendVerificationEmail(email, baseUrl)
+//        val baseUrl = "${request.scheme}://${request.serverName}:${request.serverPort}"
+//        emailService.sendVerificationEmail(email, baseUrl)
     }
 
     fun findUserDetailsByAccessToken(accessToken: String): UserDetails? {
