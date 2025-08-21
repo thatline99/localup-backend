@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import thatline.localup.common.constant.CacheKeyGeneratorName
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
+import thatline.localup.common.util.GeoUtil
 import thatline.localup.tourapi.dto.*
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
@@ -162,6 +163,106 @@ class TouristAttractionService(
             updatedDate = LocalDateTime.now(),
             sigunguEvents = sigunguEvents
         )
+    }
+
+    // TODO-noah: 캐싱 고민
+    fun findMainSigunguEvent(
+        legalDongSigunguCode: String,
+        latitude: Double,
+        longitude: Double,
+    ): SigunguEventWithDates? {
+        val now = LocalDate.now()
+        val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+        val response1 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = 1,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val response2 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = response1.response.body.totalCount,
+            eventStartDate = eventStartDate,
+            eventEndDate = eventEndDate,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val items = response2.response.body.items.item
+
+        // TODO-noah: fix
+        val filteredItem =
+            // 1. 오늘 시작
+            items.filter {
+                runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
+                    .getOrNull() == now
+            }.minWithOrNull(
+                compareBy(
+                    {
+                        val eventLatitude = it.mapy.toDoubleOrNull() ?: Double.MAX_VALUE
+                        val eventLongitude = it.mapx.toDoubleOrNull() ?: Double.MAX_VALUE
+                        GeoUtil.distanceInKilometer(latitude, longitude, eventLatitude, eventLongitude)
+                    },
+                    { it.title }
+                )
+            )
+            // 2. 곧 시작
+                ?: items.filter {
+                    val startDate =
+                        runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
+                            .getOrNull()
+                    startDate != null && startDate.isAfter(now)
+                }.minWithOrNull(
+                    compareBy(
+                        {
+                            val eventLatitude = it.mapy.toDoubleOrNull() ?: Double.MAX_VALUE
+                            val eventLongitude = it.mapx.toDoubleOrNull() ?: Double.MAX_VALUE
+                            GeoUtil.distanceInKilometer(latitude, longitude, eventLatitude, eventLongitude)
+                        },
+                        { it.title }
+                    )
+                )
+                // 3. 진행 중
+                ?: items.filter {
+                    val startDate =
+                        runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
+                            .getOrNull()
+                    val endDate =
+                        runCatching { LocalDate.parse(it.eventenddate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
+                            .getOrNull()
+                    startDate != null && endDate != null && startDate <= now && now <= endDate
+                }.minWithOrNull(
+                    compareBy(
+                        {
+                            val eventLatitude = it.mapy.toDoubleOrNull() ?: Double.MAX_VALUE
+                            val eventLongitude = it.mapx.toDoubleOrNull() ?: Double.MAX_VALUE
+                            GeoUtil.distanceInKilometer(latitude, longitude, eventLatitude, eventLongitude)
+                        },
+                        { it.title }
+                    )
+                )
+
+        return filteredItem?.let {
+            SigunguEventWithDates(
+                contentTypeId = it.contenttypeid,
+                contentId = it.contentid,
+                title = it.title,
+                startDate = LocalDate.parse(it.eventstartdate, DateTimeFormatter.BASIC_ISO_DATE),
+                endDate = LocalDate.parse(it.eventenddate, DateTimeFormatter.BASIC_ISO_DATE),
+                zipCode = it.zipcode,
+                address = listOf(it.addr1, it.addr2).filter { addr -> addr.isNotBlank() }.joinToString(", "),
+                latitude = it.mapy.toDouble(),
+                longitude = it.mapx.toDouble(),
+                telephone = it.tel,
+                originalImageUrl = it.firstimage,
+                thumbnailImageUrl = it.firstimage2,
+            )
+        }
     }
 
     @Cacheable(
