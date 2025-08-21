@@ -52,12 +52,8 @@ class TourApiRestClient(
             .queryParam("numOfRows", numOfRows)
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParamIfNotNull("areaCode", areaCode)
             .queryParam("_type", tourApiProperty.korService2.areaCode2.responseType)
-
-        // TODO-noah: 수정
-        areaCode?.let {
-            builder.queryParam("areaCode", it)
-        }
 
         val uri = builder.build(true).toUri()
 
@@ -104,11 +100,7 @@ class TourApiRestClient(
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", tourApiProperty.korService2.ldongCode2.responseType)
-
-        // TODO-noah: 수정
-        lDongRegnCd?.let {
-            builder.queryParam("lDongRegnCd", it)
-        }
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
 
         val uri = builder.build(true).toUri()
 
