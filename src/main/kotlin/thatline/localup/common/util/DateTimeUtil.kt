@@ -8,10 +8,11 @@ import java.time.temporal.WeekFields
 import kotlin.math.min
 
 object DateTimeUtil {
-    val DATETIME_FORMATTER_yyyyMM: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM")
-    val DATETIME_FORMATTER_yyyyMMdd: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-    val DATETIME_FORMATTER_yyyyMMddHHmm: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
-    val DATETIME_FORMATTER_HHmm: DateTimeFormatter = DateTimeFormatter.ofPattern("HHmm")
+    val DATETIME_FORMATTER_yyyyMM = DateTimeFormatter.ofPattern("yyyyMM")
+    val DATETIME_FORMATTER_yyyyMMdd = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val DATETIME_FORMATTER_yyyyMMddHHmm = DateTimeFormatter.ofPattern("yyyyMMddHHmm")
+    val DATETIME_FORMATTER_yyyyMMddHHmmss = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+    val DATETIME_FORMATTER_HHmm = DateTimeFormatter.ofPattern("HHmm")
 
     // LocalDate 기준, 작년 같은 ISO 주차 범위 반환
     fun getLastYearSameIsoWeekRange(localDate: LocalDate = LocalDate.now()): Pair<LocalDate, LocalDate> {
