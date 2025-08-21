@@ -3,7 +3,6 @@ package thatline.localup.common.aspect
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
-import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import thatline.localup.common.annotation.OpenApiQuota
@@ -15,10 +14,6 @@ import java.util.concurrent.TimeUnit
 class OpenApiQuotaAspect(
     private val redisTemplate: StringRedisTemplate,
 ) {
-    companion object {
-        private val logger = LoggerFactory.getLogger(this::class.java)
-    }
-
     @Around("@annotation(openApiQuota)")
     fun checkQuota(proceedingJoinPoint: ProceedingJoinPoint, openApiQuota: OpenApiQuota): Any? {
         val key = "openApi:${openApiQuota.name}:${openApiQuota.apiWindow.getKey()}"
