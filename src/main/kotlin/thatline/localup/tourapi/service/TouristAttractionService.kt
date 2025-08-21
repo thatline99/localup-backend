@@ -40,8 +40,6 @@ class TouristAttractionService(
 
         val items = response.response.body.items.item
 
-        // TODO: 예외 처리 필요
-
         val lastMonthlyTouristAttractionRankingList = items
             .map { item ->
                 LastMonthlyTouristAttractionRanking(
@@ -82,16 +80,12 @@ class TouristAttractionService(
             endYmd = endYmd,
         )
 
-        // TODO: 예외 처리 필요
-
         val response2 = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             pageNo = 1,
             numOfRows = response1.response.body.totalCount,
             startYmd = startYmd,
             endYmd = endYmd,
         )
-
-        // TODO: 예외 처리 필요
 
         val items = response2.response.body.items.item
 

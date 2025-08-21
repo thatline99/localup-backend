@@ -54,6 +54,7 @@ class TourApiRestClient(
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", tourApiProperty.korService2.areaCode2.responseType)
 
+        // TODO-noah: 수정
         areaCode?.let {
             builder.queryParam("areaCode", it)
         }
@@ -61,6 +62,16 @@ class TourApiRestClient(
         val uri = builder.build(true).toUri()
 
         val response = retrieveTourApi(uri, AreaCode2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
 
         return response
     }
@@ -94,6 +105,7 @@ class TourApiRestClient(
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", tourApiProperty.korService2.ldongCode2.responseType)
 
+        // TODO-noah: 수정
         lDongRegnCd?.let {
             builder.queryParam("lDongRegnCd", it)
         }
@@ -101,6 +113,16 @@ class TourApiRestClient(
         val uri = builder.build(true).toUri()
 
         val response = retrieveTourApi(uri, LdongCode2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
 
         return response
     }
@@ -154,7 +176,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -211,7 +233,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -261,7 +283,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -312,6 +334,16 @@ class TourApiRestClient(
 
         val response = retrieveTourApi(uri, AreaBasedListResponse::class.java)
 
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
         return response
     }
 
@@ -354,6 +386,16 @@ class TourApiRestClient(
             .toUri()
 
         val response = retrieveTourApi(uri, AreaBasedListResponse2::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
 
         return response
     }
@@ -398,7 +440,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, TatsCnctrRatedListResponse::class.java)
+        val response = retrieveTourApi(uri, TatsCnctrRatedListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     /**
@@ -436,7 +490,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, MetcoRegnVisitrDDListResponse::class.java)
+        val response = retrieveTourApi(uri, MetcoRegnVisitrDDListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     /**
@@ -474,7 +540,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, LocgoRegnVisitrDDListResponse::class.java)
+        val response = retrieveTourApi(uri, LocgoRegnVisitrDDListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     private fun <T> retrieveTourApi(
