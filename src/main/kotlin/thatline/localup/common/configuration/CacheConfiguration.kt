@@ -125,7 +125,7 @@ class CacheConfiguration(
     }
 
     @Bean
-    fun lastYearSameWeekVisitorStatistics(): KeyGenerator {
+    fun lastYearSameWeekVisitorStatisticsKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
             val sigunguCode = params[0] as String
 
