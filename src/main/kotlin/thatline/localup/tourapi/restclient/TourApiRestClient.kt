@@ -21,7 +21,9 @@ class TourApiRestClient(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     /**
      * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
@@ -480,7 +482,7 @@ class TourApiRestClient(
         responseType: Class<T>,
     ): T {
         try {
-            log.debug("URI: {}", uri.toString())
+            logger.debug("URI: {}", uri.toString())
 
             return restClient.get()
                 .uri(uri)
