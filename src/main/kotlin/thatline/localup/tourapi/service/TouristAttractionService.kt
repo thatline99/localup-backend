@@ -122,20 +122,20 @@ class TouristAttractionService(
         keyGenerator = CacheKeyGeneratorName.SIGUNGU_MAIN_EVENT,
         sync = true
     )
-    fun findLegalDongSigunguMainEvent(
-        legalDongSigunguCode: String,
+    fun findSigunguMainEvent(
+        sigunguCode: String,
         latitude: Double,
         longitude: Double,
     ): SigunguMainEventInformation {
         val now = LocalDate.now()
 
-        val events = findLegalDongSigunguEvents(
-            legalDongSigunguCode = legalDongSigunguCode,
+        val events = findSigunguEvents(
+            sigunguCode = sigunguCode,
             startDate = now,
             endDate = now.withDayOfMonth(now.lengthOfMonth()),
         )
 
-        // TODO-noah: fix
+        // TODO: 로직 수정
         val filteredEvent =
             // 1. 오늘 시작
             events.filter {
@@ -214,12 +214,12 @@ class TouristAttractionService(
         sync = true
     )
     fun findOngoingOrUpComingSigunguEventsFromTodayToMonthEnd(
-        legalDongSigunguCode: String,
+        sigunguCode: String,
     ): OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation {
         val now = LocalDate.now()
 
-        val events = findLegalDongSigunguEvents(
-            legalDongSigunguCode = legalDongSigunguCode,
+        val events = findSigunguEvents(
+            sigunguCode = sigunguCode,
             startDate = now,
             endDate = now.withDayOfMonth(now.lengthOfMonth()),
         )
@@ -262,8 +262,8 @@ class TouristAttractionService(
         )
     }
 
-    private fun findLegalDongSigunguEvents(
-        legalDongSigunguCode: String,
+    private fun findSigunguEvents(
+        sigunguCode: String,
         startDate: LocalDate,
         endDate: LocalDate,
     ): List<KorService2SearchFestival2Response.Item> {
@@ -275,8 +275,8 @@ class TouristAttractionService(
             numOfRows = 1,
             eventStartDate = startDateFormat,
             eventEndDate = endDateFormat,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+            lDongRegnCd = sigunguCode.substring(0, 2),
+            lDongSignguCd = sigunguCode.substring(2, 5),
         )
 
         val response2 = tourApiRestClient.korService2SearchFestival2(
@@ -284,8 +284,8 @@ class TouristAttractionService(
             numOfRows = response1.response.body.totalCount,
             eventStartDate = startDateFormat,
             eventEndDate = endDateFormat,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+            lDongRegnCd = sigunguCode.substring(0, 2),
+            lDongSignguCd = sigunguCode.substring(2, 5),
         )
 
         return response2.response.body.items.item
