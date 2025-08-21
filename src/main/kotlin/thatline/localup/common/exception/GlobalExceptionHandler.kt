@@ -21,4 +21,13 @@ class GlobalExceptionHandler {
             .status(HttpStatus.BAD_REQUEST)
             .body(BaseResponse.failure(message = errorMessage))
     }
+
+    @ExceptionHandler(OpenApiQuotaExceededException::class)
+    fun handleOpenApiQuotaExceededException(
+        exception: OpenApiQuotaExceededException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(BaseResponse.failure(message = exception.message))
+    }
 }
