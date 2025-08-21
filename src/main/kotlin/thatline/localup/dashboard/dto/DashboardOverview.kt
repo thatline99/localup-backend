@@ -3,13 +3,13 @@ package thatline.localup.dashboard.dto
 import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
+import thatline.localup.tourapi.dto.LegalDongSigunguMainEventInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
-import thatline.localup.tourapi.dto.SigunguEventWithDates
 
 data class DashboardOverview(
     val lastMonthlyTouristAttractionRankingInformation: LastMonthlyTouristAttractionRankingInformation,
     val lastYearSameWeekVisitorStatisticsInformation: LastYearSameWeekVisitorStatisticsInformation,
-    val mainSigunguEvent: SigunguEventWithDates?,
+    val legalDongSigunguMainEventInformation: LegalDongSigunguMainEventInformation,
     val ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation: OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
     val weatherInformation: WeatherInformation,
 )

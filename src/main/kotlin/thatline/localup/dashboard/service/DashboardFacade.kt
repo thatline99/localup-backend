@@ -30,7 +30,7 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
-        val mainSigunguEvent = touristAttractionService.findMainSigunguEvent(
+        val legalDongSigunguMainEventInformation = touristAttractionService.findLegalDongSigunguMainEvent(
             legalDongSigunguCode = foundUserBusinessDto.sigunguCode,
             latitude = foundUserBusinessDto.latitude,
             longitude = foundUserBusinessDto.longitude,
@@ -48,20 +48,20 @@ class DashboardFacade(
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
-            mainSigunguEvent = mainSigunguEvent,
+            legalDongSigunguMainEventInformation = legalDongSigunguMainEventInformation,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
             weatherInformation = weatherInformation,
         )
     }
 
     // TODO: 다시 확인
-    fun findMainEvent(
-        legalDongSigunguCode: String,
-    ): SigunguEventWithDates? {
-        return touristAttractionService.findMainSigunguEvent(
-            legalDongSigunguCode = legalDongSigunguCode,
-            latitude = 0.0,
-            longitude = 0.0,
-        )
-    }
+//    fun findMainEvent(
+//        legalDongSigunguCode: String,
+//    ): SigunguEventWithDates? {
+//        return touristAttractionService.findLegalDongSigunguMainEvent(
+//            legalDongSigunguCode = legalDongSigunguCode,
+//            latitude = 0.0,
+//            longitude = 0.0,
+//        )
+//    }
 }

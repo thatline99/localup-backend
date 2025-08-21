@@ -7,6 +7,7 @@ import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.common.util.GeoUtil
 import thatline.localup.tourapi.dto.*
+import thatline.localup.tourapi.response.KorService2SearchFestival2Response
 import thatline.localup.tourapi.restclient.TourApiRestClient
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -165,40 +166,28 @@ class TouristAttractionService(
         )
     }
 
-    // TODO-noah: 캐싱 고민
-    fun findMainSigunguEvent(
+    @Cacheable(
+        cacheNames = [CacheObjectName.LEGAL_DONG_SIGUNGU_MAIN_EVENT_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.LEGAL_DONG_SIGUNGU_MAIN_EVENT,
+        sync = true
+    )
+    fun findLegalDongSigunguMainEvent(
         legalDongSigunguCode: String,
         latitude: Double,
         longitude: Double,
-    ): SigunguEventWithDates? {
+    ): LegalDongSigunguMainEventInformation {
         val now = LocalDate.now()
-        val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-        val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-        val response1 = tourApiRestClient.korService2SearchFestival2(
-            pageNo = 1,
-            numOfRows = 1,
-            eventStartDate = eventStartDate,
-            eventEndDate = eventEndDate,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        val events = findLegalDongSigunguEvents(
+            legalDongSigunguCode = legalDongSigunguCode,
+            startDate = now,
+            endDate = now.withDayOfMonth(now.lengthOfMonth()),
         )
-
-        val response2 = tourApiRestClient.korService2SearchFestival2(
-            pageNo = 1,
-            numOfRows = response1.response.body.totalCount,
-            eventStartDate = eventStartDate,
-            eventEndDate = eventEndDate,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
-        )
-
-        val items = response2.response.body.items.item
 
         // TODO-noah: fix
-        val filteredItem =
+        val filteredEvent =
             // 1. 오늘 시작
-            items.filter {
+            events.filter {
                 runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
                     .getOrNull() == now
             }.minWithOrNull(
@@ -212,7 +201,7 @@ class TouristAttractionService(
                 )
             )
             // 2. 곧 시작
-                ?: items.filter {
+                ?: events.filter {
                     val startDate =
                         runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
                             .getOrNull()
@@ -228,7 +217,7 @@ class TouristAttractionService(
                     )
                 )
                 // 3. 진행 중
-                ?: items.filter {
+                ?: events.filter {
                     val startDate =
                         runCatching { LocalDate.parse(it.eventstartdate, DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd) }
                             .getOrNull()
@@ -247,22 +236,25 @@ class TouristAttractionService(
                     )
                 )
 
-        return filteredItem?.let {
-            SigunguEventWithDates(
-                contentTypeId = it.contenttypeid,
-                contentId = it.contentid,
-                title = it.title,
-                startDate = LocalDate.parse(it.eventstartdate, DateTimeFormatter.BASIC_ISO_DATE),
-                endDate = LocalDate.parse(it.eventenddate, DateTimeFormatter.BASIC_ISO_DATE),
-                zipCode = it.zipcode,
-                address = listOf(it.addr1, it.addr2).filter { addr -> addr.isNotBlank() }.joinToString(", "),
-                latitude = it.mapy.toDouble(),
-                longitude = it.mapx.toDouble(),
-                telephone = it.tel,
-                originalImageUrl = it.firstimage,
-                thumbnailImageUrl = it.firstimage2,
-            )
-        }
+        return LegalDongSigunguMainEventInformation(
+            updatedDate = LocalDateTime.now(),
+            legalDongSigunguMainEvent = filteredEvent?.let {
+                SigunguEventWithDates(
+                    contentTypeId = it.contenttypeid,
+                    contentId = it.contentid,
+                    title = it.title,
+                    startDate = LocalDate.parse(it.eventstartdate, DateTimeFormatter.BASIC_ISO_DATE),
+                    endDate = LocalDate.parse(it.eventenddate, DateTimeFormatter.BASIC_ISO_DATE),
+                    zipCode = it.zipcode,
+                    address = listOf(it.addr1, it.addr2).filter { addr -> addr.isNotBlank() }.joinToString(", "),
+                    latitude = it.mapy.toDouble(),
+                    longitude = it.mapx.toDouble(),
+                    telephone = it.tel,
+                    originalImageUrl = it.firstimage,
+                    thumbnailImageUrl = it.firstimage2,
+                )
+            }
+        )
     }
 
     @Cacheable(
@@ -274,28 +266,14 @@ class TouristAttractionService(
         legalDongSigunguCode: String,
     ): OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation {
         val now = LocalDate.now()
-        val eventStartDate = now.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-        val eventEndDate = now.withDayOfMonth(now.lengthOfMonth()).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-        val response1 = tourApiRestClient.korService2SearchFestival2(
-            pageNo = 1,
-            numOfRows = 1,
-            eventStartDate = eventStartDate,
-            eventEndDate = eventEndDate,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        val events = findLegalDongSigunguEvents(
+            legalDongSigunguCode = legalDongSigunguCode,
+            startDate = now,
+            endDate = now.withDayOfMonth(now.lengthOfMonth()),
         )
 
-        val response2 = tourApiRestClient.korService2SearchFestival2(
-            pageNo = 1,
-            numOfRows = response1.response.body.totalCount,
-            eventStartDate = eventStartDate,
-            eventEndDate = eventEndDate,
-            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
-            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
-        )
-
-        val sigunguEventsWithDates = response2.response.body.items.item
+        val sigunguEventsWithDates = events
             .map { it ->
                 with(it) {
                     SigunguEventWithDates(
@@ -331,5 +309,34 @@ class TouristAttractionService(
             updatedDate = LocalDateTime.now(),
             sigunguEventsWithDates = sortedEvents
         )
+    }
+
+    private fun findLegalDongSigunguEvents(
+        legalDongSigunguCode: String,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): List<KorService2SearchFestival2Response.Item> {
+        val startDateFormat = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val endDateFormat = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+        val response1 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = 1,
+            eventStartDate = startDateFormat,
+            eventEndDate = endDateFormat,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        val response2 = tourApiRestClient.korService2SearchFestival2(
+            pageNo = 1,
+            numOfRows = response1.response.body.totalCount,
+            eventStartDate = startDateFormat,
+            eventEndDate = endDateFormat,
+            lDongRegnCd = legalDongSigunguCode.substring(0, 2),
+            lDongSignguCd = legalDongSigunguCode.substring(2, 5),
+        )
+
+        return response2.response.body.items.item
     }
 }

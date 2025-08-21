@@ -15,10 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.WeatherInformation
-import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
-import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
-import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
-import thatline.localup.tourapi.dto.SigunguEventInformation
+import thatline.localup.tourapi.dto.*
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -74,6 +71,18 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
+        // 대시보드, 법정동 시군구, 메인 이벤트 정보 캐시 설정
+        val legalDongSigunguMainEventInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        LegalDongSigunguMainEventInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofDays(1))
+
         // 대시보드, 법정동 시군구 기준, 오늘 날짜 ~ 월 마지막 일 축제/공연/행사 정보 캐시 설정
         val ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
@@ -103,6 +112,7 @@ class CacheConfiguration(
             CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
             CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
             CacheObjectName.SIGUNGU_EVENT_INFORMATION to sigunguEventInformationCacheConfiguration,
+            CacheObjectName.LEGAL_DONG_SIGUNGU_MAIN_EVENT_INFORMATION to legalDongSigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
@@ -146,6 +156,19 @@ class CacheConfiguration(
             val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
             "$sigunguCode-$savedDateTime"
+        }
+    }
+
+    @Bean
+    fun legalDongSigunguMainEventKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val legalDongSigunguCode = params[0] as String
+            val latitude = params[1] as Double
+            val longitude = params[2] as Double
+
+            val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+            "$legalDongSigunguCode-$latitude-$longitude-$savedDateTime"
         }
     }
 
