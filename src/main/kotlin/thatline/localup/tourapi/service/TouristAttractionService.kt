@@ -190,7 +190,7 @@ class TouristAttractionService(
         return SigunguMainEventInformation(
             updatedDate = LocalDateTime.now(),
             sigunguMainEvent = filteredEvent?.let {
-                LocationEventWithDates(
+                LocationEvent(
                     contentTypeId = it.contenttypeid,
                     contentId = it.contentid,
                     title = it.title,
@@ -227,7 +227,7 @@ class TouristAttractionService(
         val sigunguEventsWithDates = events
             .map { it ->
                 with(it) {
-                    LocationEventWithDates(
+                    LocationEvent(
                         contentTypeId = contenttypeid,
                         contentId = contentid,
                         title = title,
@@ -258,7 +258,7 @@ class TouristAttractionService(
 
         return OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation(
             updatedDate = LocalDateTime.now(),
-            sigunguEventsWithDates = sortedEvents
+            sigunguEvents = sortedEvents
         )
     }
 

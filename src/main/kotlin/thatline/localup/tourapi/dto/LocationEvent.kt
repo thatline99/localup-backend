@@ -2,7 +2,7 @@ package thatline.localup.tourapi.dto
 
 import java.time.LocalDate
 
-data class LocationEventWithDates(
+data class LocationEvent(
     val contentTypeId: String,
     val contentId: String,
     val title: String,

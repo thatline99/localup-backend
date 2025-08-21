@@ -4,5 +4,5 @@ import java.time.LocalDateTime
 
 data class SigunguMainEventInformation(
     val updatedDate: LocalDateTime,
-    val sigunguMainEvent: LocationEventWithDates?,
+    val sigunguMainEvent: LocationEvent?,
 )
