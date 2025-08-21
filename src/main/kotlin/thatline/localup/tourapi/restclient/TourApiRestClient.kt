@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
+import thatline.localup.common.annotation.ApiWindow
+import thatline.localup.common.annotation.OpenApiQuota
 import thatline.localup.common.property.TourApiProperty
 import thatline.localup.common.util.queryParamIfNotNull
 import thatline.localup.tourapi.exception.TourApiException
@@ -31,6 +33,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "korService2:areaCode2", limit = 1000, ApiWindow.DAILY)
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaCode2(
         pageNo: Long,
@@ -72,6 +75,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
+    @OpenApiQuota(name = "korService2:ldongCode2", limit = 1000, ApiWindow.DAILY)
     fun ldongCode2(
         pageNo: Long,
         numOfRows: Long,
@@ -115,6 +119,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "korService2:areaBasedList2", limit = 1000, ApiWindow.DAILY)
     fun korService2AreaBasedList2(
         pageNo: Long? = null,
         numOfRows: Long? = null,
@@ -173,6 +178,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "korService2:searchFestival2", limit = 1000, ApiWindow.DAILY)
     fun korService2SearchFestival2(
         pageNo: Long? = null,
         numOfRows: Long? = null,
@@ -227,6 +233,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "korService2:detailIntro215", limit = 1000, ApiWindow.DAILY)
     fun korService2DetailIntro215(
         contentId: String,
         contentTypeId: String = "15",
@@ -277,6 +284,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "tarRlteTarService1:areaBasedList", limit = 1000, ApiWindow.DAILY) //
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList(
         pageNo: Long,
@@ -320,6 +328,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "locgoHubTarService1:areaBasedList2", limit = 1000, ApiWindow.DAILY)
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun areaBasedList2(
         pageNo: Long,
@@ -363,6 +372,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128555/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "tatsCnctrRateService:tatsCnctrRatedList", limit = 1000, ApiWindow.DAILY)
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun tatsCnctrRatedList(
         pageNo: Long,
@@ -405,6 +415,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "dataLabService:metcoRegnVisitrDDList", limit = 1000, ApiWindow.DAILY)
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun metcoRegnVisitrDDList(
         pageNo: Long,
@@ -443,6 +454,7 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "dataLabService:locgoRegnVisitrDDList", limit = 1000, ApiWindow.DAILY)
     // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     fun locgoRegnVisitrDDList(
         pageNo: Long,
