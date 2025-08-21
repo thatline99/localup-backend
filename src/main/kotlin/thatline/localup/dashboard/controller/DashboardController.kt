@@ -24,4 +24,13 @@ class DashboardController(
 
         return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
     }
+
+    // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
+    @GetMapping("/test")
+    fun getDashboardInformation(): ResponseEntity<BaseResponse<DashboardOverview>> {
+        // 해당 user id는 로컬 db에 따라 달라질 수 있습니다.
+        val dashboardOverview = dashboardFacade.getDashboardOverview("689eb417e295ca9144b875a0")
+
+        return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
+    }
 }

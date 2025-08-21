@@ -21,7 +21,9 @@ class TourApiRestClient(
     private val tourApiProperty: TourApiProperty,
     private val restClient: RestClient,
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     /**
      * 한국관광공사_국문 관광정보 서비스_GW: 지역코드조회
@@ -34,8 +36,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
     @OpenApiQuota(name = "korService2:areaCode2", limit = 1000, ApiWindow.DAILY)
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun areaCode2(
+    fun korServiceAreaCode2(
         pageNo: Long,
         numOfRows: Long,
         areaCode: String? = null,
@@ -51,15 +52,22 @@ class TourApiRestClient(
             .queryParam("numOfRows", numOfRows)
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
+            .queryParamIfNotNull("areaCode", areaCode)
             .queryParam("_type", tourApiProperty.korService2.areaCode2.responseType)
-
-        areaCode?.let {
-            builder.queryParam("areaCode", it)
-        }
 
         val uri = builder.build(true).toUri()
 
         val response = retrieveTourApi(uri, AreaCode2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
 
         return response
     }
@@ -74,9 +82,8 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15101578/openapi.do">공공데이터포털 API 문서</a>
      */
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
     @OpenApiQuota(name = "korService2:ldongCode2", limit = 1000, ApiWindow.DAILY)
-    fun ldongCode2(
+    fun korService2LdongCode2(
         pageNo: Long,
         numOfRows: Long,
         lDongRegnCd: String? = null,
@@ -93,14 +100,21 @@ class TourApiRestClient(
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("_type", tourApiProperty.korService2.ldongCode2.responseType)
-
-        lDongRegnCd?.let {
-            builder.queryParam("lDongRegnCd", it)
-        }
+            .queryParamIfNotNull("lDongRegnCd", lDongRegnCd)
 
         val uri = builder.build(true).toUri()
 
         val response = retrieveTourApi(uri, LdongCode2Response::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
 
         return response
     }
@@ -154,7 +168,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -211,7 +225,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -261,7 +275,7 @@ class TourApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (response.response.header.resultCode != "0000") {
+        if (responseHeader.resultCode != "0000") {
             throw TourApiKorService2AreaBasedList2Exception(
                 failedUri = uri.toString(),
                 resultCode = responseHeader.resultCode,
@@ -284,9 +298,8 @@ class TourApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15128560/openapi.do">공공데이터포털 API 문서</a>
      */
-    @OpenApiQuota(name = "tarRlteTarService1:areaBasedList", limit = 1000, ApiWindow.DAILY) //
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun areaBasedList(
+    @OpenApiQuota(name = "tarRlteTarService1:areaBasedList", limit = 1000, ApiWindow.DAILY)
+    fun tarRlteTarService1AreaBasedList(
         pageNo: Long,
         numOfRows: Long,
         baseYm: String,
@@ -313,6 +326,16 @@ class TourApiRestClient(
 
         val response = retrieveTourApi(uri, AreaBasedListResponse::class.java)
 
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
         return response
     }
 
@@ -329,8 +352,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15128559/openapi.do">공공데이터포털 API 문서</a>
      */
     @OpenApiQuota(name = "locgoHubTarService1:areaBasedList2", limit = 1000, ApiWindow.DAILY)
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun areaBasedList2(
+    fun locgoHubTarService1AreaBasedList2(
         pageNo: Long,
         numOfRows: Long,
         baseYm: String,
@@ -357,6 +379,16 @@ class TourApiRestClient(
 
         val response = retrieveTourApi(uri, AreaBasedListResponse2::class.java)
 
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
         return response
     }
 
@@ -373,8 +405,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15128555/openapi.do">공공데이터포털 API 문서</a>
      */
     @OpenApiQuota(name = "tatsCnctrRateService:tatsCnctrRatedList", limit = 1000, ApiWindow.DAILY)
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun tatsCnctrRatedList(
+    fun tatsCnctrRateServiceTatsCnctrRatedList(
         pageNo: Long,
         numOfRows: Long,
         areaCd: String,
@@ -401,7 +432,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, TatsCnctrRatedListResponse::class.java)
+        val response = retrieveTourApi(uri, TatsCnctrRatedListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     /**
@@ -416,8 +459,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
     @OpenApiQuota(name = "dataLabService:metcoRegnVisitrDDList", limit = 1000, ApiWindow.DAILY)
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun metcoRegnVisitrDDList(
+    fun dataLabServiceMetcoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
         startYmd: String,
@@ -440,7 +482,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, MetcoRegnVisitrDDListResponse::class.java)
+        val response = retrieveTourApi(uri, MetcoRegnVisitrDDListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     /**
@@ -455,8 +509,7 @@ class TourApiRestClient(
      * @see <a href="https://www.data.go.kr/data/15101972/openapi.do">공공데이터포털 API 문서</a>
      */
     @OpenApiQuota(name = "dataLabService:locgoRegnVisitrDDList", limit = 1000, ApiWindow.DAILY)
-    // TODO-noah: 중복된 메서드 이름, 이름 정의 재설정 필요
-    fun locgoRegnVisitrDDList(
+    fun dataLabServiceLocgoRegnVisitrDDList(
         pageNo: Long,
         numOfRows: Long,
         startYmd: String,
@@ -479,7 +532,19 @@ class TourApiRestClient(
             .build(true)
             .toUri()
 
-        return retrieveTourApi(uri, LocgoRegnVisitrDDListResponse::class.java)
+        val response = retrieveTourApi(uri, LocgoRegnVisitrDDListResponse::class.java)
+
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw TourApiKorService2AreaBasedList2Exception(
+                failedUri = uri.toString(),
+                resultCode = responseHeader.resultCode,
+                resultMessage = responseHeader.resultMsg
+            )
+        }
+
+        return response
     }
 
     private fun <T> retrieveTourApi(
@@ -487,7 +552,7 @@ class TourApiRestClient(
         responseType: Class<T>,
     ): T {
         try {
-            log.debug("URI: {}", uri.toString())
+            logger.debug("URI: {}", uri.toString())
 
             return restClient.get()
                 .uri(uri)
