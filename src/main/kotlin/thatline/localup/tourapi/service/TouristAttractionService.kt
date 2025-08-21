@@ -30,7 +30,7 @@ class TouristAttractionService(
     ): LastMonthlyTouristAttractionRankingInformation {
         val yearMonth = YearMonth.now().minusMonths(1)
 
-        val response = tourApiRestClient.areaBasedList2(
+        val response = tourApiRestClient.locgoHubTarService1AreaBasedList2(
             pageNo = 1,
             numOfRows = 100,
             baseYm = yearMonth.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM),
@@ -75,7 +75,7 @@ class TouristAttractionService(
         val startYmd = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val endYmd = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-        val response1 = tourApiRestClient.locgoRegnVisitrDDList(
+        val response1 = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             pageNo = 1,
             numOfRows = 1,
             startYmd = startYmd,
@@ -84,7 +84,7 @@ class TouristAttractionService(
 
         // TODO: 예외 처리 필요
 
-        val response2 = tourApiRestClient.locgoRegnVisitrDDList(
+        val response2 = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             pageNo = 1,
             numOfRows = response1.response.body.totalCount,
             startYmd = startYmd,

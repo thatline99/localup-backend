@@ -12,12 +12,12 @@ class LuCommonService(
     private val objectMapper: ObjectMapper,
 ) {
     fun searchAreas(): List<Area> {
-        val totalCount = tourApiRestClient.ldongCode2(
+        val totalCount = tourApiRestClient.korService2LdongCode2(
             pageNo = 1,
             numOfRows = 1,
         ).response.body.totalCount
 
-        val items = tourApiRestClient.ldongCode2(
+        val items = tourApiRestClient.korService2LdongCode2(
             pageNo = 1,
             numOfRows = totalCount,
         ).response.body.getItems(objectMapper)
@@ -34,13 +34,13 @@ class LuCommonService(
             return listOf(Sigungu(code = "36110", name = "세종특별자치시"))
         }
 
-        val totalCount = tourApiRestClient.ldongCode2(
+        val totalCount = tourApiRestClient.korService2LdongCode2(
             pageNo = 1,
             numOfRows = 1,
             lDongRegnCd = areaCode
         ).response.body.totalCount
 
-        val items = tourApiRestClient.ldongCode2(
+        val items = tourApiRestClient.korService2LdongCode2(
             pageNo = 1,
             numOfRows = totalCount,
             lDongRegnCd = areaCode
