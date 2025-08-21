@@ -2,9 +2,7 @@ package thatline.localup.tourapi.dto
 
 import java.time.LocalDate
 
-// TODO-noah: RENAME
-// TODO-noah: SigunguEventWithDates 객체명 LegalDongEvent으로 변경
-data class SigunguEventWithDates(
+data class LocationEventWithDates(
     val contentTypeId: String,
     val contentId: String,
     val title: String,

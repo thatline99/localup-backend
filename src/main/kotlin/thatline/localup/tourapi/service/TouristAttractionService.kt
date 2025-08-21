@@ -238,8 +238,8 @@ class TouristAttractionService(
 
         return LegalDongSigunguMainEventInformation(
             updatedDate = LocalDateTime.now(),
-            legalDongSigunguMainEvent = filteredEvent?.let {
-                SigunguEventWithDates(
+            sigunguMainEvent = filteredEvent?.let {
+                LocationEventWithDates(
                     contentTypeId = it.contenttypeid,
                     contentId = it.contentid,
                     title = it.title,
@@ -276,7 +276,7 @@ class TouristAttractionService(
         val sigunguEventsWithDates = events
             .map { it ->
                 with(it) {
-                    SigunguEventWithDates(
+                    LocationEventWithDates(
                         contentTypeId = contenttypeid,
                         contentId = contentid,
                         title = title,
