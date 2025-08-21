@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
 import thatline.localup.etcapi.service.WeatherService
+import thatline.localup.tourapi.dto.SigunguEventWithDates
 import thatline.localup.tourapi.service.TouristAttractionService
 import thatline.localup.user.service.UserService
 
@@ -50,6 +51,17 @@ class DashboardFacade(
             mainSigunguEvent = mainSigunguEvent,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
             weatherInformation = weatherInformation,
+        )
+    }
+
+    // TODO: 다시 확인
+    fun findMainEvent(
+        legalDongSigunguCode: String,
+    ): SigunguEventWithDates? {
+        return touristAttractionService.findMainSigunguEvent(
+            legalDongSigunguCode = legalDongSigunguCode,
+            latitude = 0.0,
+            longitude = 0.0,
         )
     }
 }
