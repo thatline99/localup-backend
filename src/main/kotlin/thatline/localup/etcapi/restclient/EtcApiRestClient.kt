@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
+import thatline.localup.common.annotation.ApiWindow
+import thatline.localup.common.annotation.OpenApiQuota
 import thatline.localup.common.property.EtcApiProperty
 import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
@@ -35,6 +37,7 @@ class EtcApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "vilageFcstInfoService_2.0:getUltraSrtNcst", limit = 10000, ApiWindow.DAILY)
     fun getUltraSrtNcst(
         pageNo: Long,
         numOfRows: Long,
@@ -86,6 +89,7 @@ class EtcApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "vilageFcstInfoService_2.0:getVilageFcst", limit = 10000, ApiWindow.DAILY)
     fun getVilageFcst(
         pageNo: Long,
         numOfRows: Long,
@@ -135,6 +139,7 @@ class EtcApiRestClient(
      *
      * @see <a href="https://www.data.go.kr/data/15084084/openapi.do">공공데이터포털 API 문서</a>
      */
+    @OpenApiQuota(name = "vilageFcstInfoService_2.0:getFcstVersion", limit = 10000, ApiWindow.DAILY)
     fun getFcstVersion(
         pageNo: Long,
         numOfRows: Long,
