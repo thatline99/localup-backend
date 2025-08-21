@@ -167,15 +167,15 @@ class TouristAttractionService(
     }
 
     @Cacheable(
-        cacheNames = [CacheObjectName.LEGAL_DONG_SIGUNGU_MAIN_EVENT_INFORMATION],
-        keyGenerator = CacheKeyGeneratorName.LEGAL_DONG_SIGUNGU_MAIN_EVENT,
+        cacheNames = [CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.SIGUNGU_MAIN_EVENT,
         sync = true
     )
     fun findLegalDongSigunguMainEvent(
         legalDongSigunguCode: String,
         latitude: Double,
         longitude: Double,
-    ): LegalDongSigunguMainEventInformation {
+    ): SigunguMainEventInformation {
         val now = LocalDate.now()
 
         val events = findLegalDongSigunguEvents(
@@ -236,7 +236,7 @@ class TouristAttractionService(
                     )
                 )
 
-        return LegalDongSigunguMainEventInformation(
+        return SigunguMainEventInformation(
             updatedDate = LocalDateTime.now(),
             sigunguMainEvent = filteredEvent?.let {
                 LocationEventWithDates(

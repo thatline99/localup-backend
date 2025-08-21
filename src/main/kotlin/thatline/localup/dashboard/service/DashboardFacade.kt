@@ -47,7 +47,7 @@ class DashboardFacade(
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
-            legalDongSigunguMainEventInformation = legalDongSigunguMainEventInformation,
+            sigunguMainEventInformation = legalDongSigunguMainEventInformation,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
             weatherInformation = weatherInformation,
         )

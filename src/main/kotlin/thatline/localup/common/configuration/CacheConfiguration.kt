@@ -71,13 +71,13 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
-        // 대시보드, 법정동 시군구, 메인 이벤트 정보 캐시 설정
-        val legalDongSigunguMainEventInformationCacheConfiguration = defaultCacheConfiguration
+        // 대시보드, 시군구 메인 이벤트 정보 캐시 설정
+        val sigunguMainEventInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
                     Jackson2JsonRedisSerializer(
                         objectMapper,
-                        LegalDongSigunguMainEventInformation::class.java
+                        SigunguMainEventInformation::class.java
                     )
                 )
             )
@@ -112,7 +112,7 @@ class CacheConfiguration(
             CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
             CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
             CacheObjectName.SIGUNGU_EVENT_INFORMATION to sigunguEventInformationCacheConfiguration,
-            CacheObjectName.LEGAL_DONG_SIGUNGU_MAIN_EVENT_INFORMATION to legalDongSigunguMainEventInformationCacheConfiguration,
+            CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION to sigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
@@ -160,7 +160,7 @@ class CacheConfiguration(
     }
 
     @Bean
-    fun legalDongSigunguMainEventKeyGenerator(): KeyGenerator {
+    fun sigunguMainEventKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
             val legalDongSigunguCode = params[0] as String
             val latitude = params[1] as Double

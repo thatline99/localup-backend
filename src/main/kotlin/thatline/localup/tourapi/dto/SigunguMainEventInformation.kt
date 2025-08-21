@@ -2,7 +2,7 @@ package thatline.localup.tourapi.dto
 
 import java.time.LocalDateTime
 
-data class LegalDongSigunguMainEventInformation(
+data class SigunguMainEventInformation(
     val updatedDate: LocalDateTime,
     val sigunguMainEvent: LocationEventWithDates?,
 )
