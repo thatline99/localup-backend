@@ -2,7 +2,7 @@ package thatline.localup.tourapi.dto
 
 import java.time.LocalDate
 
-data class SigunguEventWithDates(
+data class LocationEventWithDates(
     val contentTypeId: String,
     val contentId: String,
     val title: String,
