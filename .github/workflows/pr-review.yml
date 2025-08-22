@@ -192,66 +192,29 @@ jobs:
             const reviewData = JSON.parse(fs.readFileSync('review.json', 'utf8'));
             const pr_number = ${{ steps.pr-details.outputs.pr_number }};
             
-            // Get the latest commit SHA
-            const { data: pr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr_number
-            });
-            const commit_id = pr.head.sha;
+            // Build the review message
+            let reviewBody = `## 🤖 Claude AI 코드 리뷰\n\n`;
+            reviewBody += `### 📋 전체 요약\n${reviewData.summary}\n\n`;
             
-            // Prepare review comments for each file
-            const comments = [];
-            
-            // Get file data once for all files
-            const { data: fileData } = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr_number
-            });
-            
-            for (const file of reviewData.files) {
-              if (file.review) {
-                const targetFile = fileData.find(f => f.filename === file.filename);
-                if (targetFile && targetFile.patch) {
-                  // Get the position of the last line in the patch
-                  const lines = targetFile.patch.split('\n');
-                  let position = lines.length;
-                  
-                  // Find the last non-empty line position
-                  for (let i = lines.length - 1; i >= 0; i--) {
-                    if (lines[i] && lines[i].trim()) {
-                      position = i + 1;
-                      break;
-                    }
-                  }
-                  
-                  comments.push({
-                    path: file.filename,
-                    body: `## 📝 파일 리뷰\n\n${file.review}`,
-                    position: position
-                  });
+            // Add file-specific reviews
+            if (reviewData.files && reviewData.files.length > 0) {
+              reviewBody += `### 📁 파일별 리뷰\n\n`;
+              for (const file of reviewData.files) {
+                if (file.review) {
+                  reviewBody += `<details>\n`;
+                  reviewBody += `<summary><b>📝 ${file.filename}</b></summary>\n\n`;
+                  reviewBody += `${file.review}\n\n`;
+                  reviewBody += `</details>\n\n`;
                 }
               }
             }
             
-            // Create a review with all comments
-            if (comments.length > 0) {
-              await github.rest.pulls.createReview({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: pr_number,
-                commit_id: commit_id,
-                body: `## 🤖 Claude AI 코드 리뷰\n\n${reviewData.summary}\n\n---\n*이 리뷰는 Claude 3.5 Sonnet에 의해 자동으로 생성되었습니다. 새로운 리뷰를 요청하려면 \`/review\` 댓글을 작성하세요.*`,
-                event: 'COMMENT',
-                comments: comments
-              });
-            } else {
-              // If no file-specific comments, just post the summary
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: pr_number,
-                body: `## 🤖 Claude AI 코드 리뷰\n\n${reviewData.summary}\n\n특정 파일에 대한 코멘트가 없습니다. 전체적으로 잘 작성된 코드입니다! 👍\n\n---\n*이 리뷰는 Claude 3.5 Sonnet에 의해 자동으로 생성되었습니다. 새로운 리뷰를 요청하려면 \`/review\` 댓글을 작성하세요.*`
-              });
-            }
+            reviewBody += `---\n*이 리뷰는 Claude 3.5 Sonnet에 의해 자동으로 생성되었습니다. 새로운 리뷰를 요청하려면 \`/review\` 댓글을 작성하세요.*`;
+            
+            // Post the review as a single comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number,
+              body: reviewBody
+            });
