@@ -214,14 +214,14 @@ jobs:
               if (file.review) {
                 const targetFile = fileData.find(f => f.filename === file.filename);
                 if (targetFile && targetFile.patch) {
-                  // Get the last added line number
+                  // Get the position of the last line in the patch
                   const lines = targetFile.patch.split('\n');
-                  let lastLine = 1;
+                  let position = lines.length;
                   
+                  // Find the last non-empty line position
                   for (let i = lines.length - 1; i >= 0; i--) {
-                    if (lines[i].startsWith('+') && !lines[i].startsWith('+++')) {
-                      // Found the last added line
-                      lastLine = i + 1;
+                    if (lines[i] && lines[i].trim()) {
+                      position = i + 1;
                       break;
                     }
                   }
@@ -229,8 +229,7 @@ jobs:
                   comments.push({
                     path: file.filename,
                     body: `## 📝 파일 리뷰\n\n${file.review}`,
-                    line: lastLine,
-                    side: 'RIGHT'
+                    position: position
                   });
                 }
               }
