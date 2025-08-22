@@ -169,7 +169,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const review = fs.readFileSync('review.md', 'utf8');
+            const reviewContent = fs.readFileSync('review.md', 'utf8');
             
             const pr_number = ${{ steps.pr-details.outputs.pr_number }};
             
@@ -178,5 +178,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr_number,
-              body: `## 🤖 Claude AI 리뷰\n\n${review}\n\n---\n*이 리뷰는 Claude 3.5 Sonnet에 의해 자동으로 생성되었습니다. 새로운 리뷰를 요청하려면 `/review` 댓글을 작성하세요.*`
+              body: `## 🤖 Claude AI 리뷰\n\n${reviewContent}\n\n---\n*이 리뷰는 Claude 3.5 Sonnet에 의해 자동으로 생성되었습니다. 새로운 리뷰를 요청하려면 \`/review\` 댓글을 작성하세요.*`
             });
