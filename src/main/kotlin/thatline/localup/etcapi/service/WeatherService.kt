@@ -1,6 +1,5 @@
 package thatline.localup.etcapi.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
@@ -16,8 +15,6 @@ import java.time.format.DateTimeFormatter
 class WeatherService(
     private val etcApiRestClient: EtcApiRestClient,
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
-
     fun findShortTermForecast(
         sigunguCode: String,
         baseDate: String = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd),
