@@ -9,6 +9,7 @@ import thatline.localup.common.annotation.RequireUser
 import thatline.localup.common.response.BaseResponse
 import thatline.localup.dashboard.dto.DashboardOverview
 import thatline.localup.dashboard.service.DashboardFacade
+import thatline.localup.etcapi.dto.ShortTermForecastInformation
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -25,6 +26,16 @@ class DashboardController(
         return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
     }
 
+    @GetMapping("/short-term-forecast")
+    @RequireUser
+    fun findShortTermForecast(
+        @AuthenticationPrincipal userId: String,
+    ): ResponseEntity<BaseResponse<ShortTermForecastInformation>> {
+        val shortTermForecastInformation = dashboardFacade.findShortTermForecast(userId)
+
+        return ResponseEntity.ok(BaseResponse.success(data = shortTermForecastInformation))
+    }
+
     // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
     @GetMapping("/test")
     fun getDashboardInformation(): ResponseEntity<BaseResponse<DashboardOverview>> {
@@ -32,5 +43,13 @@ class DashboardController(
         val dashboardOverview = dashboardFacade.getDashboardOverview("689eb417e295ca9144b875a0")
 
         return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
+    }
+
+    // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
+    @GetMapping("/test/short-term-forecast")
+    fun findShortTermForecastTest(): ResponseEntity<BaseResponse<ShortTermForecastInformation>> {
+        val shortTermForecastInformation = dashboardFacade.findShortTermForecast("689eb417e295ca9144b875a0")
+
+        return ResponseEntity.ok(BaseResponse.success(data = shortTermForecastInformation))
     }
 }

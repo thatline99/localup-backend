@@ -49,7 +49,7 @@ class SecurityConfiguration(
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/tour-api/**").permitAll()
                     .requestMatchers("/api/health").permitAll()
-                    .requestMatchers("/api/dashboard/test").permitAll()
+                    .requestMatchers("/api/dashboard/test/**").permitAll()
                     .anyRequest().authenticated()
             }
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)

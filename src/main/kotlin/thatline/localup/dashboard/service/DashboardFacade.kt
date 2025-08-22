@@ -3,6 +3,7 @@ package thatline.localup.dashboard.service
 import org.springframework.stereotype.Service
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
+import thatline.localup.etcapi.dto.ShortTermForecastInformation
 import thatline.localup.etcapi.service.ForecastService
 import thatline.localup.tourapi.service.TouristAttractionService
 import thatline.localup.user.service.UserService
@@ -39,16 +40,22 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode,
             )
 
-        val weatherInformation = forecastService.findShortTermForecast(
-            sigunguCode = foundUserBusinessDto.sigunguCode
-        )
-
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
             sigunguMainEventInformation = sigunguMainEventInformation,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
-            weatherInformation = weatherInformation,
         )
+    }
+
+    @CountMongoDbCommands
+    fun findShortTermForecast(userId: String): ShortTermForecastInformation {
+        val foundUserBusinessDto = userService.findBusiness(userId)
+
+        val shortTermForecastInformation = forecastService.findShortTermForecast(
+            sigunguCode = foundUserBusinessDto.sigunguCode
+        )
+
+        return shortTermForecastInformation
     }
 }
