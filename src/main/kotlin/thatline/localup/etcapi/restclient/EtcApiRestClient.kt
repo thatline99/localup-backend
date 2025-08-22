@@ -9,6 +9,7 @@ import thatline.localup.common.annotation.ApiWindow
 import thatline.localup.common.annotation.OpenApiQuota
 import thatline.localup.common.property.EtcApiProperty
 import thatline.localup.etcapi.exception.ExternalEtcApiException
+import thatline.localup.etcapi.exception.KmaApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
 import thatline.localup.etcapi.response.GetVilageFcstResponse
@@ -65,13 +66,14 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetUltraSrtNcstResponse::class.java)
+        val response = retrieveEtcApi(uri, GetUltraSrtNcstResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            logger.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
@@ -117,13 +119,14 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetVilageFcstResponse::class.java)
+        val response = retrieveEtcApi(uri, GetVilageFcstResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            logger.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
@@ -163,20 +166,21 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetFcstVersionResponse::class.java)
+        val response = retrieveEtcApi(uri, GetFcstVersionResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            logger.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "0000") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
         return response
     }
 
-    private fun <T> retrieveTourApi(
+    private fun <T> retrieveEtcApi(
         uri: URI,
         responseType: Class<T>,
     ): T {

@@ -7,7 +7,6 @@ import thatline.localup.common.constant.CacheKeyGeneratorName
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
-import thatline.localup.etcapi.code.UltraSrtNcstResponseCode
 import thatline.localup.etcapi.dto.DailyWeather
 import thatline.localup.etcapi.dto.WeatherCondition
 import thatline.localup.etcapi.dto.WeatherInformation
@@ -49,19 +48,6 @@ class WeatherService(
             nx = tourApiArea.nx,
             ny = tourApiArea.ny,
         )
-
-        if (response.response.header.resultCode != "00") {
-            log.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
-            )
-
-            // TODO: 로직 재사용함, 수정 필요
-            throw WeatherServiceException(
-                message = UltraSrtNcstResponseCode.from(response.response.header.resultCode).message
-            )
-        }
 
         val body = response.response.body
             ?: throw WeatherServiceException(message = "BODY_IS_NULL")
