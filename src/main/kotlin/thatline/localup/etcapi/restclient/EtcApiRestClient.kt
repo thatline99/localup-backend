@@ -12,6 +12,8 @@ import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
 import thatline.localup.etcapi.response.GetVilageFcstResponse
+import thatline.localup.tourapi.restclient.TourApiRestClient
+import thatline.localup.tourapi.restclient.TourApiRestClient.Companion
 import java.net.URI
 
 // TODO: RENAME
@@ -22,15 +24,17 @@ class EtcApiRestClient(
     private val etcApiProperty: EtcApiProperty,
     private val restClient: RestClient,
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     /**
      * 기상청_단기예보 ((구) 동네예보) 조회서비스: 초단기실황조회
      *
      * @param pageNo 페이지 번호
-     * @param numOfRows 한 페이지에 포함할 결과 수
-     * @param baseDate 발표 일자
-     * @param baseTime 발표 시각
+     * @param numOfRows 한 페이지에 포함할 결과 수 (10건씩 묶어서 사용하면 좋음)
+     * @param baseDate 발표 일자 (최근 1일 간의 자료만 제공)
+     * @param baseTime 발표 시각 (정시 생성, 10분마다 업데이트)
      * @param nx 예보 지점의 X 좌표
      * @param ny 예보 지점의 Y 좌표
      * @return [GetUltraSrtNcstResponse]
@@ -66,7 +70,7 @@ class EtcApiRestClient(
         val response = retrieveTourApi(uri, GetUltraSrtNcstResponse::class.java)
 
         if (response.response.header.resultCode != "00") {
-            log.warn(
+            logger.warn(
                 "resultCode={}, resultMsg={}",
                 response.response.header.resultCode,
                 response.response.header.resultMsg
@@ -81,8 +85,8 @@ class EtcApiRestClient(
      *
      * @param pageNo 페이지 번호
      * @param numOfRows 한 페이지에 포함할 결과 수
-     * @param baseDate 발표 일자
-     * @param baseTime 발표 시각
+     * @param baseDate 발표 일자 (최근 1일 간의 자료만 제공)
+     * @param baseTime 발표 시각 (0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300)
      * @param nx 예보 지점의 X 좌표
      * @param ny 예보 지점의 Y 좌표
      * @return [GetVilageFcstResponse]
@@ -118,7 +122,7 @@ class EtcApiRestClient(
         val response = retrieveTourApi(uri, GetVilageFcstResponse::class.java)
 
         if (response.response.header.resultCode != "00") {
-            log.warn(
+            logger.warn(
                 "resultCode={}, resultMsg={}",
                 response.response.header.resultCode,
                 response.response.header.resultMsg
@@ -164,7 +168,7 @@ class EtcApiRestClient(
         val response = retrieveTourApi(uri, GetFcstVersionResponse::class.java)
 
         if (response.response.header.resultCode != "00") {
-            log.warn(
+            logger.warn(
                 "resultCode={}, resultMsg={}",
                 response.response.header.resultCode,
                 response.response.header.resultMsg
@@ -178,6 +182,8 @@ class EtcApiRestClient(
         uri: URI,
         responseType: Class<T>,
     ): T {
+        logger.debug("URI: {}", uri.toString())
+
         try {
             return restClient.get()
                 .uri(uri)
