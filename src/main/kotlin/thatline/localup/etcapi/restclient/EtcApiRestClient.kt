@@ -12,8 +12,6 @@ import thatline.localup.etcapi.exception.ExternalEtcApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
 import thatline.localup.etcapi.response.GetVilageFcstResponse
-import thatline.localup.tourapi.restclient.TourApiRestClient
-import thatline.localup.tourapi.restclient.TourApiRestClient.Companion
 import java.net.URI
 
 // TODO: RENAME
