@@ -12,7 +12,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Service
-class WeatherService(
+class ForecastService(
     private val etcApiRestClient: EtcApiRestClient,
 ) {
     fun findShortTermForecast(

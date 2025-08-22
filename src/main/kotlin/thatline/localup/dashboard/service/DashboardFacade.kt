@@ -3,7 +3,7 @@ package thatline.localup.dashboard.service
 import org.springframework.stereotype.Service
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
-import thatline.localup.etcapi.service.WeatherService
+import thatline.localup.etcapi.service.ForecastService
 import thatline.localup.tourapi.service.TouristAttractionService
 import thatline.localup.user.service.UserService
 
@@ -11,7 +11,7 @@ import thatline.localup.user.service.UserService
 class DashboardFacade(
     private val userService: UserService,
     private val touristAttractionService: TouristAttractionService,
-    private val weatherService: WeatherService,
+    private val forecastService: ForecastService,
 ) {
     @CountMongoDbCommands
     fun getDashboardOverview(userId: String): DashboardOverview {
@@ -39,7 +39,7 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode,
             )
 
-        val weatherInformation = weatherService.findShortTermForecast(
+        val weatherInformation = forecastService.findShortTermForecast(
             sigunguCode = foundUserBusinessDto.sigunguCode
         )
 
