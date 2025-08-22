@@ -17,9 +17,11 @@ class ForecastService(
 ) {
     fun findShortTermForecast(
         sigunguCode: String,
-        baseDate: String = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd),
-        baseTime: String = "0200",
+        dateTime: LocalDateTime = LocalDateTime.now(),
     ): List<ShortTermForecast> {
+        val baseDate = dateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        val baseTime = "0200"
+
         // TODO: 로직 개선 필요
         val tourApiLocation = TourApi.getTourApiAreaBySigunguCode(sigunguCode)
             ?: throw IllegalArgumentException()
