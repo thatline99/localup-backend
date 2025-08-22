@@ -70,7 +70,7 @@ class EtcApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (responseHeader.resultCode != "0000") {
+        if (responseHeader.resultCode != "00") {
             throw KmaApiException(
                 failedUri = uri.toString(),
                 message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
@@ -123,7 +123,7 @@ class EtcApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (responseHeader.resultCode != "0000") {
+        if (responseHeader.resultCode != "00") {
             throw KmaApiException(
                 failedUri = uri.toString(),
                 message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
@@ -170,7 +170,7 @@ class EtcApiRestClient(
 
         val responseHeader = response.response.header
 
-        if (responseHeader.resultCode != "0000") {
+        if (responseHeader.resultCode != "00") {
             throw KmaApiException(
                 failedUri = uri.toString(),
                 message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
