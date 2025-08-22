@@ -229,7 +229,6 @@ jobs:
                   comments.push({
                     path: file.filename,
                     body: `## 📝 파일 리뷰\n\n${file.review}`,
-                    commit_id: commit_id,
                     line: lastLine,
                     side: 'RIGHT'
                   });
