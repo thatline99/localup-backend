@@ -1,6 +1,6 @@
 package thatline.localup.dashboard.dto
 
-import thatline.localup.etcapi.service.ShortTermForecast
+import thatline.localup.etcapi.dto.ShortTermForecast
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
