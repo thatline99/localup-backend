@@ -39,7 +39,7 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode,
             )
 
-        val weatherInformation = weatherService.getThreeDayWeatherSummaries(
+        val weatherInformation = weatherService.findShortTermForecast(
             sigunguCode = foundUserBusinessDto.sigunguCode
         )
 

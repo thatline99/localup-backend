@@ -1,15 +1,15 @@
 package thatline.localup.dashboard.dto
 
-import thatline.localup.etcapi.dto.WeatherInformation
+import thatline.localup.etcapi.service.ShortTermForecast
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
-import thatline.localup.tourapi.dto.SigunguMainEventInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
+import thatline.localup.tourapi.dto.SigunguMainEventInformation
 
 data class DashboardOverview(
     val lastMonthlyTouristAttractionRankingInformation: LastMonthlyTouristAttractionRankingInformation,
     val lastYearSameWeekVisitorStatisticsInformation: LastYearSameWeekVisitorStatisticsInformation,
     val sigunguMainEventInformation: SigunguMainEventInformation,
     val ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation: OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
-    val weatherInformation: WeatherInformation,
+    val weatherInformation: List<ShortTermForecast>,
 )
