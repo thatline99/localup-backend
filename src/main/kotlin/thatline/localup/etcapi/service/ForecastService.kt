@@ -1,6 +1,9 @@
 package thatline.localup.etcapi.service
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
+import thatline.localup.common.constant.CacheKeyGeneratorName
+import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.constant.TourApi
 import thatline.localup.common.util.DateTimeUtil
 import thatline.localup.etcapi.dto.*
@@ -15,10 +18,15 @@ import java.time.format.DateTimeFormatter
 class ForecastService(
     private val etcApiRestClient: EtcApiRestClient,
 ) {
+    @Cacheable(
+        cacheNames = [CacheObjectName.SHORT_TERM_FORECAST_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.SHORT_TERM_FORECAST_INFORMATION,
+        sync = true
+    )
     fun findShortTermForecast(
         sigunguCode: String,
         dateTime: LocalDateTime = LocalDateTime.now(),
-    ): List<ShortTermForecast> {
+    ): ShortTermForecastInformation {
         val baseDate = dateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val baseTime = "0200"
 
@@ -40,7 +48,10 @@ class ForecastService(
         // RestClient 단에서 검사하기 때문에 !! 사용
         val shortTermForecasts = convertToShortTermForecasts(response.response.body!!.items.item).take(3)
 
-        return shortTermForecasts
+        return ShortTermForecastInformation(
+            updatedDate = dateTime,
+            shortTermForecasts = shortTermForecasts,
+        )
     }
 
     fun convertToShortTermForecasts(items: List<GetVilageFcstResponse.Item>): List<ShortTermForecast> {
