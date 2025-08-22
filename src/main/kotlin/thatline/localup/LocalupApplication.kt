@@ -10,4 +10,7 @@ class LocalupApplication
 
 fun main(args: Array<String>) {
     runApplication<LocalupApplication>(*args)
+
+    // 클로드 sonnet 모델을 이용한 테스트 PR 용 입니다.
+    println("Localup Application is running!")
 }
