@@ -3,12 +3,12 @@ package thatline.localup.etcapi.dto
 import java.time.LocalTime
 
 data class HourlyShortTermForecast(
-    val time: LocalTime,                                                        // 예보 시각 (fcstTime, HHmm) V
+    val time: LocalTime,                                                        // 예보 시각 (fcstTime, HHmm)
     val precipitationProbability: Int?,                                         // POP (강수확률, %)
     val precipitationType: HourlyShortTermForecastPrecipitationType?,           // PTY (강수형태)
-    val precipitationAmount: HourlyShortTermForecastPrecipitationAmountType?,   // PCP (1시간 강수량, mm) 1 강수없음 파싱 실패 시 V
+    val precipitationAmount: HourlyShortTermForecastPrecipitationAmountType?,   // PCP (1시간 강수량, mm)
     val humidity: Int?,                                                         // REH (습도, %)
-    val snowfallAmount: HourlyShortTermForecastSnowfallAmountType?,             // SNO (1시간 신적설, cm) 숫자 파싱 실패 시 V
+    val snowfallAmount: HourlyShortTermForecastSnowfallAmountType?,             // SNO (1시간 신적설, cm)
     val skyCondition: HourlyShortTermForecastSkyConditionType?,                 // SKY (하늘상태)
     val temperature: Double?,                                                   // TMP (1시간 기온, ℃)
     val windUComponent: Double?,                                                // UUU (풍속 동서성분, m/s)
