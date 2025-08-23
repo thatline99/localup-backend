@@ -27,12 +27,13 @@ class DataLabServiceTests {
     @Test
     @DisplayName("한국관광공사_관광빅데이터 정보서비스_GW: 기초 지자체 지역방문자수 집계 데이터 정보 조회")
     fun runDataLabServiceLocgoRegnVisitrDDList() {
-        // 지난 달, 같은 일자까지만 유효하게 처리
+        // MIN: 2018년 01월 01일
+        // MAX: 지난 달, 같은 일자까지만 유효하게 처리
         val response = restClient.dataLabServiceLocgoRegnVisitrDDList(
             pageNo = 1,
             numOfRows = 10,
-            startYmd = "20250723",
-            endYmd = "20250723"
+            startYmd = "20180101",
+            endYmd = "20180101"
         )
 
         val responseString = objectMapper
