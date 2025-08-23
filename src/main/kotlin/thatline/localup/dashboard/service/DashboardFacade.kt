@@ -5,8 +5,10 @@ import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
 import thatline.localup.etcapi.dto.ShortTermForecastInformation
 import thatline.localup.etcapi.service.ForecastService
+import thatline.localup.tourapi.dto.VisitorStatisticsInformation
 import thatline.localup.tourapi.service.TouristAttractionService
 import thatline.localup.user.service.UserService
+import java.time.LocalDate
 
 @Service
 class DashboardFacade(
@@ -24,11 +26,6 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode
             )
 
-        val lastYearSameWeekVisitorStatisticsInformation =
-            touristAttractionService.findLastYearSameWeekVisitorStatistics(
-                sigunguCode = foundUserBusinessDto.sigunguCode
-            )
-
         val sigunguMainEventInformation = touristAttractionService.findSigunguMainEvent(
             sigunguCode = foundUserBusinessDto.sigunguCode,
             latitude = foundUserBusinessDto.latitude,
@@ -42,7 +39,6 @@ class DashboardFacade(
 
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
-            lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
             sigunguMainEventInformation = sigunguMainEventInformation,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
         )
@@ -57,5 +53,22 @@ class DashboardFacade(
         )
 
         return shortTermForecastInformation
+    }
+
+    @CountMongoDbCommands
+    fun findVisitorStatistics(
+        userId: String,
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): VisitorStatisticsInformation {
+        val foundUserBusinessDto = userService.findBusiness(userId)
+
+        val visitorStatisticInformation = touristAttractionService.findVisitorStatistics(
+            sigunguCode = foundUserBusinessDto.sigunguCode,
+            startDate = startDate,
+            endDate = endDate,
+        )
+
+        return visitorStatisticInformation
     }
 }
