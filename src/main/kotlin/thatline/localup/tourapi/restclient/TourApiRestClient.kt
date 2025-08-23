@@ -510,8 +510,8 @@ class TourApiRestClient(
      */
     @OpenApiQuota(name = "dataLabService:locgoRegnVisitrDDList", limit = 1000, ApiWindow.DAILY)
     fun dataLabServiceLocgoRegnVisitrDDList(
-        pageNo: Long,
-        numOfRows: Long,
+        pageNo: Long?,
+        numOfRows: Long?,
         startYmd: String,
         endYmd: String,
     ): LocgoRegnVisitrDDListResponse {
@@ -522,8 +522,8 @@ class TourApiRestClient(
         val uri = UriComponentsBuilder
             .fromUri(fromUri)
             .queryParam("serviceKey", tourApiProperty.dataLabService.serviceKey)
-            .queryParam("pageNo", pageNo)
-            .queryParam("numOfRows", numOfRows)
+            .queryParamIfNotNull("pageNo", pageNo)
+            .queryParamIfNotNull("numOfRows", numOfRows)
             .queryParam("MobileOS", tourApiProperty.mobileOS)
             .queryParam("MobileApp", tourApiProperty.mobileApp)
             .queryParam("startYmd", startYmd)
