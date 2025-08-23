@@ -14,7 +14,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
-import thatline.localup.etcapi.dto.WeatherInformation
+import thatline.localup.etcapi.dto.ShortTermForecastInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
@@ -35,6 +35,18 @@ class CacheConfiguration(
         val defaultCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
             .disableCachingNullValues()
+
+        // 대시보드, 시군구 단기 예보 정보 캐시 설정
+        val shortTermForecastsInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        ShortTermForecastInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofHours(3))
 
         // 대시보드, 지난 달 관광지 랭킹 정보 캐시 설정
         val lastMonthlyTouristAttractionRankingInformationCacheConfiguration = defaultCacheConfiguration
@@ -84,22 +96,12 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
-        // 대시보드, 시군구 날씨 정보 캐시 설정
-        val weatherInformationCacheConfiguration = defaultCacheConfiguration
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    Jackson2JsonRedisSerializer(
-                        objectMapper,
-                        WeatherInformation::class.java
-                    )
-                )
-            )
-            .entryTtl(Duration.ofHours(3))
-
         val cacheConfigurations = mapOf(
+            CacheObjectName.SHORT_TERM_FORECAST_INFORMATION to shortTermForecastsInformationCacheConfiguration,
+
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
             CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
-            CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
+
             CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION to sigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
             // 다른 캐시 설정 추가
@@ -109,6 +111,18 @@ class CacheConfiguration(
             .cacheDefaults(defaultCacheConfiguration)
             .withInitialCacheConfigurations(cacheConfigurations)
             .build()
+    }
+
+    @Bean
+    fun shortTermForecastInformationKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[0] as String
+            val savedDateTime = (params[1] as LocalDateTime)
+                .truncatedTo(ChronoUnit.HOURS)
+                .withHour((params[1] as LocalDateTime).hour / 3 * 3)
+
+            "$sigunguCode-${savedDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMddHHmm)}"
+        }
     }
 
     @Bean
@@ -155,21 +169,6 @@ class CacheConfiguration(
             val sigunguCode = params[0] as String
 
             val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-
-            "$sigunguCode-$savedDateTime"
-        }
-    }
-
-    @Bean
-    fun weatherInformationKeyGenerator(): KeyGenerator {
-        return KeyGenerator { _, _, params ->
-            val sigunguCode = params[0] as String
-
-            val now = LocalDateTime.now()
-                .truncatedTo(ChronoUnit.HOURS)
-
-            val savedDateTime = now.withHour((now.hour / 3) * 3)
-                .format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMddHHmm)
 
             "$sigunguCode-$savedDateTime"
         }

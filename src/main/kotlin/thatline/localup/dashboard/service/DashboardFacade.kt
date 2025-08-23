@@ -3,7 +3,8 @@ package thatline.localup.dashboard.service
 import org.springframework.stereotype.Service
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.dashboard.dto.DashboardOverview
-import thatline.localup.etcapi.service.WeatherService
+import thatline.localup.etcapi.dto.ShortTermForecastInformation
+import thatline.localup.etcapi.service.ForecastService
 import thatline.localup.tourapi.service.TouristAttractionService
 import thatline.localup.user.service.UserService
 
@@ -11,7 +12,7 @@ import thatline.localup.user.service.UserService
 class DashboardFacade(
     private val userService: UserService,
     private val touristAttractionService: TouristAttractionService,
-    private val weatherService: WeatherService,
+    private val forecastService: ForecastService,
 ) {
     @CountMongoDbCommands
     fun getDashboardOverview(userId: String): DashboardOverview {
@@ -39,16 +40,22 @@ class DashboardFacade(
                 sigunguCode = foundUserBusinessDto.sigunguCode,
             )
 
-        val weatherInformation = weatherService.getThreeDayWeatherSummaries(
-            sigunguCode = foundUserBusinessDto.sigunguCode
-        )
-
         return DashboardOverview(
             lastMonthlyTouristAttractionRankingInformation = lastMonthlyTouristAttractionRankingInformation,
             lastYearSameWeekVisitorStatisticsInformation = lastYearSameWeekVisitorStatisticsInformation,
             sigunguMainEventInformation = sigunguMainEventInformation,
             ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation = ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformation,
-            weatherInformation = weatherInformation,
         )
+    }
+
+    @CountMongoDbCommands
+    fun findShortTermForecast(userId: String): ShortTermForecastInformation {
+        val foundUserBusinessDto = userService.findBusiness(userId)
+
+        val shortTermForecastInformation = forecastService.findShortTermForecast(
+            sigunguCode = foundUserBusinessDto.sigunguCode
+        )
+
+        return shortTermForecastInformation
     }
 }
