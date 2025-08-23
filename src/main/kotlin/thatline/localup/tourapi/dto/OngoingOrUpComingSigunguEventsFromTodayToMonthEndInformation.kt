@@ -4,5 +4,5 @@ import java.time.LocalDateTime
 
 data class OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation(
     val updatedDate: LocalDateTime,
-    val sigunguEventsWithDates: List<SigunguEventWithDates>,
+    val sigunguEvents: List<LocationEvent>,
 )

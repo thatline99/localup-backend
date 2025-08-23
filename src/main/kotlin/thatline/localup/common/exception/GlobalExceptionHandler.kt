@@ -61,4 +61,13 @@ class GlobalExceptionHandler {
 //            .status(HttpStatus.FORBIDDEN)
 //            .body(BaseResponse.failure(message = exception.message ?: "Email not verified"))
 //    }
+
+    @ExceptionHandler(OpenApiQuotaExceededException::class)
+    fun handleOpenApiQuotaExceededException(
+        exception: OpenApiQuotaExceededException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(BaseResponse.failure(message = exception.message))
+    }
 }

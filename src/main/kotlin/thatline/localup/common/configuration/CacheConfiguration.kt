@@ -18,7 +18,7 @@ import thatline.localup.etcapi.dto.WeatherInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
 import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
-import thatline.localup.tourapi.dto.SigunguEventInformation
+import thatline.localup.tourapi.dto.SigunguMainEventInformation
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -36,8 +36,6 @@ class CacheConfiguration(
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
             .disableCachingNullValues()
 
-        // TODO: 네이밍 통일 필요
-
         // 대시보드, 지난 달 관광지 랭킹 정보 캐시 설정
         val lastMonthlyTouristAttractionRankingInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
@@ -50,7 +48,7 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(31))
 
-        // 대시보드, 작년, 같은 주, 지역 방문자 수 통계 정보 캐시 설정
+        // 대시보드, 작년 같은 주, 지역 방문자 수 통계 정보 캐시 설정
         val lastYearSameWeekVisitorStatisticsInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
@@ -62,19 +60,19 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(7))
 
-        // 대시보드, 법정동 시군구 기준, 축제/공연/행사 정보 캐시 설정
-        val sigunguEventInformationCacheConfiguration = defaultCacheConfiguration
+        // 대시보드, 시군구 메인 이벤트 정보 캐시 설정
+        val sigunguMainEventInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
                     Jackson2JsonRedisSerializer(
                         objectMapper,
-                        SigunguEventInformation::class.java
+                        SigunguMainEventInformation::class.java
                     )
                 )
             )
             .entryTtl(Duration.ofDays(1))
 
-        // 대시보드, 법정동 시군구 기준, 오늘 날짜 ~ 월 마지막 일 축제/공연/행사 정보 캐시 설정
+        // 대시보드, 시군구 오늘 날짜 ~ 월 마지막 일 축제/공연/행사 정보 캐시 설정
         val ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
@@ -86,7 +84,7 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
-        // 대시보드, 날씨 정보 캐시 설정
+        // 대시보드, 시군구 날씨 정보 캐시 설정
         val weatherInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
@@ -102,7 +100,7 @@ class CacheConfiguration(
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
             CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
             CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
-            CacheObjectName.SIGUNGU_EVENT_INFORMATION to sigunguEventInformationCacheConfiguration,
+            CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION to sigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
             // 다른 캐시 설정 추가
         )
@@ -125,7 +123,7 @@ class CacheConfiguration(
     }
 
     @Bean
-    fun lastYearSameWeekVisitorStatistics(): KeyGenerator {
+    fun lastYearSameWeekVisitorStatisticsKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
             val sigunguCode = params[0] as String
 
@@ -139,24 +137,26 @@ class CacheConfiguration(
     }
 
     @Bean
-    fun sigunguEventKeyGenerator(): KeyGenerator {
+    fun sigunguMainEventKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
             val sigunguCode = params[0] as String
+            val latitude = params[1] as Double
+            val longitude = params[2] as Double
 
             val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-            "$sigunguCode-$savedDateTime"
+            "$sigunguCode-$latitude-$longitude-$savedDateTime"
         }
     }
 
     @Bean
     fun ongoingOrUpComingSigunguEventsFromTodayToMonthEndKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
-            val legalDongSigunguCode = params[0] as String
+            val sigunguCode = params[0] as String
 
             val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-            "$legalDongSigunguCode-$savedDateTime"
+            "$sigunguCode-$savedDateTime"
         }
     }
 
