@@ -13,7 +13,6 @@ import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.request.RegisterBusinessRequest
 import thatline.localup.user.request.UpdateBusinessRequest
 import thatline.localup.user.service.UserService
-import kotlin.math.log
 
 @RestController
 @RequestMapping("/api/users")
