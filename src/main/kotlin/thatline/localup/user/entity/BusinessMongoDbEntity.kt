@@ -48,6 +48,9 @@ class BusinessMongoDbEntity(
 
     // 주요 고객층 (선택)
     val customerSegments: Set<CustomerSegment>,
+
+    // 설명 (선택)
+    val description: String?,
 ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
     fun update(
         name: String = this.name,
@@ -62,6 +65,7 @@ class BusinessMongoDbEntity(
         averageOrderAmount: Double = this.averageOrderAmount,
         seatCount: Int = this.seatCount,
         customerSegments: Set<CustomerSegment> = this.customerSegments,
+        description: String? = this.description,
     ): BusinessMongoDbEntity {
         return BusinessMongoDbEntity(
             id = this.id,
@@ -79,6 +83,7 @@ class BusinessMongoDbEntity(
             averageOrderAmount = averageOrderAmount,
             seatCount = seatCount,
             customerSegments = customerSegments.toSet(),
+            description = description
         )
     }
 }
