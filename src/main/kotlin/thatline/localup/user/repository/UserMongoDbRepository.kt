@@ -7,4 +7,6 @@ interface UserMongoDbRepository : MongoRepository<UserMongoDbEntity, String> {
     fun findByEmail(email: String): UserMongoDbEntity?
 
     fun existsByEmail(email: String): Boolean
+
+    fun findByKakaoId(kakaoId: String): UserMongoDbEntity?
 }

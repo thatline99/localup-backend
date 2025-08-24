@@ -7,7 +7,17 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 tour-api:
   base-url: https://apis.data.go.kr
   mobile-os: WEB
@@ -91,3 +101,8 @@ etc-api:
       get-fcst-version:
         second-path: /getFcstVersion
         data-type: JSON
+
+# 이메일 인증시 리다이렉트를 위한 사이트 url 설정
+app:
+  frontend:
+    base-url: ${FE_URL}

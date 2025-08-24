@@ -15,4 +15,5 @@ data class FindBusinessDto(
     val averageOrderAmount: Double,
     val seatCount: Int,
     val customerSegments: Set<CustomerSegment>,
+    val description: String?,
 )

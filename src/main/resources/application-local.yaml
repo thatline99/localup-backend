@@ -6,6 +6,17 @@ spring:
       host: localhost
       port: 6379
       password: root
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 logging:
   level:
     mongodb-command: DEBUG
@@ -59,3 +70,8 @@ openai:
   temperature: 0.7                                     # 응답 창의성 수준 (0.0~2.0, 낮을수록 일관성 높음)
   max-tokens: 1000                                     # 응답 최대 토큰 수 (응답 길이 제한)
   max-context-tokens: 3000                             # 컨텍스트 최대 토큰 수 (대화 기록 제한)
+
+# 이메일 인증시 리다이렉트를 위한 사이트 url 설정
+app:
+  frontend:
+    base-url: http://localhost:3000/

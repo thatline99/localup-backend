@@ -17,18 +17,31 @@ class UserMongoDbEntity(
 
     val email: String,
 
-    val password: String,
+    val password: String? = null,
 
     val role: Role,
 
     @Indexed(unique = true, sparse = true)
     val businessId: String?,
-) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
+
+    val kakaoId: String? = null,
+
+    val name: String? = null,
+
+    val profileImage: String? = null,
+
+    val isEmailVerified: Boolean = false,
+
+    ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
     fun update(
         email: String = this.email,
-        password: String = this.password,
+        password: String? = this.password,
         role: Role = this.role,
         businessId: String? = this.businessId,
+        kakaoId: String?,
+        name: String?,
+        profileImage: String?,
+        isEmailVerified: Boolean = false,
     ): UserMongoDbEntity {
         return UserMongoDbEntity(
             id = this.id,
@@ -38,6 +51,10 @@ class UserMongoDbEntity(
             password = password,
             role = role,
             businessId = businessId,
+            kakaoId = kakaoId,
+            name = name,
+            profileImage = profileImage,
+            isEmailVerified = isEmailVerified,
         )
     }
 }
