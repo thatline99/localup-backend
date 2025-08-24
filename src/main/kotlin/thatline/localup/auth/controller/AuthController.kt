@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import thatline.localup.auth.exception.*
 import thatline.localup.auth.request.KakaoCheckRequest
-import thatline.localup.auth.request.KakaoSignupRequest
+import thatline.localup.auth.request.KakaoSignUpRequest
 import thatline.localup.auth.request.SignInRequest
 import thatline.localup.auth.request.SignUpRequest
 import thatline.localup.auth.service.AuthService
@@ -25,7 +25,7 @@ class AuthController(
 ) {
     @PostMapping("/sign-in")
     fun signIn(
-        @RequestBody request: SignInRequest,
+        @Valid @RequestBody request: SignInRequest,
         response: HttpServletResponse,
     ): ResponseEntity<Void> {
         val authToken = authService.signIn(request.email, request.password)
@@ -79,7 +79,7 @@ class AuthController(
         @RequestParam email: String,
         @RequestParam token: String,
     ): ResponseEntity<Void> {
-        authService.verifyEmail(email)
+        authService.verifyEmail(email, token)
 
         val redirectUrl = frontendBaseUrl
         return ResponseEntity.status(HttpStatus.FOUND).
@@ -101,7 +101,7 @@ class AuthController(
 
     @PostMapping("/kakao/signup")
     fun signUpKakao(
-        @Valid @RequestBody request: KakaoSignupRequest,
+        @Valid @RequestBody request: KakaoSignUpRequest,
         response: HttpServletResponse,
     ): ResponseEntity<Void> {
         val authToken = authService.signUpKakaoUser(

@@ -102,7 +102,7 @@ etc-api:
         second-path: /getFcstVersion
         data-type: JSON
 
-#이메일 인증시 리다이렉트를 위한 사이트 url 설정
+# 이메일 인증시 리다이렉트를 위한 사이트 url 설정
 app:
   frontend:
     base-url: ${FE_URL}

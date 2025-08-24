@@ -10,6 +10,7 @@ import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.common.constant.Role
 import thatline.localup.user.entity.UserMongoDbEntity
 import thatline.localup.user.repository.UserMongoDbRepository
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -62,7 +63,7 @@ class AuthService(
 
         userRepository.save(newUser)
 
-        //이메일 인증 링크 발송
+        // 이메일 인증 링크 발송
         emailService.sendVerificationEmail(email, baseUrl)
     }
 
@@ -83,10 +84,6 @@ class AuthService(
     fun checkKakaoUser(kakaoId: String, email: String): AuthToken {
         val user = userRepository.findByKakaoId(kakaoId)
             ?: throw UserNotFoundException()
-
-        if (!user.isActive) {
-            throw AccountDisabledException()
-        }
 
         val accessToken = UUID.randomUUID().toString()
         userTokenRedisService.save(accessToken, user.id)
@@ -139,5 +136,8 @@ class AuthService(
         )
 
         userRepository.save(updatedUser)
+        
+        // 인증 완료 후 Redis에서 토큰 삭제
+        emailService.deleteVerificationToken(email)
     }
 }

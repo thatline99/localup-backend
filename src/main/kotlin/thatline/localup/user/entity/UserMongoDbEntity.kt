@@ -43,7 +43,6 @@ class UserMongoDbEntity(
         kakaoId: String?,
         name: String?,
         profileImage: String?,
-        isActive: Boolean = true,
         isEmailVerified: Boolean = false,
     ): UserMongoDbEntity {
         return UserMongoDbEntity(
@@ -57,7 +56,6 @@ class UserMongoDbEntity(
             kakaoId = kakaoId,
             name = name,
             profileImage = profileImage,
-            isActive = isActive,
             isEmailVerified = isEmailVerified,
         )
     }
