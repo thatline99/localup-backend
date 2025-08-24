@@ -1,7 +1,5 @@
 package thatline.localup.auth.service
 
-//import thatline.localup.auth.exception.EmailNotVerifiedException
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -19,7 +17,7 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserMongoDbRepository,
     private val userTokenRedisService: UserTokenRedisService,
-//    private val emailService: EmailService,
+    private val emailService: EmailService,
 ) {
     @CountMongoDbCommands
     fun signIn(email: String, password: String): AuthToken {
@@ -32,7 +30,7 @@ class AuthService(
 
         // 이메일 인증 상태 확인 (카카오 사용자는 자동으로 인증 완료)
         if (!user.isEmailVerified) {
-//            throw EmailNotVerifiedException()
+            throw EmailNotVerifiedException()
         }
 
         val accessToken = UUID.randomUUID().toString()
@@ -47,7 +45,7 @@ class AuthService(
     }
 
     @CountMongoDbCommands
-    fun signUp(email: String, password: String, request: HttpServletRequest) {
+    fun signUp(email: String, password: String, baseUrl: String) {
         if (userRepository.existsByEmail(email)) {
             throw DuplicateEmailException()
         }
@@ -64,9 +62,8 @@ class AuthService(
 
         userRepository.save(newUser)
 
-        // 이메일 인증 링크 발송
-//        val baseUrl = "${request.scheme}://${request.serverName}:${request.serverPort}"
-//        emailService.sendVerificationEmail(email, baseUrl)
+        //이메일 인증 링크 발송
+        emailService.sendVerificationEmail(email, baseUrl)
     }
 
     @CountMongoDbCommands
@@ -84,7 +81,7 @@ class AuthService(
     }
 
     fun checkKakaoUser(kakaoId: String, email: String): AuthToken {
-        val user = userRepository.findByKakaoIdAndEmail(kakaoId, email)
+        val user = userRepository.findByKakaoId(kakaoId)
             ?: throw UserNotFoundException()
 
         if (!user.isActive) {
@@ -99,7 +96,7 @@ class AuthService(
 
     fun signUpKakaoUser(kakaoId: String, email: String, name: String, profileImage: String?): AuthToken {
         if (userRepository.existsByEmail(email)) {
-            throw EmailAlreadyExistsException()
+            throw DuplicateEmailException()
         }
 
         val newUser = UserMongoDbEntity(
