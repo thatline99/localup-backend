@@ -8,5 +8,5 @@ interface UserMongoDbRepository : MongoRepository<UserMongoDbEntity, String> {
 
     fun existsByEmail(email: String): Boolean
 
-    fun findByKakaoIdAndEmail(kakaoId: String, email: String): UserMongoDbEntity?
+    fun findByKakaoId(kakaoId: String): UserMongoDbEntity?
 }
