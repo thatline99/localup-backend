@@ -13,6 +13,7 @@ import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.request.RegisterBusinessRequest
 import thatline.localup.user.request.UpdateBusinessRequest
 import thatline.localup.user.service.UserService
+import kotlin.math.log
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,8 +24,6 @@ class UserController(
     fun findBusiness(
         @AuthenticationPrincipal userId: String,
     ): ResponseEntity<BaseResponse<FindBusinessDto>> {
-
-        System.out.println(userId+userService.findBusiness(userId))
         val findBusinessDto = userService.findBusiness(userId)
 
         return ResponseEntity.ok(

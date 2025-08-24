@@ -41,6 +41,7 @@ class UserService(
             averageOrderAmount = foundBusiness.averageOrderAmount,
             seatCount = foundBusiness.seatCount,
             customerSegments = foundBusiness.customerSegments,
+            description = foundBusiness.description,
         )
     }
 
