@@ -79,8 +79,7 @@ class EmailService(
                       .container { max-width: 600px; margin: 0 auto; padding: 20px; }
                       .header { background-color: #4CAF50; color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
                       .content { background-color: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-                      .button { display: inline-block; background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px
-   0; }
+                      .button { display: inline-block; background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }
                       .footer { margin-top: 30px; text-align: center; color: #666; font-size: 12px; }
                   </style>
               </head>
