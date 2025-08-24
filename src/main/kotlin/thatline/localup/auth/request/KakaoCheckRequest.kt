@@ -1,13 +1,12 @@
 package thatline.localup.auth.request
 
 import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.NotBlank
 
 data class KakaoCheckRequest(
-    @field:NotNull
+    @field:NotBlank
     val kakaoId: String,
-
-    @field:NotNull
+    @field:NotBlank
     @field:Email
     val email: String,
 )

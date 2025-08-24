@@ -96,17 +96,17 @@ class AuthService(
             throw DuplicateEmailException()
         }
 
-        val newUser = UserMongoDbEntity(
-            email = email,
-            password = null,
-            role = Role.USER,
-            businessId = null,
-            kakaoId = kakaoId,
-            name = name,
-            profileImage = profileImage,
-            isActive = true,
-            isEmailVerified = true,
-        )
+        val newUser =
+            UserMongoDbEntity(
+                email = email,
+                password = null,
+                role = Role.USER,
+                businessId = null,
+                kakaoId = kakaoId,
+                name = name,
+                profileImage = profileImage,
+                isEmailVerified = true,
+            )
 
         val savedUser = userRepository.save(newUser)
 
