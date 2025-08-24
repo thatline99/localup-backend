@@ -123,7 +123,7 @@ class AuthService(
         val updatedUser = UserMongoDbEntity(
             id = user.id,
             createdDate = user.createdDate,
-            lastModifiedDate = user.lastModifiedDate,
+            lastModifiedDate = LocalDateTime.now(),
             email = user.email,
             password = user.password,
             role = user.role,
