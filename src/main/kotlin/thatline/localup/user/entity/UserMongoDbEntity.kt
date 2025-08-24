@@ -30,8 +30,6 @@ class UserMongoDbEntity(
 
     val profileImage: String? = null,
 
-    val isActive: Boolean = true,
-
     val isEmailVerified: Boolean = false,
 
     ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {

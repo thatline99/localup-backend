@@ -131,13 +131,10 @@ class AuthService(
             kakaoId = user.kakaoId,
             name = user.name,
             profileImage = user.profileImage,
-            isActive = user.isActive,
             isEmailVerified = true,
         )
 
         userRepository.save(updatedUser)
-        
-        // 인증 완료 후 Redis에서 토큰 삭제
-        emailService.deleteVerificationToken(email)
+
     }
 }

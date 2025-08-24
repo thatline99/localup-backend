@@ -92,7 +92,6 @@ class UserService(
             kakaoId = foundUser.kakaoId,
             name = foundUser.name,
             profileImage = foundUser.profileImage,
-            isActive = foundUser.isActive,
             isEmailVerified = foundUser.isEmailVerified,
         )
 
@@ -159,7 +158,6 @@ class UserService(
 //            kakaoId = user.kakaoId,
 //            name = user.name,
 //            profileImage = user.profileImage,
-//            isActive = user.isActive,
 //            isEmailVerified = user.isEmailVerified,
 //        )
 //
