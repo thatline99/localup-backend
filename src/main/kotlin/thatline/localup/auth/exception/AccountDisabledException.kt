@@ -1,3 +1,5 @@
 package thatline.localup.auth.exception
 
-class AccountDisabledException(message: String = "Account is disabled") : RuntimeException(message)
+import thatline.localup.common.exception.BaseException
+
+class AccountDisabledException : BaseException("ACCOUNT_DISABLED")

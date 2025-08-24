@@ -6,8 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import thatline.localup.auth.exception.AccountDisabledException
-import thatline.localup.auth.exception.EmailAlreadyExistsException
-//import thatline.localup.auth.exception.EmailNotVerifiedException
+import thatline.localup.auth.exception.EmailNotVerifiedException
+import thatline.localup.auth.exception.EmailSendException
 import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.response.BaseResponse
 
@@ -26,6 +26,7 @@ class GlobalExceptionHandler {
             .body(BaseResponse.failure(message = errorMessage))
     }
 
+    // 회원가입이 진행되지 않은 사용자 계정 예외 처리:
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFoundException(
         exception: UserNotFoundException,
@@ -35,32 +36,25 @@ class GlobalExceptionHandler {
             .body(BaseResponse.failure(message = exception.message ?: "User not found"))
     }
 
-    @ExceptionHandler(AccountDisabledException::class)
-    fun handleAccountDisabledException(
-        exception: AccountDisabledException,
+    // 이메일 미인증 예외 처리: "EMAIL_NOT_VERIFIED"
+    @ExceptionHandler(EmailNotVerifiedException::class)
+    fun handleEmailNotVerifiedException(
+        exception: EmailNotVerifiedException,
     ): ResponseEntity<BaseResponse<Unit>> {
         return ResponseEntity
             .status(HttpStatus.FORBIDDEN)
-            .body(BaseResponse.failure(message = exception.message ?: "Account is disabled"))
+            .body(BaseResponse.failure(message = exception.message))
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException::class)
-    fun handleEmailAlreadyExistsException(
-        exception: EmailAlreadyExistsException,
+    // 이메일 전송 실패 예외 처리: "EMAIL_SEND_FAILED"
+    @ExceptionHandler(EmailSendException::class)
+    fun handleEmailSendException(
+        exception: EmailSendException,
     ): ResponseEntity<BaseResponse<Unit>> {
         return ResponseEntity
-            .status(HttpStatus.CONFLICT)
-            .body(BaseResponse.failure(message = exception.message ?: "Email already exists"))
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(BaseResponse.failure(message = exception.message ?: "Failed to send email"))
     }
-
-//    @ExceptionHandler(EmailNotVerifiedException::class)
-//    fun handleEmailNotVerifiedException(
-//        exception: EmailNotVerifiedException,
-//    ): ResponseEntity<BaseResponse<Unit>> {
-//        return ResponseEntity
-//            .status(HttpStatus.FORBIDDEN)
-//            .body(BaseResponse.failure(message = exception.message ?: "Email not verified"))
-//    }
 
     @ExceptionHandler(OpenApiQuotaExceededException::class)
     fun handleOpenApiQuotaExceededException(
