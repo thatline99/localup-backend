@@ -59,6 +59,7 @@ class UserService(
         businessAverageOrderAmount: Double,
         businessSeatCount: Int,
         businessCustomerSegments: Set<CustomerSegment>,
+        businessDescription: String?,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -80,6 +81,7 @@ class UserService(
             averageOrderAmount = businessAverageOrderAmount,
             seatCount = businessSeatCount,
             customerSegments = businessCustomerSegments,
+            description = businessDescription
         )
 
         val savedBusiness = businessRepository.save(newBusiness)
@@ -111,6 +113,7 @@ class UserService(
         businessAverageOrderAmount: Double,
         businessSeatCount: Int,
         businessCustomerSegments: Set<CustomerSegment>,
+        businessDescription: String?,
     ) {
         val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
@@ -133,6 +136,7 @@ class UserService(
             averageOrderAmount = businessAverageOrderAmount,
             seatCount = businessSeatCount,
             customerSegments = businessCustomerSegments,
+            description = businessDescription,
         )
 
         businessRepository.save(updatedBusiness)

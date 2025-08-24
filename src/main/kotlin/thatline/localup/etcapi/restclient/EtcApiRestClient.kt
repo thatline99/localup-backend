@@ -9,6 +9,7 @@ import thatline.localup.common.annotation.ApiWindow
 import thatline.localup.common.annotation.OpenApiQuota
 import thatline.localup.common.property.EtcApiProperty
 import thatline.localup.etcapi.exception.ExternalEtcApiException
+import thatline.localup.etcapi.exception.KmaApiException
 import thatline.localup.etcapi.response.GetFcstVersionResponse
 import thatline.localup.etcapi.response.GetUltraSrtNcstResponse
 import thatline.localup.etcapi.response.GetVilageFcstResponse
@@ -22,15 +23,17 @@ class EtcApiRestClient(
     private val etcApiProperty: EtcApiProperty,
     private val restClient: RestClient,
 ) {
-    private val log = LoggerFactory.getLogger(this::class.java)
+    companion object {
+        private val logger = LoggerFactory.getLogger(this::class.java)
+    }
 
     /**
      * 기상청_단기예보 ((구) 동네예보) 조회서비스: 초단기실황조회
      *
      * @param pageNo 페이지 번호
-     * @param numOfRows 한 페이지에 포함할 결과 수
-     * @param baseDate 발표 일자
-     * @param baseTime 발표 시각
+     * @param numOfRows 한 페이지에 포함할 결과 수 (10건씩 묶어서 사용하면 좋음)
+     * @param baseDate 발표 일자 (최근 1일 간의 자료만 제공)
+     * @param baseTime 발표 시각 (정시 생성, 10분마다 업데이트)
      * @param nx 예보 지점의 X 좌표
      * @param ny 예보 지점의 Y 좌표
      * @return [GetUltraSrtNcstResponse]
@@ -63,13 +66,14 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetUltraSrtNcstResponse::class.java)
+        val response = retrieveEtcApi(uri, GetUltraSrtNcstResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            log.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "00") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
@@ -81,8 +85,8 @@ class EtcApiRestClient(
      *
      * @param pageNo 페이지 번호
      * @param numOfRows 한 페이지에 포함할 결과 수
-     * @param baseDate 발표 일자
-     * @param baseTime 발표 시각
+     * @param baseDate 발표 일자 (최근 1일 간의 자료만 제공)
+     * @param baseTime 발표 시각 (0200, 0500, 0800, 1100, 1400, 1700, 2000, 2300)
      * @param nx 예보 지점의 X 좌표
      * @param ny 예보 지점의 Y 좌표
      * @return [GetVilageFcstResponse]
@@ -115,13 +119,14 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetVilageFcstResponse::class.java)
+        val response = retrieveEtcApi(uri, GetVilageFcstResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            log.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "00") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
@@ -161,23 +166,26 @@ class EtcApiRestClient(
             .build(true)
             .toUri()
 
-        val response = retrieveTourApi(uri, GetFcstVersionResponse::class.java)
+        val response = retrieveEtcApi(uri, GetFcstVersionResponse::class.java)
 
-        if (response.response.header.resultCode != "00") {
-            log.warn(
-                "resultCode={}, resultMsg={}",
-                response.response.header.resultCode,
-                response.response.header.resultMsg
+        val responseHeader = response.response.header
+
+        if (responseHeader.resultCode != "00") {
+            throw KmaApiException(
+                failedUri = uri.toString(),
+                message = "responseCode: ${responseHeader.resultCode}, responseMessage: ${responseHeader.resultMsg}",
             )
         }
 
         return response
     }
 
-    private fun <T> retrieveTourApi(
+    private fun <T> retrieveEtcApi(
         uri: URI,
         responseType: Class<T>,
     ): T {
+        logger.debug("URI: {}", uri.toString())
+
         try {
             return restClient.get()
                 .uri(uri)

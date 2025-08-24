@@ -14,12 +14,13 @@ import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import thatline.localup.common.constant.CacheObjectName
 import thatline.localup.common.util.DateTimeUtil
-import thatline.localup.etcapi.dto.WeatherInformation
+import thatline.localup.etcapi.dto.ShortTermForecastInformation
 import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformation
-import thatline.localup.tourapi.dto.LastYearSameWeekVisitorStatisticsInformation
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
 import thatline.localup.tourapi.dto.SigunguMainEventInformation
+import thatline.localup.tourapi.dto.VisitorStatisticsInformation
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.temporal.ChronoUnit
@@ -36,6 +37,32 @@ class CacheConfiguration(
             .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()))
             .disableCachingNullValues()
 
+        // 대시보드, 시군구 단기 예보 정보 캐시 설정
+        val shortTermForecastsInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        ShortTermForecastInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofHours(3))
+
+        // 대시보드, 시군구 방문자 수 통계 정보 캐시 설정
+        val visitorStatisticsInformationCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        VisitorStatisticsInformation::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofDays(7))
+
+        // 개선 전
+
         // 대시보드, 지난 달 관광지 랭킹 정보 캐시 설정
         val lastMonthlyTouristAttractionRankingInformationCacheConfiguration = defaultCacheConfiguration
             .serializeValuesWith(
@@ -47,18 +74,6 @@ class CacheConfiguration(
                 )
             )
             .entryTtl(Duration.ofDays(31))
-
-        // 대시보드, 작년 같은 주, 지역 방문자 수 통계 정보 캐시 설정
-        val lastYearSameWeekVisitorStatisticsInformationCacheConfiguration = defaultCacheConfiguration
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    Jackson2JsonRedisSerializer(
-                        objectMapper,
-                        LastYearSameWeekVisitorStatisticsInformation::class.java
-                    )
-                )
-            )
-            .entryTtl(Duration.ofDays(7))
 
         // 대시보드, 시군구 메인 이벤트 정보 캐시 설정
         val sigunguMainEventInformationCacheConfiguration = defaultCacheConfiguration
@@ -84,22 +99,11 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
-        // 대시보드, 시군구 날씨 정보 캐시 설정
-        val weatherInformationCacheConfiguration = defaultCacheConfiguration
-            .serializeValuesWith(
-                RedisSerializationContext.SerializationPair.fromSerializer(
-                    Jackson2JsonRedisSerializer(
-                        objectMapper,
-                        WeatherInformation::class.java
-                    )
-                )
-            )
-            .entryTtl(Duration.ofHours(3))
-
         val cacheConfigurations = mapOf(
+            CacheObjectName.SHORT_TERM_FORECAST_INFORMATION to shortTermForecastsInformationCacheConfiguration,
+            CacheObjectName.VISITOR_STATISTICS_INFORMATION to visitorStatisticsInformationCacheConfiguration,
+
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
-            CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION to lastYearSameWeekVisitorStatisticsInformationCacheConfiguration,
-            CacheObjectName.WEATHER_INFORMATION to weatherInformationCacheConfiguration,
             CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION to sigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
             // 다른 캐시 설정 추가
@@ -112,6 +116,31 @@ class CacheConfiguration(
     }
 
     @Bean
+    fun shortTermForecastInformationKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[0] as String
+            val savedDateTime = (params[1] as LocalDateTime)
+                .truncatedTo(ChronoUnit.HOURS)
+                .withHour((params[1] as LocalDateTime).hour / 3 * 3)
+
+            "$sigunguCode-${savedDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMddHHmm)}"
+        }
+    }
+
+    @Bean
+    fun visitorStatisticsInformationKeyGenerator(): KeyGenerator {
+        return KeyGenerator { _, _, params ->
+            val sigunguCode = params[0] as String
+            val startDate = (params[1] as LocalDate).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+            val endDate = (params[2] as LocalDate).format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+
+            "$sigunguCode-$startDate-$endDate"
+        }
+    }
+
+    // 개선 전
+
+    @Bean
     fun lastMonthlyTouristAttractionRankingKeyGenerator(): KeyGenerator {
         return KeyGenerator { _, _, params ->
             val sigunguCode = params[1] as String
@@ -119,20 +148,6 @@ class CacheConfiguration(
             val savedDateTime = YearMonth.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM)
 
             "$sigunguCode-$savedDateTime"
-        }
-    }
-
-    @Bean
-    fun lastYearSameWeekVisitorStatisticsKeyGenerator(): KeyGenerator {
-        return KeyGenerator { _, _, params ->
-            val sigunguCode = params[0] as String
-
-            val (startDate, endDate) = DateTimeUtil.getLastYearSameIsoWeekRange()
-
-            val startDateFormat = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-            val endDateFormat = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-
-            "$sigunguCode-$startDateFormat-$endDateFormat"
         }
     }
 
@@ -155,21 +170,6 @@ class CacheConfiguration(
             val sigunguCode = params[0] as String
 
             val savedDateTime = LocalDateTime.now().format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-
-            "$sigunguCode-$savedDateTime"
-        }
-    }
-
-    @Bean
-    fun weatherInformationKeyGenerator(): KeyGenerator {
-        return KeyGenerator { _, _, params ->
-            val sigunguCode = params[0] as String
-
-            val now = LocalDateTime.now()
-                .truncatedTo(ChronoUnit.HOURS)
-
-            val savedDateTime = now.withHour((now.hour / 3) * 3)
-                .format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMddHHmm)
 
             "$sigunguCode-$savedDateTime"
         }

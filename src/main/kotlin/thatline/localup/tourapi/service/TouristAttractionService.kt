@@ -59,17 +59,16 @@ class TouristAttractionService(
         )
     }
 
-    // TODO-noah: API의 한계로 별도의 배치 작업으로 개선하면 좋을 것 같음
     @Cacheable(
-        cacheNames = [CacheObjectName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS_INFORMATION],
-        keyGenerator = CacheKeyGeneratorName.LAST_YEAR_SAME_WEEK_VISITOR_STATISTICS,
+        cacheNames = [CacheObjectName.VISITOR_STATISTICS_INFORMATION],
+        keyGenerator = CacheKeyGeneratorName.VISITOR_STATISTICS_INFORMATION,
         sync = true
     )
-    fun findLastYearSameWeekVisitorStatistics(
+    fun findVisitorStatistics(
         sigunguCode: String,
-    ): LastYearSameWeekVisitorStatisticsInformation {
-        val (startDate, endDate) = DateTimeUtil.getLastYearSameIsoWeekRange()
-
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): VisitorStatisticsInformation {
         val startYmd = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val endYmd = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
@@ -87,13 +86,11 @@ class TouristAttractionService(
             endYmd = endYmd,
         )
 
-        val items = response2.response.body.items.item
-
-        val visitorStatistics = items
+        val visitorStatistics = response2.response.body.items.item
             .filter { it.signguCode == sigunguCode }
             .groupBy { it.baseYmd }
             .map { (date, data) ->
-                // 관광객 구분 코드
+                // 방문객 구분 코드
                 val visitorCode = data.associateBy { it.touDivCd }
 
                 VisitorStatistic(
@@ -105,7 +102,7 @@ class TouristAttractionService(
             }
             .sortedBy { it.date }
 
-        return LastYearSameWeekVisitorStatisticsInformation(
+        return VisitorStatisticsInformation(
             updatedDate = LocalDateTime.now(),
             visitorStatistics = visitorStatistics
         )

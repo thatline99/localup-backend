@@ -34,4 +34,5 @@ data class UpdateBusinessRequest(
     val businessSeatCount: Int,
     // TODO: 유효성 검사, 고민
     val businessCustomerSegments: Set<CustomerSegment>,
+    val businessDescription: String?,
 )
