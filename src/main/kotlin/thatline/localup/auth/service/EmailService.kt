@@ -4,14 +4,12 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
 import thatline.localup.auth.exception.EmailSendException
-import java.security.MessageDigest
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Service
 class EmailService(
     // 실행을 통해서 bean을 잡는거라 오류 표시나는 것.
-    private val mailSender: JavaMailSender
+    private val mailSender: JavaMailSender,
+    private val emailVerificationRedisService: EmailVerificationRedisService,
 ) {
     companion object {
         private const val FROM_EMAIL = "noreply@localup.co.kr"
@@ -24,7 +22,9 @@ class EmailService(
      * @param baseUrl 서버의 베이스 URL (인증 링크 생성용)
      */
     fun sendVerificationEmail(email: String, baseUrl: String) {
-        val verificationToken = generateEmailVerificationToken(email)
+        val verificationToken = emailVerificationRedisService.generateVerificationToken()
+        emailVerificationRedisService.saveVerificationToken(email, verificationToken)
+        
         val verificationLink = "$baseUrl/api/auth/verify-email?email=$email&token=$verificationToken"
 
         val htmlContent = createVerificationEmailContent(verificationLink)
@@ -59,21 +59,6 @@ class EmailService(
         }
     }
 
-    /**
-     * 이메일 인증 토큰 생성
-     * 이메일 + 현재 시간을 기반으로 SHA-256 해시 생성
-     *
-     * @param email 사용자 이메일
-     * @return 생성된 인증 토큰
-     */
-    private fun generateEmailVerificationToken(email: String): String {
-        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-        val data = "$email:$timestamp:verification"
-
-        return MessageDigest.getInstance("SHA-256")
-            .digest(data.toByteArray())
-            .joinToString("") { "%02x".format(it) }
-    }
 
     /**
      * 이메일 인증 HTML 콘텐츠 생성

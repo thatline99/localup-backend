@@ -19,6 +19,7 @@ class AuthService(
     private val userRepository: UserMongoDbRepository,
     private val userTokenRedisService: UserTokenRedisService,
     private val emailService: EmailService,
+    private val emailVerificationRedisService: EmailVerificationRedisService,
 ) {
     @CountMongoDbCommands
     fun signIn(email: String, password: String): AuthToken {
@@ -116,7 +117,11 @@ class AuthService(
         return AuthToken(accessToken)
     }
 
-    fun verifyEmail(email: String) {
+    fun verifyEmail(email: String, token: String) {
+        // 토큰 유효성 검증
+        if (!emailVerificationRedisService.isValidVerificationToken(email, token)) {
+            throw InvalidVerificationTokenException()
+        }
         val user = userRepository.findByEmail(email)
             ?: throw UserNotFoundException()
 
@@ -135,6 +140,8 @@ class AuthService(
         )
 
         userRepository.save(updatedUser)
-
+        
+        // 인증 완료 후 Redis에서 토큰 삭제
+        emailVerificationRedisService.deleteVerificationToken(email)
     }
 }
