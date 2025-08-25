@@ -5,6 +5,10 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import thatline.localup.auth.exception.AccountDisabledException
+import thatline.localup.auth.exception.EmailNotVerifiedException
+import thatline.localup.auth.exception.EmailSendException
+import thatline.localup.auth.exception.UserNotFoundException
 import thatline.localup.common.response.BaseResponse
 
 @RestControllerAdvice
@@ -20,5 +24,44 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(BaseResponse.failure(message = errorMessage))
+    }
+
+    // 회원가입이 진행되지 않은 사용자 계정 예외 처리:
+    @ExceptionHandler(UserNotFoundException::class)
+    fun handleUserNotFoundException(
+        exception: UserNotFoundException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(BaseResponse.failure(message = exception.message ?: "User not found"))
+    }
+
+    // 이메일 미인증 예외 처리: "EMAIL_NOT_VERIFIED"
+    @ExceptionHandler(EmailNotVerifiedException::class)
+    fun handleEmailNotVerifiedException(
+        exception: EmailNotVerifiedException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(BaseResponse.failure(message = exception.message))
+    }
+
+    // 이메일 전송 실패 예외 처리: "EMAIL_SEND_FAILED"
+    @ExceptionHandler(EmailSendException::class)
+    fun handleEmailSendException(
+        exception: EmailSendException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(BaseResponse.failure(message = exception.message ?: "Failed to send email"))
+    }
+
+    @ExceptionHandler(OpenApiQuotaExceededException::class)
+    fun handleOpenApiQuotaExceededException(
+        exception: OpenApiQuotaExceededException,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity
+            .status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(BaseResponse.failure(message = exception.message))
     }
 }

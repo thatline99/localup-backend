@@ -1,11 +1,9 @@
 package thatline.localup.tourapi.controller
 
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import thatline.localup.tourapi.exception.ExternalTourApiException
 import thatline.localup.tourapi.request.*
 import thatline.localup.tourapi.response.*
 import thatline.localup.tourapi.restclient.TourApiRestClient
@@ -25,7 +23,7 @@ class TourApiController(
     fun areaCode2(
         request: AreaCode2Request,
     ): ResponseEntity<AreaCode2Response> {
-        val response = tourApiRestClient.areaCode2(
+        val response = tourApiRestClient.korServiceAreaCode2(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             areaCode = request.areaCode,
@@ -44,7 +42,7 @@ class TourApiController(
     fun ldongCode2(
         request: LdongCode2Request,
     ): ResponseEntity<LdongCode2Response> {
-        val response = tourApiRestClient.ldongCode2(
+        val response = tourApiRestClient.korService2LdongCode2(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             lDongRegnCd = request.lDongRegnCd,
@@ -65,7 +63,7 @@ class TourApiController(
     fun areaBasedList(
         request: AreaBasedListRequest,
     ): ResponseEntity<AreaBasedListResponse> {
-        val response = tourApiRestClient.areaBasedList(
+        val response = tourApiRestClient.tarRlteTarService1AreaBasedList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             baseYm = request.baseYm,
@@ -88,7 +86,7 @@ class TourApiController(
     fun areaBasedList2(
         request: AreaBasedListRequest2,
     ): ResponseEntity<AreaBasedListResponse2> {
-        val response = tourApiRestClient.areaBasedList2(
+        val response = tourApiRestClient.locgoHubTarService1AreaBasedList2(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             baseYm = request.baseYm,
@@ -111,7 +109,7 @@ class TourApiController(
     fun tatsCnctrRatedList(
         request: TatsCnctrRatedListRequest,
     ): ResponseEntity<TatsCnctrRatedListResponse> {
-        val response = tourApiRestClient.tatsCnctrRatedList(
+        val response = tourApiRestClient.tatsCnctrRateServiceTatsCnctrRatedList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             areaCd = request.areaCd,
@@ -134,7 +132,7 @@ class TourApiController(
     fun metcoRegnVisitrDDList(
         request: MetcoRegnVisitrDDListRequest,
     ): ResponseEntity<MetcoRegnVisitrDDListResponse> {
-        val response = tourApiRestClient.metcoRegnVisitrDDList(
+        val response = tourApiRestClient.dataLabServiceMetcoRegnVisitrDDList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             startYmd = request.startYmd,
@@ -156,7 +154,7 @@ class TourApiController(
     fun locgoRegnVisitrDDList(
         request: LocgoRegnVisitrDDListRequest,
     ): ResponseEntity<LocgoRegnVisitrDDListResponse> {
-        val response = tourApiRestClient.locgoRegnVisitrDDList(
+        val response = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             pageNo = request.pageNo,
             numOfRows = request.numOfRows,
             startYmd = request.startYmd,
@@ -164,11 +162,5 @@ class TourApiController(
         )
 
         return ResponseEntity.ok(response)
-    }
-
-    // TODO: noah, 추후 error body 정의
-    @ExceptionHandler(ExternalTourApiException::class)
-    fun handleExternalTourApi(exception: ExternalTourApiException): ResponseEntity<Void> {
-        return ResponseEntity.internalServerError().build()
     }
 }

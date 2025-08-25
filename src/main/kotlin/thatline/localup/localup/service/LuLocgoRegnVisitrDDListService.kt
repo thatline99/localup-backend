@@ -28,14 +28,14 @@ class LuLocgoRegnVisitrDDListService(
         val formattedStartDate = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val formattedEndDate = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
-        val totalCount = tourApiRestClient.locgoRegnVisitrDDList(
+        val totalCount = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             1,
             1,
             formattedStartDate,
             formattedEndDate
         ).response.body.totalCount
 
-        val items = tourApiRestClient.locgoRegnVisitrDDList(
+        val items = tourApiRestClient.dataLabServiceLocgoRegnVisitrDDList(
             1,
             totalCount,
             formattedStartDate,

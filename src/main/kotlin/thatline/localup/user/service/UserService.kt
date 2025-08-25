@@ -1,43 +1,145 @@
 package thatline.localup.user.service
 
 import org.springframework.stereotype.Service
-import thatline.localup.user.entity.mongodb.UserMongoDbEntity
+import thatline.localup.common.annotation.CountMongoDbCommands
+import thatline.localup.user.dto.FindBusinessDto
+import thatline.localup.user.entity.BusinessMongoDbEntity
+import thatline.localup.user.entity.CustomerSegment
+import thatline.localup.user.exception.BusinessAlreadyRegisteredException
+import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
-import thatline.localup.user.repository.mongodb.UserMongoDbRepository
-import java.time.LocalDateTime
+import thatline.localup.user.repository.BusinessMongoDbRepository
+import thatline.localup.user.repository.UserMongoDbRepository
 
 @Service
 class UserService(
     private val userRepository: UserMongoDbRepository,
+    private val businessRepository: BusinessMongoDbRepository,
 ) {
-    fun updateAddress(
-        id: String,
-        zipCode: String,
-        address: String,
-        addressDetail: String?,
-        latitude: Double,
-        longitude: Double,
-    ) {
-        val user = userRepository.findById(id)
+    @CountMongoDbCommands
+    fun findBusiness(
+        userId: String,
+    ): FindBusinessDto {
+        val foundUser = userRepository.findById(userId)
             .orElseThrow { UserNotFoundException() }
 
-        val updatedUser = UserMongoDbEntity(
-            id = user.id,
-            createdDate = user.createdDate,
-            lastModifiedDate = LocalDateTime.now(),
+        val businessId = foundUser.businessId ?: throw BusinessNotRegisteredException()
 
-            email = user.email,
-            password = user.password,
-            role = user.role,
+        val foundBusiness = businessRepository.findById(businessId)
+            .orElseThrow { BusinessNotRegisteredException() }
 
-            zipCode = zipCode,
-            address = address,
-            addressDetail = addressDetail,
-            latitude = latitude,
-            longitude = longitude
+        return FindBusinessDto(
+            name = foundBusiness.name,
+            sigunguCode = foundBusiness.sigunguCode,
+            zipCode = foundBusiness.zipCode,
+            address = foundBusiness.address,
+            addressDetail = foundBusiness.addressDetail,
+            latitude = foundBusiness.latitude,
+            longitude = foundBusiness.longitude,
+            type = foundBusiness.type,
+            item = foundBusiness.item,
+            averageOrderAmount = foundBusiness.averageOrderAmount,
+            seatCount = foundBusiness.seatCount,
+            customerSegments = foundBusiness.customerSegments,
+            description = foundBusiness.description,
+        )
+    }
+
+    @CountMongoDbCommands
+    fun registerBusiness(
+        userId: String,
+        businessName: String,
+        businessSigunguCode: String,
+        businessZipCode: String,
+        businessAddress: String,
+        businessAddressDetail: String?,
+        businessLatitude: Double,
+        businessLongitude: Double,
+        businessType: String,
+        businessItem: String,
+        businessAverageOrderAmount: Double,
+        businessSeatCount: Int,
+        businessCustomerSegments: Set<CustomerSegment>,
+        businessDescription: String?,
+    ) {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+
+        if (foundUser.businessId != null) {
+            throw BusinessAlreadyRegisteredException()
+        }
+
+        val newBusiness = BusinessMongoDbEntity(
+            name = businessName,
+            sigunguCode = businessSigunguCode,
+            zipCode = businessZipCode,
+            address = businessAddress,
+            addressDetail = businessAddressDetail,
+            latitude = businessLatitude,
+            longitude = businessLongitude,
+            type = businessType,
+            item = businessItem,
+            averageOrderAmount = businessAverageOrderAmount,
+            seatCount = businessSeatCount,
+            customerSegments = businessCustomerSegments,
+            description = businessDescription
+        )
+
+        val savedBusiness = businessRepository.save(newBusiness)
+
+        val updatedUser = foundUser.update(
+            businessId = savedBusiness.id,
+            kakaoId = foundUser.kakaoId,
+            name = foundUser.name,
+            profileImage = foundUser.profileImage,
+            isEmailVerified = foundUser.isEmailVerified,
         )
 
         userRepository.save(updatedUser)
+    }
+
+    @CountMongoDbCommands
+    fun updateBusiness(
+        userId: String,
+        businessName: String,
+        businessSigunguCode: String,
+        businessZipCode: String,
+        businessAddress: String,
+        businessAddressDetail: String?,
+        businessLatitude: Double,
+        businessLongitude: Double,
+        businessType: String,
+        businessItem: String,
+        businessAverageOrderAmount: Double,
+        businessSeatCount: Int,
+        businessCustomerSegments: Set<CustomerSegment>,
+        businessDescription: String?,
+    ) {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+
+        val businessId = foundUser.businessId ?: throw BusinessNotRegisteredException()
+
+        val foundBusiness = businessRepository.findById(businessId)
+            .orElseThrow { BusinessNotRegisteredException() }
+
+        val updatedBusiness = foundBusiness.update(
+            name = businessName,
+            sigunguCode = businessSigunguCode,
+            zipCode = businessZipCode,
+            address = businessAddress,
+            addressDetail = businessAddressDetail,
+            latitude = businessLatitude,
+            longitude = businessLongitude,
+            type = businessType,
+            item = businessItem,
+            averageOrderAmount = businessAverageOrderAmount,
+            seatCount = businessSeatCount,
+            customerSegments = businessCustomerSegments,
+            description = businessDescription,
+        )
+
+        businessRepository.save(updatedBusiness)
     }
 
     // TODO: 추후
@@ -49,16 +151,14 @@ class UserService(
 //            id = user.id,
 //            createdDate = user.createdDate,
 //            lastModifiedDate = LocalDateTime.now(),
-//
 //            email = user.email,
 //            password = user.password,
 //            role = role,
-//
-//            zipCode = user.zipCode,
-//            address = user.address,
-//            addressDetail = user.addressDetail,
-//            latitude = user.latitude,
-//            longitude = user.longitude
+//            businessId = user.businessId,
+//            kakaoId = user.kakaoId,
+//            name = user.name,
+//            profileImage = user.profileImage,
+//            isEmailVerified = user.isEmailVerified,
 //        )
 //
 //        userRepository.save(updatedUser)

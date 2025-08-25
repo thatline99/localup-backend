@@ -3,13 +3,27 @@ spring:
     name: localup
   profiles:
     active: local
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 tour-api:
   base-url: https://apis.data.go.kr
   mobile-os: WEB
   mobile-app: LocalUp
-    # 한국관광공사_국문 관광정보 서비스_GW
-    # link: https://www.data.go.kr/data/15101578/openapi.do
+  # 한국관광공사_국문 관광정보 서비스_GW
+  # link: https://www.data.go.kr/data/15101578/openapi.do
   kor-service2:
     first-path: /B551011/KorService2
     # 지역코드조회
@@ -20,6 +34,15 @@ tour-api:
     ldong-code2:
       second-path: /ldongCode2
       response-type: JSON
+    # 지역기반 관광 정보 조회
+    area-based-list2:
+      second-path: /areaBasedList2
+    # 행사 정보 조회
+    search-festival2:
+      second-path: /searchFestival2
+    # 소개 정보 조회
+    detail-intro2:
+      second-path: /detailIntro2
 
   # 한국관광공사_관광지별 연관 관광지 정보
   # link: https://www.data.go.kr/data/15128560/openapi.do
@@ -69,8 +92,17 @@ etc-api:
       # 초단기실황조회
       get-ultra-srt-ncst:
         second-path: /getUltraSrtNcst
-        date-type: JSON
+        data-type: JSON
+      # 단기예보조회
+      get-vilage-fcst:
+        second-path: /getVilageFcst
+        data-type: JSON
       # 예보버전조회
       get-fcst-version:
         second-path: /getFcstVersion
-        date-type: JSON
+        data-type: JSON
+
+# 이메일 인증시 리다이렉트를 위한 사이트 url 설정
+app:
+  frontend:
+    base-url: ${FE_URL}

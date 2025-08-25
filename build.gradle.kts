@@ -4,6 +4,8 @@ plugins {
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
+    // Ktlint
+    id("org.jlleitschuh.gradle.ktlint") version "13.0.0"
 }
 
 group = "thatline"
@@ -26,15 +28,16 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    runtimeOnly("com.h2database:h2")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -57,4 +60,33 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    loadDotEnv().forEach { (key, value) -> environment(key, value) }
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    loadDotEnv().forEach { (key, value) -> environment(key, value) }
+}
+
+tasks.named("check") {
+    dependsOn("ktlintCheck")
+}
+
+private fun loadDotEnv(): Map<String, String> {
+    val dotEnvFile = rootProject.file(".env")
+
+    if (!dotEnvFile.exists()) {
+        return emptyMap()
+    }
+
+    return dotEnvFile.readLines()
+        .filter { it.isNotBlank() && !it.trim().startsWith("#") }
+        .map {
+            val (key, value) = it.split("=", limit = 2)
+
+            key.trim() to value.trim()
+                .removePrefix("\"").removeSuffix("\"")
+                .removePrefix("'").removeSuffix("'")
+        }
+        .toMap()
 }

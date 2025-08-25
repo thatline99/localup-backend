@@ -3,14 +3,14 @@ package thatline.localup.auth.service
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import thatline.localup.auth.dto.AuthToken
 import thatline.localup.auth.dto.UserDetails
-import thatline.localup.auth.exception.DuplicateEmailException
-import thatline.localup.auth.exception.InvalidCredentialsException
+import thatline.localup.auth.exception.*
+import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.common.constant.Role
-import thatline.localup.user.entity.mongodb.UserMongoDbEntity
-import thatline.localup.user.repository.mongodb.UserMongoDbRepository
+import thatline.localup.user.entity.UserMongoDbEntity
+import thatline.localup.user.repository.UserMongoDbRepository
+import java.time.LocalDateTime
 import java.util.*
 
 @Service
@@ -18,13 +18,21 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserMongoDbRepository,
     private val userTokenRedisService: UserTokenRedisService,
+    private val emailService: EmailService,
+    private val emailVerificationRedisService: EmailVerificationRedisService,
 ) {
+    @CountMongoDbCommands
     fun signIn(email: String, password: String): AuthToken {
         val user = userRepository.findByEmail(email)
             ?: throw InvalidCredentialsException()
 
         if (!passwordEncoder.matches(password, user.password)) {
             throw InvalidCredentialsException()
+        }
+
+        // 이메일 인증 상태 확인 (카카오 사용자는 자동으로 인증 완료)
+        if (!user.isEmailVerified) {
+            throw EmailNotVerifiedException()
         }
 
         val accessToken = UUID.randomUUID().toString()
@@ -38,8 +46,8 @@ class AuthService(
         userTokenRedisService.deleteByAccessToken(accessToken)
     }
 
-    @Transactional
-    fun signUp(email: String, password: String) {
+    @CountMongoDbCommands
+    fun signUp(email: String, password: String, baseUrl: String) {
         if (userRepository.existsByEmail(email)) {
             throw DuplicateEmailException()
         }
@@ -50,16 +58,17 @@ class AuthService(
             email = email,
             password = hashedPassword,
             role = Role.USER,
-            zipCode = null,
-            address = null,
-            addressDetail = null,
-            latitude = null,
-            longitude = null,
+            businessId = null,
+            isEmailVerified = false,
         )
 
         userRepository.save(newUser)
+
+        // 이메일 인증 링크 발송
+        emailService.sendVerificationEmail(email, baseUrl)
     }
 
+    @CountMongoDbCommands
     fun findUserDetailsByAccessToken(accessToken: String): UserDetails? {
         val userId = userTokenRedisService.findUserIdByAccessToken(accessToken)
             ?: return null
@@ -71,5 +80,68 @@ class AuthService(
             id = user.id,
             role = user.role
         )
+    }
+
+    fun checkKakaoUser(kakaoId: String, email: String): AuthToken {
+        val user = userRepository.findByKakaoId(kakaoId)
+            ?: throw UserNotFoundException()
+
+        val accessToken = UUID.randomUUID().toString()
+        userTokenRedisService.save(accessToken, user.id)
+
+        return AuthToken(accessToken)
+    }
+
+    fun signUpKakaoUser(kakaoId: String, email: String, name: String, profileImage: String?): AuthToken {
+        if (userRepository.existsByEmail(email)) {
+            throw DuplicateEmailException()
+        }
+
+        val newUser =
+            UserMongoDbEntity(
+                email = email,
+                password = null,
+                role = Role.USER,
+                businessId = null,
+                kakaoId = kakaoId,
+                name = name,
+                profileImage = profileImage,
+                isEmailVerified = true,
+            )
+
+        val savedUser = userRepository.save(newUser)
+
+        val accessToken = UUID.randomUUID().toString()
+        userTokenRedisService.save(accessToken, savedUser.id)
+
+        return AuthToken(accessToken)
+    }
+
+    fun verifyEmail(email: String, token: String) {
+        // 토큰 유효성 검증
+        if (!emailVerificationRedisService.isValidVerificationToken(email, token)) {
+            throw InvalidVerificationTokenException()
+        }
+        val user = userRepository.findByEmail(email)
+            ?: throw UserNotFoundException()
+
+        val updatedUser = UserMongoDbEntity(
+            id = user.id,
+            createdDate = user.createdDate,
+            lastModifiedDate = LocalDateTime.now(),
+            email = user.email,
+            password = user.password,
+            role = user.role,
+            businessId = user.businessId,
+            kakaoId = user.kakaoId,
+            name = user.name,
+            profileImage = user.profileImage,
+            isEmailVerified = true,
+        )
+
+        userRepository.save(updatedUser)
+        
+        // 인증 완료 후 Redis에서 토큰 삭제
+        emailVerificationRedisService.deleteVerificationToken(email)
     }
 }
