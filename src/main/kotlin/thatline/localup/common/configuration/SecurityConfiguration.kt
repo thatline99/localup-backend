@@ -10,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import thatline.localup.common.constant.Environment
 import thatline.localup.common.filter.AuthenticationFilter
 
@@ -63,16 +65,7 @@ class SecurityConfiguration(
     fun productionFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors { cors ->
-                cors.configurationSource {
-                    val corsConfiguration = CorsConfiguration()
-
-                    corsConfiguration.allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
-                    corsConfiguration.addAllowedHeader("*")
-                    corsConfiguration.allowedMethods = listOf("GET","POST","PUT","PATCH","DELETE","OPTIONS")
-                    corsConfiguration.allowCredentials = true
-
-                    corsConfiguration
-                }
+                cors.configurationSource(productionCorsConfigurationSource())
             }
             .csrf { it.disable() }
             .formLogin { it.disable() }
@@ -92,5 +85,24 @@ class SecurityConfiguration(
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
+    }
+
+    @Bean
+    @Profile(Environment.PRODUCTION)
+    fun productionCorsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
+            allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+            allowedHeaders = listOf("*")
+            exposedHeaders = listOf("Authorization", "Content-Type")
+            allowCredentials = true
+            maxAge = 3600L
+        }
+
+        val source = UrlBasedCorsConfigurationSource()
+
+        source.registerCorsConfiguration("/**", configuration)
+
+        return source
     }
 }
