@@ -3,7 +3,6 @@ package thatline.localup.common.configuration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -83,7 +82,6 @@ class SecurityConfiguration(
             }
             .authorizeHttpRequests { auth ->
                 auth
-//                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/tour-api/**").permitAll()
                     .requestMatchers("/api/health").permitAll()
