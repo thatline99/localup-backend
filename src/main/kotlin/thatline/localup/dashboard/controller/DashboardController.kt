@@ -19,6 +19,7 @@ import thatline.localup.tourapi.dto.VisitorStatisticsInformation
 class DashboardController(
     private val dashboardFacade: DashboardFacade,
 ) {
+    // TODO-noah: 분리
     @GetMapping
     @RequireUser
     fun getDashboardOverview(
@@ -46,37 +47,6 @@ class DashboardController(
     ): ResponseEntity<BaseResponse<VisitorStatisticsInformation>> {
         val visitorStatisticsInformation = dashboardFacade.findVisitorStatistics(
             userId = userId,
-            startDate = request.startDate,
-            endDate = request.endDate,
-        )
-
-        return ResponseEntity.ok(BaseResponse.success(data = visitorStatisticsInformation))
-    }
-
-    // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
-    @GetMapping("/test")
-    fun getDashboardInformation(): ResponseEntity<BaseResponse<DashboardOverview>> {
-        // 해당 user id는 로컬 db에 따라 달라질 수 있습니다.
-        val dashboardOverview = dashboardFacade.getDashboardOverview("689eb417e295ca9144b875a0")
-
-        return ResponseEntity.ok(BaseResponse.success(data = dashboardOverview))
-    }
-
-    // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
-    @GetMapping("/test/short-term-forecast")
-    fun findShortTermForecastTest(): ResponseEntity<BaseResponse<ShortTermForecastInformation>> {
-        val shortTermForecastInformation = dashboardFacade.findShortTermForecast("689eb417e295ca9144b875a0")
-
-        return ResponseEntity.ok(BaseResponse.success(data = shortTermForecastInformation))
-    }
-
-    // TODO-noah: 삭제, 아직 인증이 완료되지 않아 사용하는 코드입니다.
-    @GetMapping("/test/visitor-statistics")
-    fun findVisitorStatisticsTest(
-        @Valid request: FindVisitorStatisticsRequest,
-    ): ResponseEntity<BaseResponse<VisitorStatisticsInformation>> {
-        val visitorStatisticsInformation = dashboardFacade.findVisitorStatistics(
-            userId = "689eb417e295ca9144b875a0",
             startDate = request.startDate,
             endDate = request.endDate,
         )
