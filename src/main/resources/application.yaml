@@ -110,8 +110,4 @@ app:
 # TODO-noah: 사겢
 logging:
   level:
-    org.springframework.security: DEBUG
-    org.springframework.security.web.cors: TRACE
-    org.springframework.web.cors: TRACE
-    org.springframework.security.web.FilterChainProxy: DEBUG
-    thatline.localup.common.filter: DEBUG
+    root: DEBUG  # 임시로 전체 디버그
