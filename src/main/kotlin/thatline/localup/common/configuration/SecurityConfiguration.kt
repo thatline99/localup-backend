@@ -10,8 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import thatline.localup.common.constant.Environment
 import thatline.localup.common.filter.AuthenticationFilter
 
@@ -64,7 +62,18 @@ class SecurityConfiguration(
     @Profile(Environment.PRODUCTION)
     fun productionFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .cors { }
+            .cors { cors ->
+                cors.configurationSource {
+                    val corsConfiguration = CorsConfiguration()
+
+                    corsConfiguration.allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
+                    corsConfiguration.addAllowedHeader("*")
+                    corsConfiguration.addAllowedMethod("*")
+                    corsConfiguration.allowCredentials = true
+
+                    corsConfiguration
+                }
+            }
             .csrf { it.disable() }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
@@ -74,7 +83,7 @@ class SecurityConfiguration(
             }
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/tour-api/**").permitAll()
                     .requestMatchers("/api/health").permitAll()
@@ -83,23 +92,5 @@ class SecurityConfiguration(
             .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
-    }
-
-    @Bean
-    @Profile(Environment.PRODUCTION)
-    fun productionCorsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration().apply {
-            // allowedOrigins 대신 allowedOriginPatterns 사용
-            allowedOriginPatterns = listOf("*")  // 또는 listOf("https://*.localup.store", "https://localup.store")
-            allowedMethods = listOf("*")
-            allowedHeaders = listOf("*")
-            exposedHeaders = listOf("*")
-            allowCredentials = true
-            maxAge = 3600L
-        }
-
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
-        return source
     }
 }
