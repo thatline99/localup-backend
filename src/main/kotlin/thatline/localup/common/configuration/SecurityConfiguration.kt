@@ -68,7 +68,7 @@ class SecurityConfiguration(
 
                     corsConfiguration.allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
                     corsConfiguration.addAllowedHeader("*")
-                    corsConfiguration.addAllowedMethod("*")
+                    corsConfiguration.allowedMethods = listOf("GET","POST","PUT","PATCH","DELETE","OPTIONS")
                     corsConfiguration.allowCredentials = true
 
                     corsConfiguration
