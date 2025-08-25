@@ -91,7 +91,8 @@ class SecurityConfiguration(
     @Profile(Environment.PRODUCTION)
     fun productionCorsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOrigins = listOf("*")
+            // allowedOrigins 대신 allowedOriginPatterns 사용
+            allowedOriginPatterns = listOf("*")  // 또는 listOf("https://*.localup.store", "https://localup.store")
             allowedMethods = listOf("*")
             allowedHeaders = listOf("*")
             exposedHeaders = listOf("*")
@@ -100,9 +101,7 @@ class SecurityConfiguration(
         }
 
         val source = UrlBasedCorsConfigurationSource()
-
         source.registerCorsConfiguration("/**", configuration)
-
         return source
     }
 }
