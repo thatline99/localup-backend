@@ -64,9 +64,7 @@ class SecurityConfiguration(
     @Profile(Environment.PRODUCTION)
     fun productionFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .cors { cors ->
-                cors.configurationSource(productionCorsConfigurationSource())
-            }
+            .cors { }
             .csrf { it.disable() }
             .formLogin { it.disable() }
             .httpBasic { it.disable() }
