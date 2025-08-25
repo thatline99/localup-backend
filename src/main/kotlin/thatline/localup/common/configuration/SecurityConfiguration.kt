@@ -65,8 +65,7 @@ class SecurityConfiguration(
                 cors.configurationSource {
                     val corsConfiguration = CorsConfiguration()
 
-                    // TODO-noah: 프론트 링크 확정 시 수정
-                    corsConfiguration.allowedOrigins = listOf("http://localhost:3000")
+                    corsConfiguration.allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
                     corsConfiguration.addAllowedHeader("*")
                     corsConfiguration.addAllowedMethod("*")
                     corsConfiguration.allowCredentials = true
