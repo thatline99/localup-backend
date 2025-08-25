@@ -37,11 +37,11 @@ class ChatGptTests {
             userId = userId
         )
 
-        chatGptRestClient.analyzeAndAdviseTourismData(
-            "오늘/내일/모레 날씨 예보: $foundShortTermForecast" +
-                    "작년 같은 월 방문자(현지인/외지인/외국인) 수: $foundVisitorStatistics" +
-                    "지난 달 관광지 랭킹 | 메인 이벤트 | 진행 중 또는 진행 예정 이벤트: $dashboardOverview"
-        )
+//        chatGptRestClient.analyzeAndAdviseTourismData(
+//            "오늘/내일/모레 날씨 예보: $foundShortTermForecast" +
+//                    "작년 같은 월 방문자(현지인/외지인/외국인) 수: $foundVisitorStatistics" +
+//                    "지난 달 관광지 랭킹 | 메인 이벤트 | 진행 중 또는 진행 예정 이벤트: $dashboardOverview"
+//        )
 
         /**
          * 응답 예시

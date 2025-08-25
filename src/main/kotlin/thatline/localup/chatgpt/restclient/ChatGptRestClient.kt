@@ -65,39 +65,70 @@ class ChatGptRestClient(
         }
     }
 
-    fun analyzeAndAdviseTourismData(tourismData: String) {
-        // TODO-noah: 카페에 한정하지 않고, 사용자 정보를 전달해서 할 필요 있음.
+    fun getInsight(data: String): String {
         // NOTE-noah: 관리자 페이지 있다면 거기서 프롬프트를 관리할 수 있도록하면 좋을 것 같음
+        // NOTE-noah: GPT 프롬프트 수정 필요 (협업 필요)
         val systemPrompt = """
-           당신은 카페 운영 컨설턴트입니다. 제공된 모든 데이터를 종합 분석하여 카페 운영에 필요한 구체적인 조언만 제공하세요.
-           
-           활용해야 할 데이터:
-           - 날씨 예보 (오늘/내일/모레)
-           - 작년 같은 월 방문자 수 (현지인/외지인/외국인 비율)
-           - 지난 달 관광지 랭킹
-           - 메인 이벤트 및 진행 중/예정 이벤트
-           
-           답변 규칙:
-           - 인사말, 설명, 제목, 구분선 없이 바로 본론으로 시작
-           - 불필요한 서론이나 분석 과정 설명 금지
-           - 각 조언은 서로 다른 관점에서 작성 (중복 표현 금지)
-           - 날씨, 방문객 패턴, 이벤트 정보를 모두 고려한 통합적 조언 제공
-           - 카페 운영자 입장에서 오늘, 내일, 모레 어떻게 준비해야 할지만 말하기
-           - 구체적인 실행 방법과 예상 매출 영향 중심으로 작성
-           - 리스트 형식(- 또는 1., 2. 등)으로 정리해서 작성
-           - 명사형 종결법 사용 (예: ~해야 함, ~필요, ~권장 등)
+            제공된 데이터만을 사용하여 자영업자에게 필요한 구체적 조치사항을 작성하세요.
+        
+            ## 엄격한 제약사항
+            - 데이터에 명시되지 않은 내용은 절대 언급 금지
+            - 추측, 가정, 일반적 조언 완전 금지  
+            - 주어진 사업 정보에 포함된 내용만 활용
+            - 주어진 기상 데이터의 정확한 수치만 사용
+            - 주어진 방문객 통계의 실제 수치만 활용
+        
+            ## 작성 방법
+            1. 먼저 사업 정보를 정확히 파악
+            2. 그 업종에서 실제로 일어날 수 있는 상황만 고려
+            3. 기상 데이터의 정확한 시간과 수치 인용
+            4. 작년 방문객 수치를 정확히 계산하여 비교
+        
+            ## 출력 형식
+            - 제목, 인사말 없이 바로 조치사항 시작
+            - 각 문장: [정확한 데이터] → [구체적 행동] (이유)
+            - 데이터에 근거한 내용만 포함
+            - 시설이나 장비 언급 시 반드시 해당 업종에서 실제 사용하는 것만
+        
+            ## 데이터 검증
+            사업 정보에서:
+            - 정확한 업종은?
+            - 언급된 시설이나 특징은?
+            - 위치나 규모 정보는?
+        
+            기상 데이터에서:
+            - 정확한 강수확률과 시간대는?
+            - 정확한 온도와 습도는?
+            - 특별히 주의할 기상 조건은?
+        
+            방문객 데이터에서:
+            - 작년 정확한 방문객 수는?
+            - 현지인/외지인/외국인 정확한 비율은?
+            - 증감 패턴은?
+        
+            ## 금지사항
+            - 외부 테이블 (언급 없음)
+            - 카페 장비 (카페가 아닐 수 있음)  
+            - 숙박 시설 (숙박업이 아닐 수 있음)
+            - 구체적 언급 없는 모든 시설/장비
+            - 데이터 범위를 벗어난 모든 추측
+        
+            오직 제공된 데이터에서 확실히 확인할 수 있는 내용만 사용하여 해당 업종의 실제 운영에 도움이 되는 조치사항을 작성하세요.
         """.trimIndent()
 
         // NOTE-noah: maxTokens을 50으로 했으나, 너무 작음, 일단 500 설정, 추후 팀과 상의
+        // TODO-noah: property 분리
         val request = ChatGptRequest(
             model = "gpt-4o-mini",
             messages = listOf(
                 Message(role = "system", content = systemPrompt),
-                Message(role = "user", content = "다음 관광 데이터를 분석해주세요:\n\n$tourismData")
+                Message(role = "user", content = data)
             ),
             temperature = 0.7,
             maxTokens = 500
         )
+
+        // TODO-noah: 응답 실패, 처리 필요
 
         val chatGptResponse = restClient.post()
             .uri(apiUrl)
@@ -107,10 +138,6 @@ class ChatGptRestClient(
             .retrieve()
             .body(ChatGptResponse::class.java)
 
-        if (chatGptResponse != null) {
-            log.info(chatGptResponse.choices[0].message.content)
-        } else {
-            log.info("내용 없음")
-        }
+        return chatGptResponse?.choices?.get(0)?.message?.content ?: ""
     }
 }

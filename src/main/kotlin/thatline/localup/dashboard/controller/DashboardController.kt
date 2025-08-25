@@ -19,6 +19,16 @@ import thatline.localup.tourapi.dto.VisitorStatisticsInformation
 class DashboardController(
     private val dashboardFacade: DashboardFacade,
 ) {
+    @GetMapping("/insight")
+    @RequireUser
+    fun getInsight(
+        @AuthenticationPrincipal userId: String,
+    ): ResponseEntity<BaseResponse<String>> {
+        val insight = dashboardFacade.getInsight(userId)
+
+        return ResponseEntity.ok(BaseResponse.success(insight))
+    }
+
     // TODO-noah: 분리
     @GetMapping
     @RequireUser
