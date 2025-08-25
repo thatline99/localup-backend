@@ -106,8 +106,3 @@ etc-api:
 app:
   frontend:
     base-url: ${FE_URL}
-
-# TODO-noah: 사겢
-logging:
-  level:
-    root: DEBUG  # 임시로 전체 디버그

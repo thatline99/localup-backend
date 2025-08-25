@@ -39,3 +39,8 @@ etc-api:
   kma:
     vilage-fcst-info-service:
       service-key: ${VILAGE_FCST_INFO_SERVICE_KEY}
+
+# TODO-noah: 사겢
+logging:
+  level:
+    root: DEBUG  # 임시로 전체 디버그
