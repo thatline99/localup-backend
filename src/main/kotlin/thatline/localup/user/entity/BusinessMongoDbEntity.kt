@@ -40,6 +40,9 @@ class BusinessMongoDbEntity(
     // 업종, 주종목
     val item: String,
 
+    // 평균 일간 고객 수
+    val averageDailyCustomerCount: Int,
+
     // 평균 객단가
     val averageOrderAmount: Double,
 
@@ -62,6 +65,7 @@ class BusinessMongoDbEntity(
         longitude: Double = this.longitude,
         type: String = this.type,
         item: String = this.item,
+        averageDailyCustomerCount: Int = this.averageDailyCustomerCount,
         averageOrderAmount: Double = this.averageOrderAmount,
         seatCount: Int = this.seatCount,
         customerSegments: Set<CustomerSegment> = this.customerSegments,
@@ -80,6 +84,7 @@ class BusinessMongoDbEntity(
             longitude = longitude,
             type = type,
             item = item,
+            averageDailyCustomerCount = averageDailyCustomerCount,
             averageOrderAmount = averageOrderAmount,
             seatCount = seatCount,
             customerSegments = customerSegments.toSet(),

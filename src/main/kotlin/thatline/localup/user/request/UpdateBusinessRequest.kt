@@ -28,6 +28,8 @@ data class UpdateBusinessRequest(
     val businessType: String,
     @field:NotBlank
     val businessItem: String,
+    @field:Min(0)
+    val businessAverageDailyCustomerCount: Int,
     @field:DecimalMin(value = "0.0", inclusive = true)
     val businessAverageOrderAmount: Double,
     @field:Min(value = 0)
