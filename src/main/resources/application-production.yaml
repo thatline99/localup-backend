@@ -1,0 +1,41 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@mongo:27017/localup?authSource=admin
+    redis:
+      host: redis
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
+token:
+  access-token:
+    name: accessToken
+    expiration-seconds: 86400
+
+tour-api:
+  # 한국관광공사_국문 관광정보 서비스_GW
+  # link: https://www.data.go.kr/data/15101578/openapi.do
+  kor-service2:
+    service-key: ${KOR_SERVICE2_KEY}
+
+  # 한국관광공사_관광지별 연관 관광지 정보
+  # link: https://www.data.go.kr/data/15128560/openapi.do
+  tar-rlte-tar-service:
+    service-key: ${TAR_RLTE_TAR_SERVICE_KEY}
+
+  # 한국관광공사_기초지자체 중심 관광지 정보
+  # link: https://www.data.go.kr/data/15128559/openapi.do
+  locgo-hub-tar-service:
+    service-key: ${LOCGO_HUB_TAR_SERVICE_KEY}
+
+  # 한국관광공사_관광지 집중률 방문자 추이 예측 정보
+  tats-cnctr-rate-service:
+    service-key: ${TATS_CNCTR_RATE_SERVICE_KEY}
+  data-lab-service:
+    service-key: ${DATA_LAB_SERVICE}
+
+etc-api:
+  # 기상청 (Korea Meteorological Administration)
+  kma:
+    vilage-fcst-info-service:
+      service-key: ${VILAGE_FCST_INFO_SERVICE_KEY}

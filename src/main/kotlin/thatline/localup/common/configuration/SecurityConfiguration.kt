@@ -56,4 +56,39 @@ class SecurityConfiguration(
 
         return http.build()
     }
+
+    @Bean
+    @Profile(Environment.PRODUCTION)
+    fun productionFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .cors { cors ->
+                cors.configurationSource {
+                    val corsConfiguration = CorsConfiguration()
+
+                    corsConfiguration.allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
+                    corsConfiguration.addAllowedHeader("*")
+                    corsConfiguration.addAllowedMethod("*")
+                    corsConfiguration.allowCredentials = true
+
+                    corsConfiguration
+                }
+            }
+            .csrf { it.disable() }
+            .formLogin { it.disable() }
+            .httpBasic { it.disable() }
+            .logout { it.disable() }
+            .sessionManagement { session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/tour-api/**").permitAll()
+                    .requestMatchers("/api/health").permitAll()
+                    .anyRequest().authenticated()
+            }
+            .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+
+        return http.build()
+    }
 }

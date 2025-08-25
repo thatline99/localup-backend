@@ -1,0 +1,17 @@
+# 실행: docker compose -f docker/production/docker-compose.yaml up -d
+services:
+  app:
+    image: ghcr.io/thatline99/localup-backend:latest
+    container_name: localup-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - /home/thatline/localup_environment/.env
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+    restart: unless-stopped
+    networks:
+      - localup_environment_default
+networks:
+  localup_environment_default:
+    external: true

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component
 import thatline.localup.common.constant.Environment
 import thatline.localup.common.property.TokenProperty
 
-@Profile(Environment.LOCAL)
+@Profile(Environment.PRODUCTION)
 @Component
-class LocalCookieProvider(
+class ProductionCookieProvider(
     private val tokenProperty: TokenProperty,
 ) : CookieProvider {
     override fun createAccessTokenCookie(accessToken: String): ResponseCookie {
@@ -17,7 +17,9 @@ class LocalCookieProvider(
             .path("/")
             .httpOnly(true)
             .maxAge(tokenProperty.accessToken.expirationSeconds)
-            .sameSite("Lax")
+            .secure(true)
+            .sameSite("Strict")
+
             .build()
     }
 
@@ -30,7 +32,8 @@ class LocalCookieProvider(
             .path("/")
             .httpOnly(true)
             .maxAge(0)
-            .sameSite("Lax")
+            .secure(true)
+            .sameSite("Strict")
             .build()
     }
 }
