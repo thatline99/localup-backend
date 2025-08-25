@@ -91,10 +91,10 @@ class SecurityConfiguration(
     @Profile(Environment.PRODUCTION)
     fun productionCorsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOrigins = listOf("https://localup.store", "https://www.localup.store")
-            allowedMethods = listOf("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+            allowedOrigins = listOf("*")
+            allowedMethods = listOf("*")
             allowedHeaders = listOf("*")
-            exposedHeaders = listOf("Authorization", "Content-Type")
+            exposedHeaders = listOf("*")
             allowCredentials = true
             maxAge = 3600L
         }
