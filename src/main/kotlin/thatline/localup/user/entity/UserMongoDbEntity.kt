@@ -31,6 +31,8 @@ class UserMongoDbEntity(
     val profileImage: String? = null,
 
     val isEmailVerified: Boolean = false,
+    
+    val marketingConsent: Boolean = false,
 
     ) : BaseMongoDbEntity(id, createdDate, lastModifiedDate) {
     fun update(
@@ -42,6 +44,7 @@ class UserMongoDbEntity(
         name: String?,
         profileImage: String?,
         isEmailVerified: Boolean = false,
+        marketingConsent: Boolean = this.marketingConsent,
     ): UserMongoDbEntity {
         return UserMongoDbEntity(
             id = this.id,
@@ -55,6 +58,7 @@ class UserMongoDbEntity(
             name = name,
             profileImage = profileImage,
             isEmailVerified = isEmailVerified,
+            marketingConsent = marketingConsent,
         )
     }
 }
