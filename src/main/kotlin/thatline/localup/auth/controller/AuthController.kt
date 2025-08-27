@@ -15,6 +15,11 @@ import thatline.localup.auth.request.SignUpRequest
 import thatline.localup.auth.service.AuthService
 import thatline.localup.common.support.CookieProvider
 import org.springframework.beans.factory.annotation.Value
+import thatline.localup.common.response.BaseResponse
+import thatline.localup.common.response.ResponseCode
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.data.domain.PageRequest
+import thatline.localup.auth.dto.LastLoginInfo
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,9 +31,13 @@ class AuthController(
     @PostMapping("/sign-in")
     fun signIn(
         @Valid @RequestBody request: SignInRequest,
+        httpRequest: HttpServletRequest,
         response: HttpServletResponse,
     ): ResponseEntity<Void> {
-        val authToken = authService.signIn(request.email, request.password)
+        val ipAddress = httpRequest.remoteAddr
+        val userAgent = httpRequest.getHeader("User-Agent")
+        
+        val authToken = authService.signIn(request.email, request.password, ipAddress, userAgent)
 
         val accessTokenCookie = cookieProvider.createAccessTokenCookie(authToken.accessToken)
 
@@ -59,12 +68,12 @@ class AuthController(
     fun signUp(
         @Valid @RequestBody request: SignUpRequest,
         httpRequest: HttpServletRequest,
-    ): ResponseEntity<Void> {
+    ): ResponseEntity<BaseResponse<Unit>> {
 
         val baseUrl = "${httpRequest.scheme}://${httpRequest.serverName}:${httpRequest.serverPort}"
-        authService.signUp(request.email, request.password, baseUrl)
+        authService.signUp(request.email, request.password, request.marketingConsent, baseUrl)
 
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+        return ResponseEntity.status(HttpStatus.CREATED).body(BaseResponse.success())
     }
 
     /**
@@ -99,6 +108,12 @@ class AuthController(
         return ResponseEntity.ok().build()
     }
 
+    @GetMapping("/last-login")
+    fun getLastLoginInfo(@RequestParam email: String): ResponseEntity<BaseResponse<LastLoginInfo?>> {
+        val lastLoginInfo = authService.getLastLoginInfo(email)
+        return ResponseEntity.ok(BaseResponse.success(lastLoginInfo))
+    }
+    
     @PostMapping("/kakao/signup")
     fun signUpKakao(
         @Valid @RequestBody request: KakaoSignUpRequest,
@@ -123,15 +138,42 @@ class AuthController(
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
     }
 
-    // TODO: noah, 추후 error body 정의
     @ExceptionHandler(DuplicateEmailException::class)
-    fun handleDuplicateEmail(exception: DuplicateEmailException): ResponseEntity<Void> {
-        return ResponseEntity.badRequest().build()
+    fun handleDuplicateEmail(exception: DuplicateEmailException): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity.badRequest().body(
+            BaseResponse.failure(ResponseCode.DUPLICATE_EMAIL)
+        )
     }
 
 
     @ExceptionHandler(AccountDisabledException::class)
     fun handleAccountDisabled(exception: AccountDisabledException): ResponseEntity<Void> {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+    }
+    
+    @ExceptionHandler(EmailNotVerifiedException::class)
+    fun handleEmailNotVerified(exception: EmailNotVerifiedException): ResponseEntity<BaseResponse<Unit>> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            BaseResponse.failure(ResponseCode.EMAIL_NOT_VERIFIED)
+        )
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationExceptions(exception: MethodArgumentNotValidException): ResponseEntity<BaseResponse<Unit>> {
+        val errors = exception.bindingResult.fieldErrors
+        
+        // 비밀번호 유효성 검사 실패 확인
+        val passwordError = errors.find { it.field == "password" }
+        if (passwordError != null) {
+            return ResponseEntity.badRequest().body(
+                BaseResponse.failure(ResponseCode.INVALID_PASSWORD)
+            )
+        }
+        
+        // 다른 유효성 검사 실패
+        val message = errors.firstOrNull()?.defaultMessage ?: "입력값이 올바르지 않습니다."
+        return ResponseEntity.badRequest().body(
+            BaseResponse.failure(ResponseCode.FAILURE, message)
+        )
     }
 }
