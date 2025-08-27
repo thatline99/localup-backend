@@ -3,7 +3,9 @@ package thatline.localup.auth.service
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
+import org.springframework.scheduling.annotation.Async
 import thatline.localup.auth.exception.EmailSendException
+import org.slf4j.LoggerFactory
 
 @Service
 class EmailService(
@@ -14,6 +16,7 @@ class EmailService(
     companion object {
         private const val FROM_EMAIL = "noreply@localup.co.kr"
         private const val VERIFICATION_SUBJECT = "[LocalUp] 이메일 인증을 완료해주세요"
+        private val logger = LoggerFactory.getLogger(EmailService::class.java)
     }
     /**
      * 이메일 인증 링크를 전송합니다.
@@ -21,19 +24,27 @@ class EmailService(
      * @param email 수신자 이메일 주소
      * @param baseUrl 서버의 베이스 URL (인증 링크 생성용)
      */
+    @Async
     fun sendVerificationEmail(email: String, baseUrl: String) {
-        val verificationToken = emailVerificationRedisService.generateVerificationToken()
-        emailVerificationRedisService.saveVerificationToken(email, verificationToken)
-        
-        val verificationLink = "$baseUrl/api/auth/verify-email?email=$email&token=$verificationToken"
+        try {
+            val verificationToken = emailVerificationRedisService.generateVerificationToken()
+            emailVerificationRedisService.saveVerificationToken(email, verificationToken)
+            
+            val verificationLink = "$baseUrl/api/auth/verify-email?email=$email&token=$verificationToken"
 
-        val htmlContent = createVerificationEmailContent(verificationLink)
+            val htmlContent = createVerificationEmailContent(verificationLink)
 
-        sendEmail(
-            to = email,
-            subject = VERIFICATION_SUBJECT,
-            htmlContent = htmlContent
-        )
+            sendEmail(
+                to = email,
+                subject = VERIFICATION_SUBJECT,
+                htmlContent = htmlContent
+            )
+            
+            logger.info("Verification email sent successfully to: $email")
+        } catch (e: Exception) {
+            logger.error("Failed to send verification email to: $email", e)
+            // 비동기 처리이므로 예외를 throw하지 않고 로그만 남김
+        }
     }
 
     /**
