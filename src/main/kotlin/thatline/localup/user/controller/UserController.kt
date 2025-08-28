@@ -7,11 +7,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import thatline.localup.common.response.BaseResponse
 import thatline.localup.user.dto.FindBusinessDto
+import thatline.localup.user.dto.UserProfileDto
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
 import thatline.localup.user.exception.BusinessNotRegisteredException
 import thatline.localup.user.exception.UserNotFoundException
 import thatline.localup.user.request.RegisterBusinessRequest
 import thatline.localup.user.request.UpdateBusinessRequest
+import thatline.localup.user.request.UpdateProfileRequest
 import thatline.localup.user.service.UserService
 
 @RestController
@@ -19,6 +21,34 @@ import thatline.localup.user.service.UserService
 class UserController(
     private val userService: UserService,
 ) {
+    @GetMapping("/profile")
+    fun findProfile(
+        @AuthenticationPrincipal userId: String,
+    ): ResponseEntity<BaseResponse<UserProfileDto>> {
+        val userProfile = userService.findUserProfile(userId)
+        
+        return ResponseEntity.ok(
+            BaseResponse.success(
+                data = userProfile,
+            )
+        )
+    }
+    
+    @PatchMapping("/profile")
+    fun updateProfile(
+        @AuthenticationPrincipal userId: String,
+        @RequestBody @Valid request: UpdateProfileRequest,
+    ): ResponseEntity<BaseResponse<Unit>> {
+        userService.updateUserProfile(
+            userId = userId,
+            name = request.name,
+            phoneNumber = request.phoneNumber,
+            position = request.position,
+        )
+        
+        return ResponseEntity.ok(BaseResponse.success())
+    }
+    
     @GetMapping("/business")
     fun findBusiness(
         @AuthenticationPrincipal userId: String,

@@ -3,6 +3,7 @@ package thatline.localup.user.service
 import org.springframework.stereotype.Service
 import thatline.localup.common.annotation.CountMongoDbCommands
 import thatline.localup.user.dto.FindBusinessDto
+import thatline.localup.user.dto.UserProfileDto
 import thatline.localup.user.entity.BusinessMongoDbEntity
 import thatline.localup.user.entity.CustomerSegment
 import thatline.localup.user.exception.BusinessAlreadyRegisteredException
@@ -16,6 +17,44 @@ class UserService(
     private val userRepository: UserMongoDbRepository,
     private val businessRepository: BusinessMongoDbRepository,
 ) {
+    @CountMongoDbCommands
+    fun findUserProfile(
+        userId: String,
+    ): UserProfileDto {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+        
+        return UserProfileDto(
+            email = foundUser.email,
+            name = foundUser.name,
+            phoneNumber = foundUser.phoneNumber,
+            position = foundUser.position,
+            profileImage = foundUser.profileImage,
+            isProfileCompleted = foundUser.isProfileCompleted,
+            hasBusinessInfo = foundUser.businessId != null,
+        )
+    }
+    
+    @CountMongoDbCommands
+    fun updateUserProfile(
+        userId: String,
+        name: String,
+        phoneNumber: String,
+        position: String,
+    ) {
+        val foundUser = userRepository.findById(userId)
+            .orElseThrow { UserNotFoundException() }
+        
+        val updatedUser = foundUser.update(
+            name = name,
+            phoneNumber = phoneNumber,
+            position = position,
+            isProfileCompleted = true,
+        )
+        
+        userRepository.save(updatedUser)
+    }
+    
     @CountMongoDbCommands
     fun findBusiness(
         userId: String,
@@ -91,10 +130,6 @@ class UserService(
 
         val updatedUser = foundUser.update(
             businessId = savedBusiness.id,
-            kakaoId = foundUser.kakaoId,
-            name = foundUser.name,
-            profileImage = foundUser.profileImage,
-            isEmailVerified = foundUser.isEmailVerified,
         )
 
         userRepository.save(updatedUser)

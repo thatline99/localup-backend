@@ -27,10 +27,16 @@ class UserMongoDbEntity(
     val kakaoId: String? = null,
 
     val name: String? = null,
+    
+    val phoneNumber: String? = null,
+    
+    val position: String? = null,
 
     val profileImage: String? = null,
 
     val isEmailVerified: Boolean = false,
+    
+    val isProfileCompleted: Boolean = false,
     
     val marketingConsent: Boolean = false,
 
@@ -40,10 +46,13 @@ class UserMongoDbEntity(
         password: String? = this.password,
         role: Role = this.role,
         businessId: String? = this.businessId,
-        kakaoId: String?,
-        name: String?,
-        profileImage: String?,
-        isEmailVerified: Boolean = false,
+        kakaoId: String? = this.kakaoId,
+        name: String? = this.name,
+        phoneNumber: String? = this.phoneNumber,
+        position: String? = this.position,
+        profileImage: String? = this.profileImage,
+        isEmailVerified: Boolean = this.isEmailVerified,
+        isProfileCompleted: Boolean = this.isProfileCompleted,
         marketingConsent: Boolean = this.marketingConsent,
     ): UserMongoDbEntity {
         return UserMongoDbEntity(
@@ -56,8 +65,11 @@ class UserMongoDbEntity(
             businessId = businessId,
             kakaoId = kakaoId,
             name = name,
+            phoneNumber = phoneNumber,
+            position = position,
             profileImage = profileImage,
             isEmailVerified = isEmailVerified,
+            isProfileCompleted = isProfileCompleted,
             marketingConsent = marketingConsent,
         )
     }
