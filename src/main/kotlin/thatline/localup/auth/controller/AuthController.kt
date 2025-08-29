@@ -90,7 +90,7 @@ class AuthController(
     ): ResponseEntity<Void> {
         authService.verifyEmail(email, token)
 
-        val redirectUrl = frontendBaseUrl
+            val redirectUrl = "$frontendBaseUrl/sign-in"
         return ResponseEntity.status(HttpStatus.FOUND).
             header(HttpHeaders.LOCATION, redirectUrl).build()
     }
