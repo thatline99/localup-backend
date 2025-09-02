@@ -220,12 +220,17 @@ class AiInsightService(
             위 정보를 바탕으로 오늘과 내일의 예상 매출과 방문객을 예측하세요.
             다음 JSON 형식으로 응답하세요:
             {
-              "todayRevenue": {"value": 숫자, "change": 퍼센트, "trend": "up/down/stable", "confidence": 0-1},
-              "todayVisitors": {"value": 숫자, "change": 퍼센트, "trend": "up/down/stable", "confidence": 0-1},
-              "tomorrowRevenue": {"value": 숫자, "change": 퍼센트, "trend": "up/down/stable", "confidence": 0-1},
-              "tomorrowVisitors": {"value": 숫자, "change": 퍼센트, "trend": "up/down/stable", "confidence": 0-1},
+              "todayRevenue": {"value": 숫자, "change": 전일대비 퍼센트(양수면 증가), "trend": "up(증가)/down(감소)/stable", "confidence": 0-1},
+              "todayVisitors": {"value": 숫자, "change": 전일대비 퍼센트(양수면 증가), "trend": "up(증가)/down(감소)/stable", "confidence": 0-1},
+              "tomorrowRevenue": {"value": 숫자, "change": 오늘대비 퍼센트(양수면 증가), "trend": "up(증가)/down(감소)/stable", "confidence": 0-1},
+              "tomorrowVisitors": {"value": 숫자, "change": 오늘대비 퍼센트(양수면 증가), "trend": "up(증가)/down(감소)/stable", "confidence": 0-1},
               "recommendations": ["추천1", "추천2", "추천3"]
             }
+            
+            중요: 
+            - change는 비교 대상 대비 변화율입니다 (양수면 증가, 음수면 감소)
+            - trend는 change가 양수면 "up", 음수면 "down", 0이면 "stable"입니다
+            - 내일 예상값의 change와 trend는 오늘 예상값 대비입니다
         """.trimIndent()
     }
 
