@@ -19,6 +19,8 @@ import thatline.localup.tourapi.dto.LastMonthlyTouristAttractionRankingInformati
 import thatline.localup.tourapi.dto.OngoingOrUpComingSigunguEventsFromTodayToMonthEndInformation
 import thatline.localup.tourapi.dto.SigunguMainEventInformation
 import thatline.localup.tourapi.dto.VisitorStatisticsInformation
+import thatline.localup.dashboard.dto.WeatherInsightResponse
+import thatline.localup.dashboard.dto.BusinessMetricsResponse
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -99,6 +101,30 @@ class CacheConfiguration(
             )
             .entryTtl(Duration.ofDays(1))
 
+        // AI 날씨 인사이트 캐시 설정 (3시간)
+        val weatherInsightCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        WeatherInsightResponse::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofHours(3))
+
+        // AI 비즈니스 메트릭 캐시 설정 (1시간)
+        val businessMetricsCacheConfiguration = defaultCacheConfiguration
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    Jackson2JsonRedisSerializer(
+                        objectMapper,
+                        BusinessMetricsResponse::class.java
+                    )
+                )
+            )
+            .entryTtl(Duration.ofHours(1))
+
         val cacheConfigurations = mapOf(
             CacheObjectName.SHORT_TERM_FORECAST_INFORMATION to shortTermForecastsInformationCacheConfiguration,
             CacheObjectName.VISITOR_STATISTICS_INFORMATION to visitorStatisticsInformationCacheConfiguration,
@@ -106,7 +132,8 @@ class CacheConfiguration(
             CacheObjectName.LAST_MONTHLY_TOURIST_ATTRACTION_RANKING_INFORMATION to lastMonthlyTouristAttractionRankingInformationCacheConfiguration,
             CacheObjectName.SIGUNGU_MAIN_EVENT_INFORMATION to sigunguMainEventInformationCacheConfiguration,
             CacheObjectName.ONGOING_OR_UPCOMING_SIGUNGU_EVENTS_FROM_TODAY_TO_MONTH_END_INFORMATION to ongoingOrUpComingSigunguEventsFromTodayToMonthEndInformationCacheConfiguration,
-            // 다른 캐시 설정 추가
+            "weatherInsight" to weatherInsightCacheConfiguration,
+            "businessMetrics" to businessMetricsCacheConfiguration
         )
 
         return RedisCacheManager.builder(redisConnectionFactory)
