@@ -3,13 +3,12 @@ package thatline.localup.dashboard.controller
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import thatline.localup.common.annotation.RequireUser
 import thatline.localup.common.response.BaseResponse
-import thatline.localup.dashboard.dto.DashboardOverview
+import thatline.localup.dashboard.dto.*
 import thatline.localup.dashboard.request.FindVisitorStatisticsRequest
+import thatline.localup.dashboard.service.AiInsightService
 import thatline.localup.dashboard.service.DashboardFacade
 import thatline.localup.etcapi.dto.ShortTermForecastInformation
 import thatline.localup.tourapi.dto.VisitorStatisticsInformation
@@ -18,6 +17,7 @@ import thatline.localup.tourapi.dto.VisitorStatisticsInformation
 @RequestMapping("/api/dashboard")
 class DashboardController(
     private val dashboardFacade: DashboardFacade,
+    private val aiInsightService: AiInsightService,
 ) {
     // TODO-noah: 분리
     @GetMapping
@@ -52,5 +52,25 @@ class DashboardController(
         )
 
         return ResponseEntity.ok(BaseResponse.success(data = visitorStatisticsInformation))
+    }
+
+    @PostMapping("/weather-insight")
+    @RequireUser
+    fun generateWeatherInsight(
+        @AuthenticationPrincipal userId: String,
+        @RequestBody request: WeatherInsightRequest
+    ): ResponseEntity<BaseResponse<WeatherInsightResponse>> {
+        val insight = aiInsightService.generateWeatherInsight(request, userId)
+        return ResponseEntity.ok(BaseResponse.success(data = insight))
+    }
+
+    @PostMapping("/business-metrics")
+    @RequireUser
+    fun generateBusinessMetrics(
+        @AuthenticationPrincipal userId: String,
+        @RequestBody request: BusinessMetricsRequest
+    ): ResponseEntity<BaseResponse<BusinessMetricsResponse>> {
+        val metrics = aiInsightService.generateBusinessMetrics(request, userId)
+        return ResponseEntity.ok(BaseResponse.success(data = metrics))
     }
 }
