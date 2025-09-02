@@ -41,6 +41,7 @@ class DashboardController(
     }
 
     @GetMapping("/visitor-statistics")
+    @RequireUser
     fun findVisitorStatistics(
         @AuthenticationPrincipal userId: String,
         @Valid request: FindVisitorStatisticsRequest,
