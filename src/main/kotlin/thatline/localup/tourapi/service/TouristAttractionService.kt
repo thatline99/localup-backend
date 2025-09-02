@@ -28,35 +28,44 @@ class TouristAttractionService(
         areaCode: String,
         sigunguCode: String,
     ): LastMonthlyTouristAttractionRankingInformation {
-        val yearMonth = YearMonth.now().minusMonths(1)
+        // 2024년 10월 데이터 사용 (현재 사용 가능한 최신 데이터)
+        val yearMonth = YearMonth.of(2024, 10)
 
-        val response = tourApiRestClient.locgoHubTarService1AreaBasedList2(
-            pageNo = 1,
-            numOfRows = 100,
-            baseYm = yearMonth.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM),
-            areaCd = areaCode,
-            signguCd = sigunguCode,
-        )
+        return try {
+            val response = tourApiRestClient.locgoHubTarService1AreaBasedList2(
+                pageNo = 1,
+                numOfRows = 100,
+                baseYm = yearMonth.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMM),
+                areaCd = areaCode,
+                signguCd = sigunguCode,
+            )
 
-        val items = response.response.body.items.item
+            val items = response.response.body.items.item
 
-        val lastMonthlyTouristAttractionRankingList = items
-            .map { item ->
-                LastMonthlyTouristAttractionRanking(
-                    rank = item.hubRank.toInt(),
-                    name = item.hubTatsNm,
-                    latitude = item.mapY.toDouble(),
-                    longitude = item.mapX.toDouble(),
-                    category = item.hubCtgryLclsNm,
-                    subCategory = item.hubCtgryMclsNm,
-                )
-            }
-            .sortedBy { it.rank }
+            val lastMonthlyTouristAttractionRankingList = items
+                .map { item ->
+                    LastMonthlyTouristAttractionRanking(
+                        rank = item.hubRank.toInt(),
+                        name = item.hubTatsNm,
+                        latitude = item.mapY.toDouble(),
+                        longitude = item.mapX.toDouble(),
+                        category = item.hubCtgryLclsNm,
+                        subCategory = item.hubCtgryMclsNm,
+                    )
+                }
+                .sortedBy { it.rank }
 
-        return LastMonthlyTouristAttractionRankingInformation(
-            updatedDate = yearMonth.atDay(1).atStartOfDay(),
-            lastMonthlyTouristAttractionRankingList = lastMonthlyTouristAttractionRankingList
-        )
+            LastMonthlyTouristAttractionRankingInformation(
+                updatedDate = yearMonth.atDay(1).atStartOfDay(),
+                lastMonthlyTouristAttractionRankingList = lastMonthlyTouristAttractionRankingList
+            )
+        } catch (e: Exception) {
+            // 데이터가 없는 경우 빈 리스트 반환
+            LastMonthlyTouristAttractionRankingInformation(
+                updatedDate = yearMonth.atDay(1).atStartOfDay(),
+                lastMonthlyTouristAttractionRankingList = emptyList()
+            )
+        }
     }
 
     @Cacheable(
@@ -126,7 +135,6 @@ class TouristAttractionService(
             endDate = now.withDayOfMonth(now.lengthOfMonth()),
         )
 
-        // TODO: 로직 수정
         val filteredEvent =
             // 1. 오늘 시작
             events.filter {
@@ -235,14 +243,9 @@ class TouristAttractionService(
                 }
             }
 
-        // 오늘 날짜(행사 종료일, 제목, 컨텐츠 ID), 진행 중(행사 종료일, 행사 시작일, 제목, 컨텐츠 ID), 진행 예정(행사 시작일, 행사 종료일, 제목, 컨텐츠 ID) 정렬로 진행
-
-        // 1) 오늘 시작 / 나머지
+        // 정렬 우선순위: 1) 오늘 시작 2) 진행 중 3) 진행 예정
         val (todayStartEvents, restEvents) = sigunguEventsWithDates.partition { it.startDate == now }
-        // 2) 진행 중 / 진행 예정
         val (ongoingEvents, upcomingEvents) = restEvents.partition { it.startDate <= now && now <= it.endDate }
-
-        // 3) 섹션별 정렬 후 합치기
         val sortedEvents = todayStartEvents.sortedWith(compareBy({ it.endDate }, { it.title }, { it.contentId })) +
                 ongoingEvents.sortedWith(compareBy({ it.endDate }, { it.startDate }, { it.title }, { it.contentId })) +
                 upcomingEvents.sortedWith(compareBy({ it.startDate }, { it.endDate }, { it.title }, { it.contentId }))
@@ -258,7 +261,9 @@ class TouristAttractionService(
         startDate: LocalDate,
         endDate: LocalDate,
     ): List<KorService2SearchFestival2Response.Item> {
-        val startDateFormat = startDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        // 진행 중인 이벤트를 포함하기 위해 검색 시작일을 3개월 전으로 설정
+        val searchStartDate = startDate.minusMonths(3)
+        val startDateFormat = searchStartDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
         val endDateFormat = endDate.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
 
         val response1 = tourApiRestClient.korService2SearchFestival2(
@@ -279,6 +284,6 @@ class TouristAttractionService(
             lDongSignguCd = sigunguCode.substring(2, 5),
         )
 
-        return response2.response.body.items.item
+        return response2.response.body.items.item ?: emptyList()
     }
 }
