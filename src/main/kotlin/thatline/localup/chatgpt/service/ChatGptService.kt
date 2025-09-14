@@ -10,6 +10,8 @@ import thatline.localup.chatgpt.entity.ChatSession
 import thatline.localup.chatgpt.repository.ChatSessionRepository
 import thatline.localup.chatgpt.restclient.ChatGptRestClient
 import thatline.localup.chatgpt.util.TokenCounter
+import thatline.localup.user.service.UserService
+import thatline.localup.user.dto.FindBusinessDto
 import java.time.LocalDateTime
 
 @Service
@@ -18,6 +20,7 @@ class ChatGptService(
     private val chatSessionRepository: ChatSessionRepository,
     private val tokenCounter: TokenCounter,
     private val objectMapper: ObjectMapper,
+    private val userService: UserService,
     @Value("\${openai.max-context-tokens:3000}")
     private val maxContextTokens: Int,
     @Value("\${openai.model:gpt-4o-mini}")
@@ -41,7 +44,61 @@ class ChatGptService(
         사용자의 질문에 정확하고 유용한 답변을 제공해주세요.
         답변은 명확하고 이해하기 쉽게 작성해주세요.
         한국어로 대화를 진행합니다.
+
+        응답 형식 (매우 중요):
+        - 절대로 마크다운(**bold**, ##제목, - 목록 등)을 사용하지 마세요.
+        - 각 섹션마다 빈 줄을 추가하여 단락을 명확히 구분하세요.
+        - 긴 문장은 적절한 위치에서 줄바꿈하여 읽기 쉽게 만드세요.
+        - 번호 목록: 1. 2. 3. 형식 사용
+        - 하위 항목: - 또는 · 기호 사용
+        - 제목이나 강조가 필요한 부분은 "대괄호 [강조내용]" 형식 사용
     """.trimIndent()
+
+    private fun getBusinessInfo(userId: String): FindBusinessDto? {
+        return try {
+            userService.findBusiness(userId)
+        } catch (e: Exception) {
+            log.warn("사업정보 조회 실패: ${e.message}")
+            null
+        }
+    }
+
+    private fun buildDynamicSystemPrompt(userId: String?): String {
+        if (userId == null) return systemPrompt
+
+        val business = getBusinessInfo(userId)
+
+        return if (business != null) {
+            """
+            당신은 친절하고 도움이 되는 AI 어시스턴트입니다.
+            사용자의 질문에 정확하고 유용한 답변을 제공해주세요.
+            답변은 명확하고 이해하기 쉽게 작성해주세요.
+            한국어로 대화를 진행합니다.
+
+            응답 형식 (매우 중요):
+            - 절대로 마크다운(**bold**, ##제목, - 목록 등)을 사용하지 마세요.
+            - 각 섹션마다 빈 줄을 추가하여 단락을 명확히 구분하세요.
+            - 긴 문장은 적절한 위치에서 줄바꿈하여 읽기 쉽게 만드세요.
+            - 번호 목록: 1. 2. 3. 형식 사용
+            - 하위 항목: - 또는 · 기호 사용
+            - 제목이나 강조가 필요한 부분은 "대괄호 [강조내용]" 형식 사용
+
+            특히 현재 대화하는 사용자는 다음과 같은 사업정보를 가진 사업자입니다:
+            - 업체명: ${business.name}
+            - 업종: ${business.type} (${business.item})
+            - 위치: ${business.address}${if (!business.addressDetail.isNullOrBlank()) " ${business.addressDetail}" else ""}
+            - 좌석 수: ${business.seatCount}석
+            - 평균 객단가: ${String.format("%.0f", business.averageOrderAmount)}원
+            - 주요 고객층: ${business.customerSegments.joinToString(", ")}
+            ${if (!business.description.isNullOrBlank()) "- 사업체 특징: ${business.description}" else ""}
+
+            이 사업정보를 바탕으로 해당 업종과 사업 규모에 맞는 전문적이고 실용적인 조언을 제공해주세요.
+            관광, 날씨, 지역 특성 등을 활용한 비즈니스 인사이트도 함께 제공하면 더욱 좋습니다.
+            """.trimIndent()
+        } else {
+            systemPrompt
+        }
+    }
     
     fun chat(sessionId: String?, userId: String?, userMessage: String): ChatSessionResponse {
         val session = getOrCreateSession(sessionId, userId)
@@ -49,7 +106,7 @@ class ChatGptService(
         addUserMessage(session, userMessage)
         
         return try {
-            val response = sendChatRequest(session.messages)
+            val response = sendChatRequest(session.messages, userId)
             val reply = extractReply(response)
             
             if (reply.isNullOrBlank()) {
@@ -89,23 +146,24 @@ class ChatGptService(
         )
     }
     
-    private fun sendChatRequest(messages: List<ChatMessage>): ChatGptResponse {
-        val messagesToSend = optimizeMessages(messages)
-        val apiMessages = buildApiMessages(messagesToSend)
-        
+    private fun sendChatRequest(messages: List<ChatMessage>, userId: String? = null): ChatGptResponse {
+        val messagesToSend = optimizeMessages(messages, userId)
+        val apiMessages = buildApiMessages(messagesToSend, userId)
+
         val request = ChatGptRequest(
             model = defaultModel,
             messages = apiMessages,
             temperature = defaultTemperature,
             maxTokens = defaultMaxTokens
         )
-        
+
         return chatGptRestClient.chat(request)
     }
     
-    private fun buildApiMessages(messages: List<ChatMessage>): List<Message> {
+    private fun buildApiMessages(messages: List<ChatMessage>, userId: String? = null): List<Message> {
+        val dynamicSystemPrompt = buildDynamicSystemPrompt(userId)
         val apiMessages = mutableListOf(
-            Message(role = "system", content = systemPrompt)
+            Message(role = "system", content = dynamicSystemPrompt)
         )
         apiMessages.addAll(
             messages.map { Message(role = it.role, content = it.content) }
@@ -215,12 +273,13 @@ class ChatGptService(
         }
     }
     
-    private fun optimizeMessages(messages: List<ChatMessage>): List<ChatMessage> {
+    private fun optimizeMessages(messages: List<ChatMessage>, userId: String? = null): List<ChatMessage> {
         if (messages.isEmpty()) return emptyList()
-        
+
         val optimizedMessages = mutableListOf<ChatMessage>()
-        var currentTokens = tokenCounter.countTokens(systemPrompt)
-        
+        val dynamicSystemPrompt = buildDynamicSystemPrompt(userId)
+        var currentTokens = tokenCounter.countTokens(dynamicSystemPrompt)
+
         for (message in messages.reversed()) {
             val messageTokens = message.tokens
             if (currentTokens + messageTokens > maxContextTokens) {
@@ -229,14 +288,14 @@ class ChatGptService(
             optimizedMessages.add(0, message)
             currentTokens += messageTokens
         }
-        
+
         if (optimizedMessages.isNotEmpty() && optimizedMessages.first().role != "user") {
             val firstUserIndex = optimizedMessages.indexOfFirst { it.role == "user" }
             if (firstUserIndex > 0) {
                 return optimizedMessages.subList(firstUserIndex, optimizedMessages.size)
             }
         }
-        
+
         return optimizedMessages
     }
     
