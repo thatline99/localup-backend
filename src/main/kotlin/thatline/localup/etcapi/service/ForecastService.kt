@@ -27,8 +27,7 @@ class ForecastService(
         sigunguCode: String,
         dateTime: LocalDateTime = LocalDateTime.now(),
     ): ShortTermForecastInformation {
-        val baseDate = dateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
-        val baseTime = "0200"
+        val (baseDate, baseTime) = getValidBaseDateAndTime(dateTime)
 
         // TODO: 로직 개선 필요
         val tourApiLocation = TourApi.getTourApiAreaBySigunguCode(sigunguCode)
@@ -120,5 +119,34 @@ class ForecastService(
             dailyMaximumTemperature = dailyMaximumTemperature,
             hourlyShortTermForecasts = hourlyForecasts,
         )
+    }
+
+    /**
+     * 현재 시간을 기준으로 유효한 기상청 API baseDate와 baseTime을 반환합니다.
+     * 기상청 단기예보는 하루 8번 (02, 05, 08, 11, 14, 17, 20, 23시) 발표됩니다.
+     */
+    private fun getValidBaseDateAndTime(dateTime: LocalDateTime): Pair<String, String> {
+        val validTimes = listOf("0200", "0500", "0800", "1100", "1400", "1700", "2000", "2300")
+        val currentHour = dateTime.hour
+        val currentMinute = dateTime.minute
+
+        // 현재 시간을 4자리 문자열로 변환 (예: 13:30 -> "1330")
+        val currentTime = String.format("%02d%02d", currentHour, currentMinute)
+
+        // 현재 시간보다 이전인 가장 최근의 발표 시간 찾기
+        val validBaseTime = validTimes
+            .reversed() // 최신부터 확인
+            .find { it <= currentTime }
+            ?: validTimes.last() // 만약 02시 이전이라면 전날 23시 사용
+
+        val baseDateTime = if (validBaseTime == validTimes.last() && currentTime < validTimes.first()) {
+            // 02시 이전이면 전날 23시 데이터 사용
+            dateTime.minusDays(1)
+        } else {
+            dateTime
+        }
+
+        val baseDate = baseDateTime.format(DateTimeUtil.DATETIME_FORMATTER_yyyyMMdd)
+        return Pair(baseDate, validBaseTime)
     }
 }
